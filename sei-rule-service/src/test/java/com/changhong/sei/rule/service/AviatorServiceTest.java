@@ -27,12 +27,14 @@ public class AviatorServiceTest extends BaseUnitTest {
         env.put("c", -199.100);
         // 执行表达式
         Boolean result = (Boolean) compiledExp.execute(env);
+        System.out.println(result);
         Assert.assertTrue(result);
     }
 
     @Test
     public void testUserFunction() {
         Double result = (Double) AviatorEvaluator.execute("AddFunction(1, 2)");
+        System.out.println(result);
         Assert.assertEquals(3.0d, result, 0.0);
     }
 
@@ -43,11 +45,12 @@ public class AviatorServiceTest extends BaseUnitTest {
         Expression compiledExp = AviatorEvaluator.compile(expression, true);
         Map<String, Object> env = new HashMap<>();
         env.put("a", 100.3);
-        env.put("b", 45);
+        env.put("b", 4225);
         env.put("appModuleCode", "sei-rule");
         env.put("path", "demoHello/matchRuleComparator");
         // 执行表达式
         Boolean result = (Boolean) compiledExp.execute(env);
+        System.out.println(result);
         Assert.assertTrue(result);
     }
 

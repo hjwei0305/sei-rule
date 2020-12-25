@@ -63,7 +63,7 @@ public class HelloController implements HelloApi {
     }
 
     @Override
-    public Boolean compare(Map<String, Object> env) {
-        return MapUtils.getDouble(env,"a")>MapUtils.getDouble(env,"b");
+    public ResultData<Boolean> compare(Map<String, Object> env) {
+        return ResultData.success(MapUtils.getDouble(env,"a")>MapUtils.getDouble(env,"b"));
     }
 }

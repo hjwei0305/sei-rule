@@ -37,5 +37,5 @@ public interface HelloApi {
 
     @PostMapping(path = "matchRuleComparator")
     @ApiOperation(value = "外部自定义规则匹配接口", notes = "外部自定义规则匹配接口")
-    Boolean compare(@RequestBody Map<String, Object> env);
+    ResultData<Boolean> compare(@RequestBody Map<String, Object> env);
 }

@@ -1,5 +1,7 @@
 package com.changhong.sei.rule.api;
 
+import com.changhong.sei.core.dto.ResultData;
+
 import java.util.Map;
 
 /**
@@ -15,5 +17,5 @@ public interface MatchingRuleComparator {
      * @param env 环境参数
      * @return 匹配结果
      */
-    boolean compare(Map<String, Object> env);
+    ResultData<Boolean> compare(Map<String, Object> env);
 }
