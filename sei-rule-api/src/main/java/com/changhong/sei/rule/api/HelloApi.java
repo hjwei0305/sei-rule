@@ -4,7 +4,11 @@ import com.changhong.sei.core.dto.ResultData;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Map;
 
 /**
  * 实现功能: 你好API接口
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface HelloApi {
     /**
      * say hello
+     *
      * @param name name
      * @return hello name
      */
@@ -22,10 +27,15 @@ public interface HelloApi {
 
     /**
      * say hello 无返回参数
+     *
      * @param name name
      * @return hello name
      */
     @GetMapping(path = "sayVoid")
     @ApiOperation(value = "say hello 无返回参数", notes = "测试无返回参数的服务方法")
     void sayVoid(@RequestParam("name") String name);
+
+    @PostMapping(path = "matchRuleComparator")
+    @ApiOperation(value = "外部自定义规则匹配接口", notes = "外部自定义规则匹配接口")
+    Boolean compare(@RequestBody Map<String, Object> env);
 }

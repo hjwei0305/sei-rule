@@ -15,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 /**
  * 实现功能: 你好的API服务实现
  */
@@ -57,5 +59,10 @@ public class HelloController implements HelloApi {
     public void sayVoid(String name) {
         String data = service.sayHello(name, testKey);
         LogUtil.bizLog("已经执行了说你好的方法！"+data);
+    }
+
+    @Override
+    public Boolean compare(Map<String, Object> env) {
+        return true;
     }
 }
