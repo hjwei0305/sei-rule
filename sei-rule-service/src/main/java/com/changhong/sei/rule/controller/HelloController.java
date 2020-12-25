@@ -8,6 +8,7 @@ import com.changhong.sei.core.util.JsonUtils;
 import com.changhong.sei.rule.api.HelloApi;
 import com.changhong.sei.rule.service.HelloService;
 import io.swagger.annotations.Api;
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -63,6 +64,6 @@ public class HelloController implements HelloApi {
 
     @Override
     public Boolean compare(Map<String, Object> env) {
-        return true;
+        return MapUtils.getDouble(env,"a")>MapUtils.getDouble(env,"b");
     }
 }
