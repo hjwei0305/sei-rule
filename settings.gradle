@@ -1,0 +1,5 @@
+rootProject.name = 'sei-rule'
+
+include 'sei-rule-service'
+include 'sei-rule-api'
+
