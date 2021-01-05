@@ -35,7 +35,37 @@ public interface HelloApi {
     @ApiOperation(value = "say hello 无返回参数", notes = "测试无返回参数的服务方法")
     void sayVoid(@RequestParam("name") String name);
 
+    /**
+     * 外部自定义规则匹配接口
+     * @param env 参数
+     * @return
+     */
     @PostMapping(path = "matchRuleComparator")
     @ApiOperation(value = "外部自定义规则匹配接口", notes = "外部自定义规则匹配接口")
     ResultData<Boolean> compare(@RequestBody Map<String, Object> env);
+
+    /**
+     * 比较两个数的大小
+     * @param a
+     * @param b
+     * @return
+     */
+    @GetMapping(path = "compare")
+    @ApiOperation(value = "比较两个数的大小", notes = "比较两个数的大小")
+    Boolean compare(@RequestParam("a")Float a, @RequestParam("b")Float b);
+
+    /**
+     * 是否是我的公司
+     * @param value
+     * @return
+     */
+    @PostMapping(path = "isMyCompany")
+    @ApiOperation(value = "比较两个数的大小", notes = "比较两个数的大小")
+    Boolean isMyCompany(@RequestBody Object value);
+
+    @GetMapping(path = "testSpeed")
+    void testSpeed();
+
+    @GetMapping(path = "testSpeed2")
+    void testSpeed2();
 }

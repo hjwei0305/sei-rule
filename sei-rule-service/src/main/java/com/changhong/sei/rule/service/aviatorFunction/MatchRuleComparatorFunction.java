@@ -5,9 +5,9 @@ import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.exception.ServiceException;
 import com.googlecode.aviator.runtime.function.AbstractFunction;
+import com.googlecode.aviator.runtime.function.FunctionUtils;
 import com.googlecode.aviator.runtime.type.AviatorBoolean;
 import com.googlecode.aviator.runtime.type.AviatorObject;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,6 +22,11 @@ import java.util.Map;
 @Component("MatchRuleComparator")
 public class MatchRuleComparatorFunction extends AbstractFunction {
 
+    /**
+     * 函数名称
+     */
+    public static final String MATCH_RULE_COMPARATOR_FUNCTION = "MatchRuleComparator";
+
     @Autowired
     private ApiTemplate apiTemplate;
 
@@ -33,13 +38,13 @@ public class MatchRuleComparatorFunction extends AbstractFunction {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public AviatorObject call(Map<String, Object> env) {
-        String appModuleCode = MapUtils.getString(env, "appModuleCode");
+    public AviatorObject call(Map<String, Object> env, AviatorObject arg1, AviatorObject arg2) {
+        String appModuleCode = FunctionUtils.getStringValue(arg1, env);
         if (StringUtils.isEmpty(appModuleCode)) {
             //00002 = 访问外部服务模块代码不能为空！
             throw new ServiceException(ContextUtil.getMessage("00002"));
         }
-        String path = MapUtils.getString(env, "path");
+        String path = FunctionUtils.getStringValue(arg2, env);
         if (StringUtils.isEmpty(path)) {
             //00003 = 访问外部服务API路径不能为空！
             throw new ServiceException(ContextUtil.getMessage("00003"));
@@ -56,7 +61,7 @@ public class MatchRuleComparatorFunction extends AbstractFunction {
 
     @Override
     public String getName() {
-        return "MatchRuleComparator";
+        return MATCH_RULE_COMPARATOR_FUNCTION;
     }
 
 }
