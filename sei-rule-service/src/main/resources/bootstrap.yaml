@@ -1,9 +1,9 @@
 sei: # 应用全局配置
   application:
     code: sei-rule
-    name: SEI规则引擎SEI规则引擎
+    name: SEI规则引擎
     env: DEV
-    version: 1.0.1
+    version: '@project_version@'
     swagger:
       title: "${sei.application.name} API"
       description: "${sei.application.name} 的API文档，运行环境: ${sei.application.env}"
