@@ -42,6 +42,9 @@ import static com.changhong.sei.util.DateUtils.DEFAULT_DATE_FORMAT;
  */
 @Service("matchingRuleService")
 public class MatchingRuleService extends BaseTreeService<MatchingRule> {
+
+    public static final String RULE_CHAIN_CACHE_KEY_PREFIX = "sei:sei-rule:rule-chains:";
+
     @Autowired
     private MatchingRuleDao dao;
     @Autowired
@@ -163,6 +166,8 @@ public class MatchingRuleService extends BaseTreeService<MatchingRule> {
         if (Objects.isNull(tree)) {
             return;
         }
+        //删除规则链缓存
+        redisTemplate.delete(RULE_CHAIN_CACHE_KEY_PREFIX + rootNodeId);
         // 获取所有树节点清单
         List<MatchingRule> rules = unBuildTree(Collections.singletonList(tree));
         // 按层级倒序排列
@@ -224,7 +229,7 @@ public class MatchingRuleService extends BaseTreeService<MatchingRule> {
             //子节点为空，则把这一条规则链的表达式保存起来
             //00004 = 规则[{0}]:规则叶子节点[{1}]生成表达式{2}！
             LogUtil.bizLog("00004",ruleNode.getRootId(),ruleNode.getId(),ruleNode.getExpression());
-            BoundListOperations<String, String> operations = redisTemplate.boundListOps("sei:sei-rule:rule-chains" + ruleNode.getRootId());
+            BoundListOperations<String, String> operations = redisTemplate.boundListOps(RULE_CHAIN_CACHE_KEY_PREFIX + ruleNode.getRootId());
             operations.leftPush(ruleNode.getExpression());
             return;
         }

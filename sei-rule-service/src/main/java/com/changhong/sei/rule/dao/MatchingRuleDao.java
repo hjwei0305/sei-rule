@@ -25,10 +25,4 @@ public interface MatchingRuleDao extends BaseTreeDao<MatchingRule> {
     @Query("select rule from MatchingRule rule where rule.parentId is null and rule.frozen=false and rule.ruleCategory=?1 order by rule.rank desc ")
     List<MatchingRule> findRootNode(RuleCategory category);
 
-    /**
-     * 根据款项记账类型Id获取规则
-     * @param itemAccountTypeId  款项记账类型Id
-     * @return 规则
-     */
-    List<MatchingRule> findByItemAccountTypeId(String itemAccountTypeId);
 }
