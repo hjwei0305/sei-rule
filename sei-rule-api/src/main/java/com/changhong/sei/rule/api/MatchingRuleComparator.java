@@ -12,6 +12,15 @@ import java.util.Map;
 public interface MatchingRuleComparator {
 
     /**
+     * 模块与url路径分隔符
+     */
+    public static final char SPLIT_CHAR = ':';
+    /**
+     * 正确的分割后数组长度
+     */
+    public static final Integer SPLIT_LENGTH = 2;
+
+    /**
      * 规则计算
      *
      * @param env 环境参数

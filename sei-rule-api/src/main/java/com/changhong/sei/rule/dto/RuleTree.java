@@ -27,6 +27,8 @@ public class RuleTree implements Serializable {
     @Size(max = 100)
     @ApiModelProperty(value = "规则名称", required = true)
     private String name;
+
+
     /**
      * 规则分类
      */

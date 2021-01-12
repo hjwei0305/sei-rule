@@ -6,7 +6,9 @@ import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.data.redis.FallbackExceptionTranslationStrategy;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,17 +21,16 @@ public class AviatorServiceTest extends BaseUnitTest {
 
     @Test
     public void testExpression() {
-        String expression = "a+(b-c)>100";
+        String expression = "a>'2021-01-11 00:00:00:00'";
         // 编译表达式
         Expression compiledExp = AviatorEvaluator.compile(expression, true);
         Map<String, Object> env = new HashMap<>();
-        env.put("a", 100.3);
-        env.put("b", 45);
+        env.put("a", new Date());
+        env.put("b", true);
         env.put("c", -199.100);
         // 执行表达式
         Boolean result = (Boolean) compiledExp.execute(env);
         System.out.println(result);
-        Assert.assertTrue(result);
     }
 
     @Test

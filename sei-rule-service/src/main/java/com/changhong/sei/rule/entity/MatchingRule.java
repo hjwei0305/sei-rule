@@ -5,6 +5,7 @@ import com.changhong.sei.core.dto.serializer.EnumJsonSerializer;
 import com.changhong.sei.core.entity.BaseAuditableEntity;
 import com.changhong.sei.core.entity.ITenant;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
+import com.changhong.sei.rule.dto.enums.DataType;
 import com.changhong.sei.rule.dto.enums.RuleCategory;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.DynamicInsert;
@@ -85,16 +86,15 @@ public class MatchingRule extends BaseAuditableEntity implements TreeEntity<Matc
      */
     @Column(name = "comparison_value")
     private String comparisonValue;
+
     /**
-     * 无需认款
+     * 数据类型
      */
-    @Column(name = "unrecognize")
-    private Boolean unrecognize = Boolean.FALSE;
-    /**
-     * 款项记账类型Id
-     */
-    @Column(name = "item_account_type_id")
-    private String itemAccountTypeId;
+    @Enumerated(EnumType.STRING)
+    @JsonSerialize(using = EnumJsonSerializer.class)
+    @Column(name = "data_type")
+    private DataType dataType = DataType.STRING;
+
     /**
      * 是否冻结
      */
@@ -110,6 +110,18 @@ public class MatchingRule extends BaseAuditableEntity implements TreeEntity<Matc
      */
     @Column(name = "tenant_code")
     private String tenantCode;
+
+    /**
+     * 根节点id
+     */
+    @Transient
+    private String rootId;
+
+    /**
+     * 该节点表达式
+     */
+    @Transient
+    private String expression;
 
     /**
      * 子节点列表
@@ -205,20 +217,12 @@ public class MatchingRule extends BaseAuditableEntity implements TreeEntity<Matc
         this.comparisonValue = comparisonValue;
     }
 
-    public Boolean getUnrecognize() {
-        return unrecognize;
+    public DataType getDataType() {
+        return dataType;
     }
 
-    public void setUnrecognize(Boolean unrecognize) {
-        this.unrecognize = unrecognize;
-    }
-
-    public String getItemAccountTypeId() {
-        return itemAccountTypeId;
-    }
-
-    public void setItemAccountTypeId(String itemAccountTypeId) {
-        this.itemAccountTypeId = itemAccountTypeId;
+    public void setDataType(DataType dataType) {
+        this.dataType = dataType;
     }
 
     public Boolean getFrozen() {
@@ -243,6 +247,22 @@ public class MatchingRule extends BaseAuditableEntity implements TreeEntity<Matc
 
     public void setTenantCode(String tenantCode) {
         this.tenantCode = tenantCode;
+    }
+
+    public String getRootId() {
+        return rootId;
+    }
+
+    public void setRootId(String rootId) {
+        this.rootId = rootId;
+    }
+
+    public String getExpression() {
+        return expression;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
     }
 
     @Override

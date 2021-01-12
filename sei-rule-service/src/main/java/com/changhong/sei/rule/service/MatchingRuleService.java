@@ -1,22 +1,37 @@
 package com.changhong.sei.rule.service;
 
+import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.dao.BaseTreeDao;
+import com.changhong.sei.core.dto.ResultData;
+import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.service.BaseTreeService;
 import com.changhong.sei.core.service.bo.OperateResult;
 import com.changhong.sei.core.service.bo.OperateResultWithData;
 import com.changhong.sei.exception.ServiceException;
+import com.changhong.sei.rule.api.MatchingRuleApi;
+import com.changhong.sei.rule.api.MatchingRuleComparator;
 import com.changhong.sei.rule.dao.MatchingRuleDao;
+import com.changhong.sei.rule.dto.enums.ComparisonOperator;
+import com.changhong.sei.rule.dto.enums.DataType;
 import com.changhong.sei.rule.dto.enums.RuleCategory;
 import com.changhong.sei.rule.entity.MatchingRule;
+import com.changhong.sei.rule.service.exception.MatchingRuleComparatorException;
 import com.changhong.sei.serial.sdk.SerialService;
+import com.changhong.sei.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundHashOperations;
+import org.springframework.data.redis.core.BoundListOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.changhong.sei.util.DateUtils.DEFAULT_DATE_FORMAT;
 
 
 /**
@@ -31,6 +46,8 @@ public class MatchingRuleService extends BaseTreeService<MatchingRule> {
     private MatchingRuleDao dao;
     @Autowired
     private SerialService serialService;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @Override
     protected BaseTreeDao<MatchingRule> getDao() {
@@ -39,6 +56,7 @@ public class MatchingRuleService extends BaseTreeService<MatchingRule> {
 
     /**
      * 检查菜单父节点
+     *
      * @param parentId 父节点Id
      * @return 检查结果
      */
@@ -52,16 +70,13 @@ public class MatchingRuleService extends BaseTreeService<MatchingRule> {
             // 检查通过！
             return OperateResult.operationSuccess("00001");
         }
-        if (StringUtils.isNotBlank(parent.getItemAccountTypeId())
-                || parent.getUnrecognize()) {
-            // 规则节点【{0}】已经配置了规则结果，禁止作为父节点！
-            return OperateResult.operationFailure("00149", parent.getName());
-        }
         // 检查通过！
         return OperateResult.operationSuccess("00001");
     }
+
     /**
      * 保存一个规则树节点
+     *
      * @param entity 规则树节点
      * @return 操作结果
      */
@@ -81,6 +96,7 @@ public class MatchingRuleService extends BaseTreeService<MatchingRule> {
         }
         return super.save(entity);
     }
+
     /**
      * 移动节点
      *
@@ -136,6 +152,7 @@ public class MatchingRuleService extends BaseTreeService<MatchingRule> {
 
     /**
      * 删除一个规则树
+     *
      * @param rootNodeId 根节点Id
      * @return 处理结果
      */
@@ -180,25 +197,116 @@ public class MatchingRuleService extends BaseTreeService<MatchingRule> {
 
     /**
      * 递归保存业务规则树子节点
+     *
      * @param ruleNode 树节点
      * @param children 子节点清单
      */
     private void saveChildren(MatchingRule ruleNode, List<MatchingRule> children) {
+        //循环传递根节点的id
+        if (StringUtils.isBlank(ruleNode.getParentId())){
+            ruleNode.setRootId(ruleNode.getId());
+        }else {
+            ruleNode.setRootId(ruleNode.getRootId());
+        }
+        //获得当前节点表达式
+        String expression = convertToExpression(ruleNode);
+        //循环拼接表达式
+        if (StringUtils.isNotBlank(expression)) {
+            //判断前面是否已经有节点生成表达式
+            String parentExpression = ruleNode.getExpression();
+            if (StringUtils.isNotBlank(parentExpression)) {
+                ruleNode.setExpression(parentExpression + " && " + expression);
+            } else {
+                ruleNode.setExpression(expression);
+            }
+        }
         if (CollectionUtils.isEmpty(children)) {
+            //子节点为空，则把这一条规则链的表达式保存起来
+            //00004 = 规则[{0}]:规则叶子节点[{1}]生成表达式{2}！
+            LogUtil.bizLog("00004",ruleNode.getRootId(),ruleNode.getId(),ruleNode.getExpression());
+            BoundListOperations<String, String> operations = redisTemplate.boundListOps("sei:sei-rule:rule-chains" + ruleNode.getRootId());
+            operations.leftPush(ruleNode.getExpression());
             return;
         }
         children.forEach(node -> {
             // 重新创建节点
             node.setId(null);
             node.setCode(null);
+            node.setRootId(ruleNode.getRootId());
             node.setParentId(ruleNode.getId());
             // 设置公共属性
             node.setRuleCategory(ruleNode.getRuleCategory());
             OperateResultWithData<MatchingRule> saveResult = save(node);
             if (saveResult.notSuccessful()) {
-                throw new ServiceException("递归保存规则树节点失败！"+saveResult.getMessage());
+                throw new ServiceException("递归保存规则树节点失败！" + saveResult.getMessage());
             }
             saveChildren(saveResult.getData(), node.getChildren());
         });
+    }
+
+    private String convertToExpression(MatchingRule ruleNode) {
+        ComparisonOperator operator = ruleNode.getComparisonOperator();
+        String propertyCode = ruleNode.getPropertyCode();
+        String comparisonValue = ruleNode.getComparisonValue();
+        DataType dataType = ruleNode.getDataType();
+        switch (dataType) {
+            case STRING:
+                //字符串类型需要在两侧加单引号
+                comparisonValue = "'" + comparisonValue + "'";
+                break;
+            case DATE:
+                //日期类型需要转化为yyyy-MM-dd HH:mm:ss:SS 格式 在两侧加单引号
+                Date date = DateUtils.parseDate(comparisonValue, DEFAULT_DATE_FORMAT);
+                comparisonValue = "'" + DateUtils.formatDate(date, "yyyy-MM-dd HH:mm:ss:SS") + "'";
+                break;
+            default:
+                break;
+        }
+        StringBuilder builder = new StringBuilder();
+        switch (operator) {
+            case EQUAL:
+                builder.append(propertyCode).append("==").append(comparisonValue);
+                break;
+            case NOTEQUAL:
+                builder.append(propertyCode).append("!=").append(comparisonValue);
+                break;
+            case LESS:
+                builder.append(propertyCode).append("<").append(comparisonValue);
+                break;
+            case GREATER:
+                builder.append(propertyCode).append(">").append(comparisonValue);
+                break;
+            case LESS_EQUAL:
+                builder.append(propertyCode).append("<=").append(comparisonValue);
+                break;
+            case GREATER_EQUAL:
+                builder.append(propertyCode).append(">=").append(comparisonValue);
+                break;
+            case CONTAIN:
+                builder.append("string.contains(").append(propertyCode).append(",").append(comparisonValue).append(")");
+            case MATCH:
+                builder.append(propertyCode).append("=~").append(comparisonValue);
+                break;
+            case COMPARER:
+                //MatchRuleComparator('sei-rule','demoHello/matchRuleComparator')
+                //comparisonValue中模块名与url路径以:相隔
+                String[] splits = StringUtils.split(comparisonValue, MatchingRuleComparator.SPLIT_CHAR);
+                if (splits.length != MatchingRuleComparator.SPLIT_LENGTH) {
+                    throw new MatchingRuleComparatorException("匹配规则计算接口实现[" + comparisonValue + "]不符合定义,正确定义为[模块名" + MatchingRuleComparator.SPLIT_CHAR + "URL路径]");
+                }
+                String module = splits[0];
+                String url = splits[1];
+                if (StringUtils.isBlank(module)) {
+                    throw new MatchingRuleComparatorException("匹配规则计算接口实现[" + comparisonValue + "]模块名为空");
+                }
+                if (StringUtils.isBlank(url)) {
+                    throw new MatchingRuleComparatorException("匹配规则计算接口实现[" + comparisonValue + "]URL路径为空");
+                }
+                builder.append("MatchRuleComparator('").append(module).append("','").append(url).append("')");
+                break;
+            default:
+                break;
+        }
+        return builder.toString();
     }
 }

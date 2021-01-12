@@ -20,6 +20,26 @@ public enum ComparisonOperator {
     @Remark("等于")
     EQUAL,
     /**
+     * 小于
+     */
+    @Remark("小于")
+    LESS,
+    /**
+     * 小于等于
+     */
+    @Remark("小于等于")
+    LESS_EQUAL,
+    /**
+     * 大于
+     */
+    @Remark("大于")
+    GREATER,
+    /**
+     * 大于等于
+     */
+    @Remark("大于等于")
+    GREATER_EQUAL,
+    /**
      * 不等于
      */
     @Remark("不等于")
