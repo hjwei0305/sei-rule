@@ -7,6 +7,7 @@ import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.util.JsonUtils;
 import com.changhong.sei.rule.api.HelloApi;
 import com.changhong.sei.rule.service.HelloService;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
 import io.swagger.annotations.Api;
@@ -18,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -107,7 +109,7 @@ public class HelloController implements HelloApi {
         // 编译表达式
         Expression compiledExp = AviatorEvaluator.compile(expression,true);
         // 执行表达式
-        Boolean result = (Boolean) compiledExp.execute(env);
+        boolean result = (Boolean) compiledExp.execute(env);
         String expression2 = "b!=2";
         Expression compiledExp2 = AviatorEvaluator.compile(expression2,true);
         // 执行表达式

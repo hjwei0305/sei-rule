@@ -3,12 +3,12 @@ package com.changhong.sei.rule.dto.enums;
 import com.changhong.sei.annotation.Remark;
 
 /**
- * 实现功能: 数据类型
+ * 实现功能: 规则属性类型
  *
  * @author 王锦光 wangjg
  * @version 2020-08-14 9:26
  */
-public enum DataType {
+public enum RuleAttributeType {
     /**
      * 字符串
      */
@@ -28,6 +28,5 @@ public enum DataType {
      * 日期
      */
     @Remark("日期")
-    DATE
-
+    DATETIME
 }

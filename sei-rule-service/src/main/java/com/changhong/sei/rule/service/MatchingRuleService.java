@@ -1,18 +1,15 @@
 package com.changhong.sei.rule.service;
 
-import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.dao.BaseTreeDao;
-import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.service.BaseTreeService;
 import com.changhong.sei.core.service.bo.OperateResult;
 import com.changhong.sei.core.service.bo.OperateResultWithData;
 import com.changhong.sei.exception.ServiceException;
-import com.changhong.sei.rule.api.MatchingRuleApi;
 import com.changhong.sei.rule.api.MatchingRuleComparator;
 import com.changhong.sei.rule.dao.MatchingRuleDao;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
-import com.changhong.sei.rule.dto.enums.DataType;
+import com.changhong.sei.rule.dto.enums.RuleAttributeType;
 import com.changhong.sei.rule.dto.enums.RuleCategory;
 import com.changhong.sei.rule.entity.MatchingRule;
 import com.changhong.sei.rule.service.exception.MatchingRuleComparatorException;
@@ -21,13 +18,11 @@ import com.changhong.sei.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -253,13 +248,13 @@ public class MatchingRuleService extends BaseTreeService<MatchingRule> {
         ComparisonOperator operator = ruleNode.getComparisonOperator();
         String propertyCode = ruleNode.getPropertyCode();
         String comparisonValue = ruleNode.getComparisonValue();
-        DataType dataType = ruleNode.getDataType();
-        switch (dataType) {
+        RuleAttributeType ruleAttributeType = ruleNode.getDataType();
+        switch (ruleAttributeType) {
             case STRING:
                 //字符串类型需要在两侧加单引号
                 comparisonValue = "'" + comparisonValue + "'";
                 break;
-            case DATE:
+            case DATETIME:
                 //日期类型需要转化为yyyy-MM-dd HH:mm:ss:SS 格式 在两侧加单引号
                 Date date = DateUtils.parseDate(comparisonValue, DEFAULT_DATE_FORMAT);
                 comparisonValue = "'" + DateUtils.formatDate(date, "yyyy-MM-dd HH:mm:ss:SS") + "'";

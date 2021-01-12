@@ -54,5 +54,4 @@ public enum ComparisonOperator {
      */
     @Remark("比较器")
     COMPARER
-
 }

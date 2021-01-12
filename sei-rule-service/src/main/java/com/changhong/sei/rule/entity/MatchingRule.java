@@ -5,7 +5,7 @@ import com.changhong.sei.core.dto.serializer.EnumJsonSerializer;
 import com.changhong.sei.core.entity.BaseAuditableEntity;
 import com.changhong.sei.core.entity.ITenant;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
-import com.changhong.sei.rule.dto.enums.DataType;
+import com.changhong.sei.rule.dto.enums.RuleAttributeType;
 import com.changhong.sei.rule.dto.enums.RuleCategory;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.DynamicInsert;
@@ -93,7 +93,7 @@ public class MatchingRule extends BaseAuditableEntity implements TreeEntity<Matc
     @Enumerated(EnumType.STRING)
     @JsonSerialize(using = EnumJsonSerializer.class)
     @Column(name = "data_type")
-    private DataType dataType = DataType.STRING;
+    private RuleAttributeType ruleAttributeType = RuleAttributeType.STRING;
 
     /**
      * 是否冻结
@@ -217,12 +217,12 @@ public class MatchingRule extends BaseAuditableEntity implements TreeEntity<Matc
         this.comparisonValue = comparisonValue;
     }
 
-    public DataType getDataType() {
-        return dataType;
+    public RuleAttributeType getDataType() {
+        return ruleAttributeType;
     }
 
-    public void setDataType(DataType dataType) {
-        this.dataType = dataType;
+    public void setDataType(RuleAttributeType ruleAttributeType) {
+        this.ruleAttributeType = ruleAttributeType;
     }
 
     public Boolean getFrozen() {
