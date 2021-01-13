@@ -29,12 +29,12 @@ import java.util.Map;
 @RestController
 @RefreshScope
 @Api(value = "HelloApi", tags = "调试你好的API服务")
-@RequestMapping(path = "demoHello", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(path = "demoHello", produces = MediaType.APPLICATION_JSON_VALUE)
 public class HelloController implements HelloApi {
     @Autowired
     private HelloService service;
 
-    @Value("${demo.test-key:123456}")
+    @Value("${sei-rule.test-key:123456}")
     private String testKey;
 
     /**
