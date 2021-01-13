@@ -65,7 +65,7 @@ public interface MatchingRuleApi extends BaseTreeApi<MatchingRuleDto> {
      * @param ruleTree 业务规则树
      * @return 处理结果
      */
-    @PostMapping(path = "saveRuleTree", consumes = MediaType.APPLICATION_UTF8_VALUE)
+    @PostMapping(path = "saveRuleTree", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(notes = "保存业务规则树", value = "保存一个完整的业务规则树")
     ResultData<?> saveRuleTree(@RequestBody RuleTree ruleTree);
 
