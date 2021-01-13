@@ -53,5 +53,10 @@ public enum ComparisonOperator {
      * 运算
      */
     @Remark("比较器")
-    COMPARER
+    COMPARER,
+    /**
+     * 是真
+     */
+    @Remark("是真")
+    IS_TRUE
 }
