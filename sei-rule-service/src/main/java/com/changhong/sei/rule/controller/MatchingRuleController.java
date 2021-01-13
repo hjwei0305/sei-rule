@@ -31,7 +31,7 @@ import java.util.List;
  */
 @RestController
 @Api(value = "MatchingRuleApi", tags = "业务匹配规则服务")
-@RequestMapping(path = "matchingRule", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(path = "matchingRule", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MatchingRuleController extends BaseTreeController<MatchingRule, MatchingRuleDto>
         implements MatchingRuleApi {
     /**
