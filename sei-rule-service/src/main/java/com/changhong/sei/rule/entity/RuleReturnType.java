@@ -1,12 +1,15 @@
 package com.changhong.sei.rule.entity;
 
 import com.changhong.sei.core.entity.BaseAuditableEntity;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -21,6 +24,7 @@ import java.io.Serializable;
 @DynamicUpdate
 public class RuleReturnType extends BaseAuditableEntity {
     private static final long serialVersionUID = -2997202066472400974L;
+
     /**
      * 规则业务实体Id
      */

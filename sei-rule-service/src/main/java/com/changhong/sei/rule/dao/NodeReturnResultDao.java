@@ -21,4 +21,10 @@ public interface NodeReturnResultDao extends BaseEntityDao<NodeReturnResult> {
      * @return 返回结果清单
      */
     List<NodeReturnResult> findByRuleTreeNodeId(String ruleTreeNodeId);
+
+    /**
+     * 根据规则树根节点id删除所有返回结果
+     * @param ruleTreeRootNodeId 规则树根节点id
+     */
+    void deleteByRuleTreeRootNodeId(String ruleTreeRootNodeId);
 }

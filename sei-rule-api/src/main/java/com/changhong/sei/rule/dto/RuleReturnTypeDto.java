@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 @ApiModel(description = "返回结果定义DTO")
 public class RuleReturnTypeDto extends BaseEntityDto {
     private static final long serialVersionUID = -5957257447021974798L;
+
     /**
      * 规则业务实体Id
      */

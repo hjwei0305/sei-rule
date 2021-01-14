@@ -9,10 +9,14 @@ import com.changhong.sei.core.service.bo.OperateResultWithData;
 import com.changhong.sei.exception.ServiceException;
 import com.changhong.sei.rule.api.MatchingRuleComparator;
 import com.changhong.sei.rule.dao.LogicalExpressionDao;
+import com.changhong.sei.rule.dao.NodeReturnResultDao;
 import com.changhong.sei.rule.dao.RuleTreeNodeDao;
+import com.changhong.sei.rule.dto.RuleReturnTypeDto;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
 import com.changhong.sei.rule.dto.enums.RuleAttributeType;
 import com.changhong.sei.rule.entity.LogicalExpression;
+import com.changhong.sei.rule.entity.NodeReturnResult;
+import com.changhong.sei.rule.entity.RuleReturnType;
 import com.changhong.sei.rule.entity.RuleTreeNode;
 import com.changhong.sei.rule.service.exception.MatchingRuleComparatorException;
 import com.changhong.sei.serial.sdk.SerialService;
@@ -54,6 +58,8 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     private RuleTreeNodeDao dao;
     @Autowired
     private LogicalExpressionDao logicalExpressionDao;
+    @Autowired
+    private NodeReturnResultDao nodeReturnResultDao;
     @Autowired
     private SerialService serialService;
     @Autowired
@@ -162,6 +168,10 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         }
         //删除规则链缓存
         redisTemplate.delete(RULE_CHAIN_CACHE_KEY_PREFIX + rootNodeId);
+        //删除逻辑表达式
+        logicalExpressionDao.deleteByRuleTreeRootNodeId(rootNodeId);
+        //删除结果
+        nodeReturnResultDao.deleteByRuleTreeRootNodeId(rootNodeId);
         // 获取所有树节点清单
         List<RuleTreeNode> rules = unBuildTree(Collections.singletonList(tree));
         // 按层级倒序排列
@@ -189,6 +199,21 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         if (saveResult.notSuccessful()) {
             return OperateResultWithData.converterNoneData(saveResult);
         }
+        //保存逻辑表达式
+        List<LogicalExpression> expressions = ruleNode.getExpressions();
+        //赋值根节点值
+        for (LogicalExpression expression : expressions) {
+            expression.setRuleTreeRootNodeId(saveResult.getData().getId());
+            logicalExpressionDao.save(expression);
+        }
+        //保存结果
+        List<NodeReturnResult> nodeReturnResults = ruleNode.getNodeReturnResults();
+        //赋值根节点值
+        for (NodeReturnResult nodeReturnResult : nodeReturnResults) {
+            nodeReturnResult.setRuleTreeRootNodeId(saveResult.getData().getId());
+            nodeReturnResultDao.save(nodeReturnResult);
+        }
+        //保存子节点
         saveChildren(saveResult.getData(), ruleNode.getChildren());
         // 业务规则【{0}】保存成功！
         return OperateResult.operationSuccess("00017", ruleNode.getName());

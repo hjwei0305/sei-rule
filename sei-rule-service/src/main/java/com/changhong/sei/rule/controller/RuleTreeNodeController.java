@@ -22,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.swing.text.TabExpander;
 import java.util.List;
 
 import java.util.LinkedList;
@@ -104,6 +105,9 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
         // 为根节点赋值
         RuleTreeNodeDto treeNode = ruleTree.getTreeNode();
         treeNode.setName(ruleTree.getName());
+        treeNode.setTrueNode(ruleTree.getTrueNode());
+        treeNode.setRuleTypeId(ruleTree.getRuleTypeId());
+        treeNode.setEnabled(ruleTree.getEnabled());
         treeNode.setRank(ruleTree.getRank());
         RuleTreeNode ruleNode = convertToEntity(treeNode);
         return ResultDataUtil.convertFromOperateResult(service.saveRuleTree(ruleNode));

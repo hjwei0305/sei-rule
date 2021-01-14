@@ -105,6 +105,16 @@ public class RuleTreeNodeDto extends BaseEntityDto {
     @ApiModelProperty(value = "租户代码")
     private String tenantCode;
     /**
+     * 规则逻辑表达式
+     */
+    @ApiModelProperty(value = "规则逻辑表达式")
+    private List<LogicalExpressionDto> expressionDtos;
+    /**
+     * 返回结果
+     */
+    @ApiModelProperty(value = "返回结果")
+    private List<NodeReturnResultDto> nodeReturnResultDtos;
+    /**
      * 子节点清单
      */
     @ApiModelProperty(value = "子节点清单")
@@ -220,6 +230,22 @@ public class RuleTreeNodeDto extends BaseEntityDto {
 
     public void setTenantCode(String tenantCode) {
         this.tenantCode = tenantCode;
+    }
+
+    public List<LogicalExpressionDto> getExpressionDtos() {
+        return expressionDtos;
+    }
+
+    public void setExpressionDtos(List<LogicalExpressionDto> expressionDtos) {
+        this.expressionDtos = expressionDtos;
+    }
+
+    public List<NodeReturnResultDto> getNodeReturnResultDtos() {
+        return nodeReturnResultDtos;
+    }
+
+    public void setNodeReturnResultDtos(List<NodeReturnResultDto> nodeReturnResultDtos) {
+        this.nodeReturnResultDtos = nodeReturnResultDtos;
     }
 
     public List<RuleTreeNodeDto> getChildren() {

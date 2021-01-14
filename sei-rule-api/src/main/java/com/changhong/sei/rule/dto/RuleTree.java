@@ -18,31 +18,44 @@ import java.io.Serializable;
 public class RuleTree implements Serializable {
     private static final long serialVersionUID = 6395924727672357371L;
     /**
+     * 代码
+     */
+    @NotBlank
+    @Size(max = 10)
+    @ApiModelProperty(value = "代码", required = true)
+    private String code;
+    /**
      * 规则名称
      */
     @NotBlank
     @Size(max = 100)
     @ApiModelProperty(value = "规则名称", required = true)
     private String name;
-
     /**
-     * 公司代码
+     * 规则类型Id
      */
-    @Size(max = 10)
-    @ApiModelProperty(value = "公司代码")
-    private String corporationCode;
-    /**
-     * 公司名称
-     */
-    @Size(max = 100)
-    @ApiModelProperty(value = "公司名称")
-    private String corporationName;
+    @NotBlank
+    @Size(max = 36)
+    @ApiModelProperty(value = "规则类型Id", required = true)
+    private String ruleTypeId;
     /**
      * 优先级
      */
     @NotNull
     @ApiModelProperty(value = "优先级", required = true)
     private Integer rank = 0;
+    /**
+     * 真节点
+     */
+    @NotNull
+    @ApiModelProperty(value = "真节点", required = true)
+    private Boolean trueNode = Boolean.FALSE;
+    /**
+     * 启用标识
+     */
+    @NotNull
+    @ApiModelProperty(value = "启用标识")
+    private Boolean enabled = Boolean.FALSE;
     /**
      * 规则树节点(包含子节点)
      */
@@ -58,20 +71,12 @@ public class RuleTree implements Serializable {
         this.name = name;
     }
 
-    public String getCorporationCode() {
-        return corporationCode;
+    public String getRuleTypeId() {
+        return ruleTypeId;
     }
 
-    public void setCorporationCode(String corporationCode) {
-        this.corporationCode = corporationCode;
-    }
-
-    public String getCorporationName() {
-        return corporationName;
-    }
-
-    public void setCorporationName(String corporationName) {
-        this.corporationName = corporationName;
+    public void setRuleTypeId(String ruleTypeId) {
+        this.ruleTypeId = ruleTypeId;
     }
 
     public Integer getRank() {
@@ -80,6 +85,22 @@ public class RuleTree implements Serializable {
 
     public void setRank(Integer rank) {
         this.rank = rank;
+    }
+
+    public Boolean getTrueNode() {
+        return trueNode;
+    }
+
+    public void setTrueNode(Boolean trueNode) {
+        this.trueNode = trueNode;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     public RuleTreeNodeDto getTreeNode() {
