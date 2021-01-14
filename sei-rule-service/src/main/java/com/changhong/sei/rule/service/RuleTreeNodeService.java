@@ -224,7 +224,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         RuleType ruleType = ruleTypeDao.findOne(ruleNode.getRuleTypeId());
         if (Objects.isNull(ruleType)){
             //指定规则类型[{0}]不存在！
-            return OperateResult.operationFailure("00022",ruleNode.getRuleTypeId());
+            return OperateResult.operationFailure("00023",ruleNode.getRuleTypeId());
         }
         OperateResultWithData<RuleTreeNode> saveResult = save(ruleNode);
         if (saveResult.notSuccessful()) {
