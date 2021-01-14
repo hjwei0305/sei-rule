@@ -64,6 +64,16 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         return dao;
     }
 
+    /**
+     * 获取规则实体类型的所有根节点
+     * @param ruleTypeId 规则类型Id
+     * @param tenantCode 租户代码
+     * @return 根节点清单
+     */
+    public List<RuleTreeNode> findRootNodes(String ruleTypeId, String tenantCode) {
+        return dao.findRootNodes(ruleTypeId, ContextUtil.getTenantCode());
+    }
+
 
     /**
      * 检查菜单父节点
@@ -125,7 +135,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      */
     public List<RuleTreeNode> getRuleTrees(String ruleTypeId) {
         // 限制规则分类
-        List<RuleTreeNode> rootTree = dao.findRootNodesByRuleType(ruleTypeId, ContextUtil.getTenantCode());
+        List<RuleTreeNode> rootTree = dao.findRootNodes(ruleTypeId, ContextUtil.getTenantCode());
         if (CollectionUtils.isEmpty(rootTree)) {
             return new ArrayList<>();
         }
