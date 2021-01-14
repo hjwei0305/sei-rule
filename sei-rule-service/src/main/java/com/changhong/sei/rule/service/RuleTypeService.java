@@ -9,6 +9,7 @@ import com.changhong.sei.rule.dao.RuleTreeNodeDao;
 import com.changhong.sei.rule.dao.RuleTypeDao;
 import com.changhong.sei.rule.entity.RuleEntityType;
 import com.changhong.sei.rule.entity.RuleType;
+import com.changhong.sei.rule.service.utils.PinYinUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,7 +52,19 @@ public class RuleTypeService extends BaseEntityService<RuleType> {
                 // 规则实体类型【{0}】不存在！
                 return OperateResultWithData.operationFailure("00019", entity.getRuleEntityTypeId());
             }
-
+            // 生成代码
+            String code = StringUtils.lowerCase(entityType.getCode())+"-"+PinYinUtil.getLowerCase(entity.getName(), Boolean.FALSE);
+            entity.setCode(code);
+        } else {
+            // 检查代码，禁止修改
+            if (!entity.isNew()) {
+                RuleType ruleType = dao.findOne(entity.getId());
+                if (Objects.nonNull(ruleType)
+                        && !StringUtils.equals(ruleType.getCode(), entity.getCode())) {
+                    // 规则类型的代码禁止修改！
+                    return OperateResultWithData.operationFailure("00022");
+                }
+            }
         }
         return super.save(entity);
     }
