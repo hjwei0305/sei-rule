@@ -1,6 +1,7 @@
 package com.changhong.sei.rule.api;
 
 import com.changhong.sei.core.api.BaseEntityApi;
+import com.changhong.sei.core.api.FindAllApi;
 import com.changhong.sei.rule.dto.RuleEntityTypeDto;
 import org.springframework.cloud.openfeign.FeignClient;
 
@@ -14,6 +15,7 @@ import javax.validation.Valid;
  */
 @Valid
 @FeignClient(name = "sei-rule", path = "ruleEntityType")
-public interface RuleEntityTypeApi extends BaseEntityApi<RuleEntityTypeDto> {
+public interface RuleEntityTypeApi extends BaseEntityApi<RuleEntityTypeDto>,
+        FindAllApi<RuleEntityTypeDto> {
 
 }

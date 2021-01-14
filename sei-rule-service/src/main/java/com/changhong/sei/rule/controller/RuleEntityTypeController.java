@@ -1,6 +1,7 @@
 package com.changhong.sei.rule.controller;
 
 import com.changhong.sei.core.controller.BaseEntityController;
+import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.service.BaseEntityService;
 import com.changhong.sei.rule.api.RuleEntityTypeApi;
 import com.changhong.sei.rule.dto.RuleEntityTypeDto;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 规则业务实体(RuleEntityType)控制类
@@ -34,4 +37,23 @@ public class RuleEntityTypeController extends BaseEntityController<RuleEntityTyp
         return service;
     }
 
+    /**
+     * 获取所有业务实体
+     *
+     * @return 业务实体清单
+     */
+    @Override
+    public ResultData<List<RuleEntityTypeDto>> findAll() {
+        return ResultData.success(convertToDtos(service.findAll()));
+    }
+
+    /**
+     * 获取所有未冻结的业务实体
+     *
+     * @return 业务实体清单
+     */
+    @Override
+    public ResultData<List<RuleEntityTypeDto>> findAllUnfrozen() {
+        return ResultData.success(convertToDtos(service.findAllUnfrozen()));
+    }
 }
