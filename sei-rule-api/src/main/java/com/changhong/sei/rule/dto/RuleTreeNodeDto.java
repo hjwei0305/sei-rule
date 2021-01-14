@@ -21,9 +21,8 @@ public class RuleTreeNodeDto extends BaseEntityDto {
     /**
      * 代码
      */
-    @NotBlank
     @Size(max = 10)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "$tool.trim(${column.comment})")
     private String code;
     /**
      * 名称
