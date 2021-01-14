@@ -1,16 +1,12 @@
 package com.changhong.sei.rule.controller;
 
 import com.changhong.sei.core.dto.ResultData;
-import com.changhong.sei.core.test.BaseUnitTest;
 import com.changhong.sei.core.util.JsonUtils;
 import com.changhong.sei.rule.BaseUnit5Test;
-import com.changhong.sei.rule.dto.RuleEntityTypeDto;
 import com.changhong.sei.rule.dto.RuleTypeDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 实现功能: 规则类型单元测试

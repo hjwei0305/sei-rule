@@ -1,12 +1,10 @@
 package com.changhong.sei.rule.service;
 
-import com.alibaba.fastjson.JSONObject;
-import com.changhong.sei.core.test.BaseUnitTest;
+import com.changhong.sei.rule.BaseUnit5Test;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
-import org.junit.Assert;
-import org.junit.Test;
-import org.springframework.data.redis.FallbackExceptionTranslationStrategy;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -17,7 +15,7 @@ import java.util.Map;
  * @description 实现功能:
  * @date 2020/12/25 14:48
  */
-public class AviatorServiceTest extends BaseUnitTest {
+public class AviatorServiceTest extends BaseUnit5Test {
 
     @Test
     public void testExpression() {
@@ -37,7 +35,7 @@ public class AviatorServiceTest extends BaseUnitTest {
     public void testUserFunction() {
         Double result = (Double) AviatorEvaluator.execute("AddFunction(1, 2)");
         System.out.println(result);
-        Assert.assertEquals(3.0d, result, 0.0);
+        Assertions.assertEquals(3.0d, result, 0.0);
     }
 
     @Test
@@ -53,7 +51,7 @@ public class AviatorServiceTest extends BaseUnitTest {
         // 执行表达式
         Boolean result = (Boolean) compiledExp.execute(env);
         System.out.println(result);
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -67,45 +65,45 @@ public class AviatorServiceTest extends BaseUnitTest {
         long startTime = System.nanoTime();   //获取开始时间
         String expression = "a==1";
         // 编译表达式
-        Expression compiledExp = AviatorEvaluator.compile(expression,true);
+        Expression compiledExp = AviatorEvaluator.compile(expression, true);
         // 执行表达式
         Boolean result = (Boolean) compiledExp.execute(env);
         String expression2 = "b!=2";
-        Expression compiledExp2 = AviatorEvaluator.compile(expression2,true);
+        Expression compiledExp2 = AviatorEvaluator.compile(expression2, true);
         // 执行表达式
         Boolean result2 = (Boolean) compiledExp2.execute(env);
         String expression3 = "c>3";
-        Expression compiledExp3 = AviatorEvaluator.compile(expression3,true);
+        Expression compiledExp3 = AviatorEvaluator.compile(expression3, true);
         // 执行表达式
         Boolean result3 = (Boolean) compiledExp3.execute(env);
         String expression4 = "string.contains(d,e)";
-        Expression compiledExp4 = AviatorEvaluator.compile(expression4,true);
+        Expression compiledExp4 = AviatorEvaluator.compile(expression4, true);
         // 执行表达式
         Boolean result4 = (Boolean) compiledExp4.execute(env);
 
         long endTime = System.nanoTime(); //获取结束时间
-        System.out.println("执行结果:" + (result && result2 && result3&&result4) + "，消耗时间:" + (endTime - startTime) / 1000 + "ms");
+        System.out.println("执行结果:" + (result && result2 && result3 && result4) + "，消耗时间:" + (endTime - startTime) / 1000 + "ms");
 
         startTime = System.nanoTime();   //获取开始时间
         expression = "a==1";
         // 编译表达式
-        compiledExp = AviatorEvaluator.compile(expression,true);
+        compiledExp = AviatorEvaluator.compile(expression, true);
         // 执行表达式
         result = (Boolean) compiledExp.execute(env);
         expression2 = "b!=2";
-        compiledExp2 = AviatorEvaluator.compile(expression2,true);
+        compiledExp2 = AviatorEvaluator.compile(expression2, true);
         // 执行表达式
         result2 = (Boolean) compiledExp2.execute(env);
         expression3 = "c>3";
-        compiledExp3 = AviatorEvaluator.compile(expression3,true);
+        compiledExp3 = AviatorEvaluator.compile(expression3, true);
         // 执行表达式
         result3 = (Boolean) compiledExp3.execute(env);
-         expression4 = "string.contains(d,e)";
-         compiledExp4 = AviatorEvaluator.compile(expression4,true);
+        expression4 = "string.contains(d,e)";
+        compiledExp4 = AviatorEvaluator.compile(expression4, true);
         // 执行表达式
-         result4 = (Boolean) compiledExp4.execute(env);
+        result4 = (Boolean) compiledExp4.execute(env);
         endTime = System.nanoTime(); //获取结束时间
-        System.out.println("执行结果:" + (result && result2 && result3&&result4) + "，消耗时间:" + (endTime - startTime) / 1000 + "ms");
+        System.out.println("执行结果:" + (result && result2 && result3 && result4) + "，消耗时间:" + (endTime - startTime) / 1000 + "ms");
     }
 
     @Test
@@ -134,5 +132,4 @@ public class AviatorServiceTest extends BaseUnitTest {
         endTime = System.nanoTime(); //获取结束时间
         System.out.println("执行结果:" + (result) + "，消耗时间:" + (endTime - startTime) / 1000 + "ms");
     }
-
-    }
+}

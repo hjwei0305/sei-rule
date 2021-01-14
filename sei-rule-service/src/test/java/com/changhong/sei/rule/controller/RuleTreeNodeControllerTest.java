@@ -3,6 +3,7 @@ package com.changhong.sei.rule.controller;
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.test.BaseUnitTest;
 import com.changhong.sei.core.util.JsonUtils;
+import com.changhong.sei.rule.BaseUnit5Test;
 import com.changhong.sei.rule.dto.RuleTreeNodeDto;
 import com.changhong.sei.rule.dto.RuleTypeDto;
 import org.junit.jupiter.api.Assertions;
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author 王锦光 wangjg
  * @version 2021-01-13 16:53
  */
-class RuleTreeNodeControllerTest extends BaseUnitTest {
+class RuleTreeNodeControllerTest extends BaseUnit5Test {
     @Autowired
     private RuleTreeNodeController controller;
 
