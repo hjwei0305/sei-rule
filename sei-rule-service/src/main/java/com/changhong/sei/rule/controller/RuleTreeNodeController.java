@@ -7,10 +7,14 @@ import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.service.BaseTreeService;
 import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.rule.api.RuleTreeNodeApi;
+import com.changhong.sei.rule.dto.LogicalExpressionDto;
+import com.changhong.sei.rule.dto.NodeReturnResultDto;
 import com.changhong.sei.rule.dto.RuleTree;
 import com.changhong.sei.rule.dto.RuleTreeNodeDto;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
+import com.changhong.sei.rule.entity.LogicalExpression;
+import com.changhong.sei.rule.entity.NodeReturnResult;
 import com.changhong.sei.rule.entity.RuleTreeNode;
 import com.changhong.sei.rule.service.RuleTreeNodeService;
 import com.changhong.sei.util.EnumUtils;
@@ -22,11 +26,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.swing.text.TabExpander;
-import java.util.List;
+import java.util.*;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 规则树节点(RuleTreeNode)控制类
@@ -61,7 +63,7 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
         List<RuleTreeNode> nodes = service.findRootNodes(ruleTypeId, ContextUtil.getTenantCode());
         List<RuleTreeRoot> roots = new LinkedList<>();
         if (CollectionUtils.isNotEmpty(nodes)) {
-            nodes.forEach( node -> {
+            nodes.forEach(node -> {
                 RuleTreeRoot root = dtoModelMapper.map(node, RuleTreeRoot.class);
                 if (Objects.nonNull(root)) {
                     roots.add(root);
@@ -103,6 +105,7 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
     public ResultData<?> saveRuleTree(RuleTree ruleTree) {
         // 为根节点赋值
         RuleTreeNodeDto treeNode = ruleTree.getTreeNode();
+        treeNode.setCode(ruleTree.getCode());
         treeNode.setName(ruleTree.getName());
         treeNode.setTrueNode(ruleTree.getTrueNode());
         treeNode.setRuleTypeId(ruleTree.getRuleTypeId());
@@ -125,4 +128,30 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
         return ResultDataUtil.success("00018");
     }
 
+    @Override
+    public RuleTreeNode convertToEntity(RuleTreeNodeDto dto) {
+        if (Objects.isNull(dto)) {
+            return null;
+        }
+        RuleTreeNode ruleTreeNode = entityModelMapper.map(dto, getEntityClass());
+        //设置表达式
+        List<LogicalExpressionDto> expressionDtos = dto.getExpressionDtos();
+        if (Objects.nonNull(expressionDtos)) {
+            List<LogicalExpression> expressions = new ArrayList<>();
+            expressionDtos.forEach(ex -> {
+                expressions.add(entityModelMapper.map(ex, LogicalExpression.class));
+            });
+            ruleTreeNode.setExpressions(expressions);
+        }
+        //设置结果
+        List<NodeReturnResultDto> returnResultDtos = dto.getNodeReturnResultDtos();
+        if (Objects.nonNull(returnResultDtos)) {
+            List<NodeReturnResult> returnResults = new ArrayList<>();
+            returnResultDtos.forEach(result -> {
+                returnResults.add(entityModelMapper.map(result, NodeReturnResult.class));
+            });
+            ruleTreeNode.setNodeReturnResults(returnResults);
+        }
+        return ruleTreeNode;
+    }
 }

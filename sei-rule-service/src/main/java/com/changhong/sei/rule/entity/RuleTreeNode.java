@@ -65,12 +65,12 @@ public class RuleTreeNode extends BaseAuditableEntity implements TreeEntity<Rule
      */
     @Column(name = "rule_type_id")
     private String ruleTypeId;
-//    /**
-//     * 规则类型
-//     */
-//    @ManyToOne
-//    @JoinColumn(name = "rule_type_id", insertable = false, updatable = false)
-//    private RuleType ruleType;
+    /**
+     * 规则类型
+     */
+    @ManyToOne
+    @JoinColumn(name = "rule_type_id", insertable = false, updatable = false)
+    private RuleType ruleType;
     /**
      * 真节点
      */
@@ -111,6 +111,7 @@ public class RuleTreeNode extends BaseAuditableEntity implements TreeEntity<Rule
     /**
      * 该节点表达式
      */
+    @Transient
     private String expression;
     /**
      * 规则逻辑表达式
@@ -187,6 +188,14 @@ public class RuleTreeNode extends BaseAuditableEntity implements TreeEntity<Rule
 
     public String getRuleTypeId() {
         return ruleTypeId;
+    }
+
+    public RuleType getRuleType() {
+        return ruleType;
+    }
+
+    public void setRuleType(RuleType ruleType) {
+        this.ruleType = ruleType;
     }
 
     public void setRuleTypeId(String ruleTypeId) {

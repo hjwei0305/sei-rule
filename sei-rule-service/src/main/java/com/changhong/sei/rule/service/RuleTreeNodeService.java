@@ -8,16 +8,11 @@ import com.changhong.sei.core.service.bo.OperateResult;
 import com.changhong.sei.core.service.bo.OperateResultWithData;
 import com.changhong.sei.exception.ServiceException;
 import com.changhong.sei.rule.api.MatchingRuleComparator;
-import com.changhong.sei.rule.dao.LogicalExpressionDao;
-import com.changhong.sei.rule.dao.NodeReturnResultDao;
-import com.changhong.sei.rule.dao.RuleTreeNodeDao;
+import com.changhong.sei.rule.dao.*;
 import com.changhong.sei.rule.dto.RuleReturnTypeDto;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
 import com.changhong.sei.rule.dto.enums.RuleAttributeType;
-import com.changhong.sei.rule.entity.LogicalExpression;
-import com.changhong.sei.rule.entity.NodeReturnResult;
-import com.changhong.sei.rule.entity.RuleReturnType;
-import com.changhong.sei.rule.entity.RuleTreeNode;
+import com.changhong.sei.rule.entity.*;
 import com.changhong.sei.rule.service.exception.MatchingRuleComparatorException;
 import com.changhong.sei.serial.sdk.SerialService;
 import com.changhong.sei.util.DateUtils;
@@ -49,6 +44,10 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      */
     public static final String RULE_CHAIN_CACHE_KEY_PREFIX = "sei:sei-rule:rule-chains:";
     /**
+     * 表达式前缀
+     */
+    public static final String RULE_CHAIN_PARAM_PREFIX = "param.";
+    /**
      *或表达式
      */
     private static final String OR_EXPRESSION = " || ";
@@ -60,6 +59,10 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     private LogicalExpressionDao logicalExpressionDao;
     @Autowired
     private NodeReturnResultDao nodeReturnResultDao;
+    @Autowired
+    private RuleAttributeDao ruleAttributeDao;
+    @Autowired
+    private RuleTypeDao ruleTypeDao;
     @Autowired
     private SerialService serialService;
     @Autowired
@@ -108,6 +111,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      * @return 操作结果
      */
     @Override
+    @Transactional
     public OperateResultWithData<RuleTreeNode> save(RuleTreeNode entity) {
         // 检查父节点
         OperateResult checkResult = checkParentNode(entity.getParentId());
@@ -117,7 +121,28 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         if (StringUtils.isBlank(entity.getCode())) {
             entity.setCode(serialService.getNumber(RuleTreeNode.class));
         }
-        return super.save(entity);
+        List<LogicalExpression> expressions = entity.getExpressions();
+        if (Objects.isNull(expressions)||expressions.isEmpty()){
+            //规则树节点[{0}]表达式不能为空！
+            return OperateResultWithData.operationFailure("00020",entity.getName());
+        }
+
+        if (entity.getFinished()){
+            List<NodeReturnResult> nodeReturnResults = entity.getNodeReturnResults();
+            if (Objects.isNull(nodeReturnResults)||nodeReturnResults.isEmpty()){
+                //规则树节点[{0}]已勾结束节点,返回结果不能为空！
+                return OperateResultWithData.operationFailure("00021",entity.getName());
+            }
+        }
+        OperateResultWithData<RuleTreeNode> result = super.save(entity);
+        if (result.notSuccessful()){
+            return result;
+        }
+        //保存逻辑表达式
+        saveLogicalExpression(entity);
+        //保存规则结果
+        saveNodeResult(entity);
+        return result;
     }
 
     /**
@@ -195,23 +220,15 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
             ruleNode.setId(null);
             ruleNode.setCode(null);
         }
+        //查询规则分类是否存在
+        RuleType ruleType = ruleTypeDao.findOne(ruleNode.getRuleTypeId());
+        if (Objects.isNull(ruleType)){
+            //指定规则类型[{0}]不存在！
+            return OperateResult.operationFailure("00022",ruleNode.getRuleTypeId());
+        }
         OperateResultWithData<RuleTreeNode> saveResult = save(ruleNode);
         if (saveResult.notSuccessful()) {
             return OperateResultWithData.converterNoneData(saveResult);
-        }
-        //保存逻辑表达式
-        List<LogicalExpression> expressions = ruleNode.getExpressions();
-        //赋值根节点值
-        for (LogicalExpression expression : expressions) {
-            expression.setRuleTreeRootNodeId(saveResult.getData().getId());
-            logicalExpressionDao.save(expression);
-        }
-        //保存结果
-        List<NodeReturnResult> nodeReturnResults = ruleNode.getNodeReturnResults();
-        //赋值根节点值
-        for (NodeReturnResult nodeReturnResult : nodeReturnResults) {
-            nodeReturnResult.setRuleTreeRootNodeId(saveResult.getData().getId());
-            nodeReturnResultDao.save(nodeReturnResult);
         }
         //保存子节点
         saveChildren(saveResult.getData(), ruleNode.getChildren());
@@ -232,6 +249,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         }else {
             ruleNode.setRootId(ruleNode.getRootId());
         }
+
         //获得当前节点表达式
         String expression = convertToExpression(ruleNode);
         //循环拼接表达式
@@ -258,6 +276,8 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
             node.setCode(null);
             node.setRootId(ruleNode.getRootId());
             node.setParentId(ruleNode.getId());
+            //循环传递规则分类的id
+            node.setRuleTypeId(ruleNode.getRuleTypeId());
             // 设置公共属性
             OperateResultWithData<RuleTreeNode> saveResult = save(node);
             if (saveResult.notSuccessful()) {
@@ -267,17 +287,51 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         });
     }
 
+    /**
+     * 保存业务逻辑表达式
+     * @param ruleNode 规则树节点
+     */
+    private void saveLogicalExpression(RuleTreeNode ruleNode){
+        //赋值根节点值
+        for (LogicalExpression expression : ruleNode.getExpressions()) {
+            if (StringUtils.isBlank(ruleNode.getRootId())){
+                expression.setRuleTreeRootNodeId(ruleNode.getId());
+            }else {
+                expression.setRuleTreeRootNodeId(ruleNode.getRootId());
+            }
+            expression.setRuleTreeNodeId(ruleNode.getId());
+            logicalExpressionDao.save(expression);
+        }
+    }
+
+
+    /**
+     * 保存规则节点结果
+     * @param ruleNode 规则树节点
+     */
+    private void saveNodeResult(RuleTreeNode ruleNode){
+        //保存结果
+        //赋值根节点值
+        for (NodeReturnResult nodeReturnResult : ruleNode.getNodeReturnResults()) {
+            if (StringUtils.isBlank(ruleNode.getRootId())){
+                nodeReturnResult.setRuleTreeRootNodeId(ruleNode.getId());
+            }else {
+                nodeReturnResult.setRuleTreeRootNodeId(ruleNode.getRootId());
+            }
+            nodeReturnResult.setRuleTreeNodeId(ruleNode.getId());
+            nodeReturnResultDao.save(nodeReturnResult);
+        }
+    }
+
     private String convertToExpression(RuleTreeNode ruleNode) {
         //真节点跳过
         if (ruleNode.getTrueNode()){
             return "";
         }
         //查询逻辑表达式
-        List<LogicalExpression> expressions = logicalExpressionDao.findByRuleTreeNodeId(ruleNode.getId());
+        List<LogicalExpression> expressions = ruleNode.getExpressions();
         StringBuilder expression = new StringBuilder("(");
-        expressions.forEach(ex -> {
-            expression.append(convertToExpression(ex)).append(OR_EXPRESSION);
-        });
+        expressions.forEach(ex -> expression.append(convertToExpression(ex)).append(OR_EXPRESSION));
         //去除最后一个||
         if (expression.toString().endsWith(OR_EXPRESSION)){
             int expressionLength = expression.toString().length();
@@ -294,9 +348,10 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      */
     private String convertToExpression(LogicalExpression expression){
         ComparisonOperator operator = expression.getComparisonOperator();
-        String propertyCode = expression.getRuleAttribute().getName();
+        RuleAttribute ruleAttribute = ruleAttributeDao.findOne(expression.getRuleAttributeId());
+        String propertyCode = ruleAttribute.getAttribute();
         String comparisonValue = expression.getComparisonValue();
-        RuleAttributeType ruleAttributeType = expression.getRuleAttribute().getRuleAttributeType();
+        RuleAttributeType ruleAttributeType = ruleAttribute.getRuleAttributeType();
         switch (ruleAttributeType) {
             case STRING:
                 //字符串类型需要在两侧加单引号
@@ -310,7 +365,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
             default:
                 break;
         }
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(RULE_CHAIN_PARAM_PREFIX);
         switch (operator) {
             case EQUAL:
                 builder.append(propertyCode).append("==").append(comparisonValue);
@@ -332,6 +387,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
                 break;
             case CONTAIN:
                 builder.append("string.contains(").append(propertyCode).append(",").append(comparisonValue).append(")");
+                break;
             case MATCH:
                 builder.append(propertyCode).append("=~").append(comparisonValue);
                 break;

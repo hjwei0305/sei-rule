@@ -20,9 +20,8 @@ public class RuleTree implements Serializable {
     /**
      * 代码
      */
-    @NotBlank
     @Size(max = 10)
-    @ApiModelProperty(value = "代码", required = true)
+    @ApiModelProperty(value = "代码")
     private String code;
     /**
      * 规则名称
@@ -42,13 +41,13 @@ public class RuleTree implements Serializable {
      * 优先级
      */
     @NotNull
-    @ApiModelProperty(value = "优先级", required = true)
+    @ApiModelProperty(value = "优先级")
     private Integer rank = 0;
     /**
      * 真节点
      */
     @NotNull
-    @ApiModelProperty(value = "真节点", required = true)
+    @ApiModelProperty(value = "真节点")
     private Boolean trueNode = Boolean.FALSE;
     /**
      * 启用标识
@@ -62,6 +61,14 @@ public class RuleTree implements Serializable {
     @NotNull
     @ApiModelProperty(value = "规则树节点(包含子节点)", required = true)
     private RuleTreeNodeDto treeNode;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public String getName() {
         return name;

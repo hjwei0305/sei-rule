@@ -32,6 +32,7 @@ public class LogicalExpression extends BaseAuditableEntity implements ITenant {
      */
     @Column(name = "rule_tree_node_id")
     private String ruleTreeNodeId;
+
     /**
      * 规则属性Id
      */
@@ -75,6 +76,7 @@ public class LogicalExpression extends BaseAuditableEntity implements ITenant {
     public void setRuleTreeNodeId(String ruleTreeNodeId) {
         this.ruleTreeNodeId = ruleTreeNodeId;
     }
+
 
     public String getRuleAttributeId() {
         return ruleAttributeId;

@@ -65,7 +65,6 @@ public class RuleTreeNodeDto extends BaseEntityDto {
     /**
      * 规则类型Id
      */
-    @NotBlank
     @Size(max = 36)
     @ApiModelProperty(value = "规则类型Id", required = true)
     private String ruleTypeId;
