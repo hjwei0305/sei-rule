@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
  * @author sei
  * @since 2021-01-13 17:04:57
  */
-@ApiModel(description = "$tool.trim($!{tableInfo.comment})DTO")
+@ApiModel(description = "规则树逻辑表达式DTO")
 public class LogicalExpressionDto extends BaseEntityDto {
     private static final long serialVersionUID = 4068060971518565005L;
     /**
@@ -25,21 +25,21 @@ public class LogicalExpressionDto extends BaseEntityDto {
      */
     @NotBlank
     @Size(max = 36)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "规则树节点Id", required = true)
     private String ruleTreeNodeId;
     /**
      * 规则属性Id
      */
     @NotBlank
     @Size(max = 36)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "规则属性Id", required = true)
     private String ruleAttributeId;
     /**
      * 运算符
      */
     @NotNull
     @JsonSerialize(using = EnumJsonSerializer.class)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true,
+    @ApiModelProperty(value = "运算符", required = true,
             notes = "包含：CONTAIN,等于：EQUAL,小于：LESS,小于等于：LESS_EQUAL,大于：GREATER,大于等于：GREATER_EQUAL,不等于：NOTEQUAL,正则匹配：MATCH,比较器：COMPARER")
     private ComparisonOperator comparisonOperator = ComparisonOperator.CONTAIN;
     /**
@@ -47,12 +47,12 @@ public class LogicalExpressionDto extends BaseEntityDto {
      */
     @NotBlank
     @Size(max = 100)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "匹配值", required = true)
     private String comparisonValue;
     /**
      * 租户代码
      */
-    @ApiModelProperty(value = "$tool.trim(${column.comment})")
+    @ApiModelProperty(value = "租户代码")
     private String tenantCode;
 
     public String getRuleTreeNodeId() {

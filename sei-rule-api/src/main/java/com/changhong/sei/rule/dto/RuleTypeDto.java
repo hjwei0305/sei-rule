@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
  * @author sei
  * @since 2021-01-13 16:15:28
  */
-@ApiModel(description = "$tool.trim($!{tableInfo.comment})DTO")
+@ApiModel(description = "规则类型DTO")
 public class RuleTypeDto extends BaseEntityDto {
     private static final long serialVersionUID = 7527833729348951167L;
     /**

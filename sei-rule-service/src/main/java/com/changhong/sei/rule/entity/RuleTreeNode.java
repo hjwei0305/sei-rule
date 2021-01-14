@@ -97,6 +97,17 @@ public class RuleTreeNode extends BaseAuditableEntity implements TreeEntity<Rule
      */
     @Column(name = "tenant_code")
     private String tenantCode;
+
+    /**
+     * 根节点ID
+     */
+    @Transient
+    private String rootId;
+
+    /**
+     * 该节点表达式
+     */
+    private String expression;
     /**
      * 子节点清单
      */
@@ -221,6 +232,22 @@ public class RuleTreeNode extends BaseAuditableEntity implements TreeEntity<Rule
 
     public void setTenantCode(String tenantCode) {
         this.tenantCode = tenantCode;
+    }
+
+    public String getExpression() {
+        return expression;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
+
+    public String getRootId() {
+        return rootId;
+    }
+
+    public void setRootId(String rootId) {
+        this.rootId = rootId;
     }
 
     @Override

@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
  * @author sei
  * @since 2021-01-13 15:45:53
  */
-@ApiModel(description = "$tool.trim($!{tableInfo.comment})DTO")
+@ApiModel(description = "规则属性定义DTO")
 public class RuleAttributeDto extends BaseEntityDto {
     private static final long serialVersionUID = 7929147332119138792L;
     /**
@@ -25,28 +25,28 @@ public class RuleAttributeDto extends BaseEntityDto {
      */
     @NotBlank
     @Size(max = 36)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "规则业务实体Id", required = true)
     private String ruleEntityTypeId;
     /**
      * 属性名
      */
     @NotBlank
     @Size(max = 100)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "属性名", required = true)
     private String attribute;
     /**
      * 属性名称
      */
     @NotBlank
     @Size(max = 50)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "属性名称", required = true)
     private String name;
     /**
      * 属性类型(字符串：STRING,日期：DATETIME,数值：NUMBER,布尔：BOOLEAN)
      */
     @NotNull
     @JsonSerialize(using = EnumJsonSerializer.class)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true,
+    @ApiModelProperty(value = "属性类型", required = true,
             notes = "(字符串：STRING,日期：DATETIME,数值：NUMBER,布尔：BOOLEAN)")
     private RuleAttributeType ruleAttributeType = RuleAttributeType.STRING;
     /**
@@ -54,7 +54,7 @@ public class RuleAttributeDto extends BaseEntityDto {
      */
     @NotBlank
     @Size(max = 100)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})")
+    @ApiModelProperty(value = "UI组件")
     private String uiComponent;
 
     public String getRuleEntityTypeId() {

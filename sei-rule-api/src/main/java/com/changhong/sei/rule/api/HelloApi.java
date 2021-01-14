@@ -37,6 +37,7 @@ public interface HelloApi {
 
     /**
      * 外部自定义规则匹配接口
+     *
      * @param env 参数
      * @return
      */
@@ -46,22 +47,24 @@ public interface HelloApi {
 
     /**
      * 比较两个数的大小
+     *
      * @param a
      * @param b
      * @return
      */
     @GetMapping(path = "compare")
     @ApiOperation(value = "比较两个数的大小", notes = "比较两个数的大小")
-    Boolean compare(@RequestParam("a")Float a, @RequestParam("b")Float b);
+    Boolean compare(@RequestParam("a") Float a, @RequestParam("b") Float b);
 
     /**
      * 是否是我的公司
+     *
      * @param value
      * @return
      */
     @PostMapping(path = "isMyCompany")
     @ApiOperation(value = "比较两个数的大小", notes = "比较两个数的大小")
-    Boolean isMyCompany(@RequestBody Object value);
+    Boolean isMyCompany(@RequestBody String value);
 
     @GetMapping(path = "testSpeed")
     void testSpeed();

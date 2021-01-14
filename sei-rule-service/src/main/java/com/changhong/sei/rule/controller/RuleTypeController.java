@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2021-01-13 16:15:14
  */
 @RestController
-@Api(value = "RuleTypeApi", tags = "$tool.trim($!{tableInfo.comment})服务")
+@Api(value = "RuleTypeApi", tags = "规则类型服务")
 @RequestMapping(path = "ruleType", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RuleTypeController extends BaseEntityController<RuleType, RuleTypeDto>
         implements RuleTypeApi {

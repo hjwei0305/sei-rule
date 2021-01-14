@@ -15,7 +15,7 @@ import java.util.List;
  * @author sei
  * @since 2021-01-13 16:30:12
  */
-@ApiModel(description = "$tool.trim($!{tableInfo.comment})DTO")
+@ApiModel(description = "规则树节点DTO")
 public class RuleTreeNodeDto extends BaseEntityDto {
     private static final long serialVersionUID = -7270581327275285182L;
     /**
@@ -23,86 +23,86 @@ public class RuleTreeNodeDto extends BaseEntityDto {
      */
     @NotBlank
     @Size(max = 10)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "代码", required = true)
     private String code;
     /**
      * 名称
      */
     @NotBlank
     @Size(max = 50)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "名称", required = true)
     private String name;
     /**
      * 父节点Id
      */
     @Size(max = 36)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})")
+    @ApiModelProperty(value = "父节点Id")
     private String parentId;
     /**
      * 层级
      */
     @NotNull
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "层级", required = true)
     private Integer nodeLevel = 0;
     /**
      * 代码路径
      */
     @Size(max = 100)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})")
+    @ApiModelProperty(value = "代码路径")
     private String codePath;
     /**
      * 名称路径
      */
     @Size(max = 1000)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})")
+    @ApiModelProperty(value = "名称路径")
     private String namePath;
     /**
      * 优先级
      */
     @NotNull
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "优先级", required = true)
     private Integer rank = 0;
     /**
      * 规则类型Id
      */
     @NotBlank
     @Size(max = 36)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "规则类型Id", required = true)
     private String ruleTypeId;
     /**
      * 真节点
      */
     @NotNull
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "真节点", required = true)
     private Boolean trueNode = Boolean.FALSE;
     /**
      * 规则结束
      */
     @NotNull
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "规则结束", required = true)
     private Boolean finished = Boolean.FALSE;
     /**
      * 服务方法Id
      */
     @Size(max = 36)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})")
+    @ApiModelProperty(value = "服务方法Id")
     private String ruleServiceMethodId;
     /**
      * 是异步执行
      */
     @NotNull
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "是异步执行", required = true)
     private Boolean asyncExecute = Boolean.FALSE;
     /**
      * 启用标识
      */
     @NotNull
-    @ApiModelProperty(value = "$tool.trim(${column.comment})")
+    @ApiModelProperty(value = "启用标识")
     private Boolean enabled = Boolean.FALSE;
     /**
      * 租户代码
      */
-    @ApiModelProperty(value = "$tool.trim(${column.comment})")
+    @ApiModelProperty(value = "租户代码")
     private String tenantCode;
     /**
      * 子节点清单

@@ -22,7 +22,7 @@ import java.util.List;
  * @since 2021-01-14 09:19:19
  */
 @RestController
-@Api(value = "RuleComparatorApi", tags = "$tool.trim($!{tableInfo.comment})服务")
+@Api(value = "RuleComparatorApi", tags = "比较器定义服务")
 @RequestMapping(path = "ruleComparator", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RuleComparatorController extends BaseEntityController<RuleComparator, RuleComparatorDto>
         implements RuleComparatorApi {

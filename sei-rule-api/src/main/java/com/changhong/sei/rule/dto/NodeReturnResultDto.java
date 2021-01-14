@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
  * @author sei
  * @since 2021-01-13 17:18:52
  */
-@ApiModel(description = "$tool.trim($!{tableInfo.comment})DTO")
+@ApiModel(description = "规则树节点返回结果DTO")
 public class NodeReturnResultDto extends BaseEntityDto {
     private static final long serialVersionUID = 8958116065995438120L;
     /**
@@ -21,33 +21,33 @@ public class NodeReturnResultDto extends BaseEntityDto {
      */
     @NotBlank
     @Size(max = 36)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "规则树节点Id", required = true)
     private String ruleTreeNodeId;
     /**
      * 返回结果类型Id
      */
     @NotBlank
     @Size(max = 36)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "返回结果类型Id", required = true)
     private String ruleReturnTypeId;
     /**
      * 返回对象Id
      */
     @NotBlank
     @Size(max = 36)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "返回对象Id", required = true)
     private String returnValueId;
     /**
      * 返回对象名称
      */
     @NotBlank
     @Size(max = 100)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "返回对象名称", required = true)
     private String returnValueName;
     /**
      * 租户代码
      */
-    @ApiModelProperty(value = "$tool.trim(${column.comment})")
+    @ApiModelProperty(value = "租户代码")
     private String tenantCode;
 
     public String getRuleTreeNodeId() {

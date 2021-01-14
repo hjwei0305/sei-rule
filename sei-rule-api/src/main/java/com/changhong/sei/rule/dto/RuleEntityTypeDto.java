@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
  * @author sei
  * @since 2021-01-13 14:55:08
  */
-@ApiModel(description = "$tool.trim($!{tableInfo.comment})DTO")
+@ApiModel(description = "规则业务实体DTO")
 public class RuleEntityTypeDto extends BaseEntityDto {
     private static final long serialVersionUID = -6841562517354867788L;
     /**
@@ -21,21 +21,21 @@ public class RuleEntityTypeDto extends BaseEntityDto {
      */
     @NotBlank
     @Size(max = 50)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "代码", required = true)
     private String code;
     /**
      * 名称
      */
     @NotBlank
     @Size(max = 50)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "名称", required = true)
     private String name;
     /**
      * 服务名
      */
     @NotBlank
     @Size(max = 50)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "服务名", required = true)
     private String serviceName;
 
     public String getCode() {

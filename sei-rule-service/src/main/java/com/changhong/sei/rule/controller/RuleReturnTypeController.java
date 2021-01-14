@@ -22,7 +22,7 @@ import java.util.List;
  * @since 2021-01-14 08:56:10
  */
 @RestController
-@Api(value = "RuleReturnTypeApi", tags = "$tool.trim($!{tableInfo.comment})服务")
+@Api(value = "RuleReturnTypeApi", tags = "返回结果定义服务")
 @RequestMapping(path = "ruleReturnType", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RuleReturnTypeController extends BaseEntityController<RuleReturnType, RuleReturnTypeDto>
         implements RuleReturnTypeApi {

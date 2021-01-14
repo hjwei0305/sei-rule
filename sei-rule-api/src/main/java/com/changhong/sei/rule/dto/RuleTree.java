@@ -1,8 +1,5 @@
 package com.changhong.sei.rule.dto;
 
-import com.changhong.sei.core.dto.serializer.EnumJsonSerializer;
-import com.changhong.sei.rule.dto.enums.RuleCategory;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -28,14 +25,6 @@ public class RuleTree implements Serializable {
     @ApiModelProperty(value = "规则名称", required = true)
     private String name;
 
-
-    /**
-     * 规则分类
-     */
-    @NotNull
-    @JsonSerialize(using = EnumJsonSerializer.class)
-    @ApiModelProperty(value = "规则分类", required = true)
-    private RuleCategory ruleCategory = RuleCategory.UNRECOGNIZE;
     /**
      * 公司代码
      */
@@ -59,7 +48,7 @@ public class RuleTree implements Serializable {
      */
     @NotNull
     @ApiModelProperty(value = "规则树节点(包含子节点)", required = true)
-    private MatchingRuleDto treeNode;
+    private RuleTreeNodeDto treeNode;
 
     public String getName() {
         return name;
@@ -67,14 +56,6 @@ public class RuleTree implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public RuleCategory getRuleCategory() {
-        return ruleCategory;
-    }
-
-    public void setRuleCategory(RuleCategory ruleCategory) {
-        this.ruleCategory = ruleCategory;
     }
 
     public String getCorporationCode() {
@@ -101,11 +82,11 @@ public class RuleTree implements Serializable {
         this.rank = rank;
     }
 
-    public MatchingRuleDto getTreeNode() {
+    public RuleTreeNodeDto getTreeNode() {
         return treeNode;
     }
 
-    public void setTreeNode(MatchingRuleDto treeNode) {
+    public void setTreeNode(RuleTreeNodeDto treeNode) {
         this.treeNode = treeNode;
     }
 }

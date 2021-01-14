@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
  * @author sei
  * @since 2021-01-13 16:07:32
  */
-@ApiModel(description = "$tool.trim($!{tableInfo.comment})DTO")
+@ApiModel(description = "服务方法定义DTO")
 public class RuleServiceMethodDto extends BaseEntityDto {
     private static final long serialVersionUID = 8413444629839916683L;
     /**
@@ -21,28 +21,28 @@ public class RuleServiceMethodDto extends BaseEntityDto {
      */
     @NotBlank
     @Size(max = 36)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "规则业务实体Id", required = true)
     private String ruleEntityTypeId;
     /**
      * 方法名
      */
     @NotBlank
     @Size(max = 100)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "方法名", required = true)
     private String method;
     /**
      * 名称
      */
     @NotBlank
     @Size(max = 50)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "名称", required = true)
     private String name;
     /**
      * API相对路径
      */
     @NotBlank
     @Size(max = 100)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "API相对路径", required = true)
     private String path;
 
     public String getRuleEntityTypeId() {

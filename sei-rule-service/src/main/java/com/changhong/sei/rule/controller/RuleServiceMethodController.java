@@ -22,7 +22,7 @@ import java.util.List;
  * @since 2021-01-14 09:12:04
  */
 @RestController
-@Api(value = "RuleServiceMethodApi", tags = "$tool.trim($!{tableInfo.comment})服务")
+@Api(value = "RuleServiceMethodApi", tags = "服务方法定义服务")
 @RequestMapping(path = "ruleServiceMethod", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RuleServiceMethodController extends BaseEntityController<RuleServiceMethod, RuleServiceMethodDto>
         implements RuleServiceMethodApi {

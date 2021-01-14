@@ -22,7 +22,7 @@ import java.util.List;
  * @since 2021-01-13 14:47:33
  */
 @RestController
-@Api(value = "RuleEntityTypeApi", tags = "$tool.trim($!{tableInfo.comment})服务")
+@Api(value = "RuleEntityTypeApi", tags = "规则业务实体服务")
 @RequestMapping(path = "ruleEntityType", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RuleEntityTypeController extends BaseEntityController<RuleEntityType, RuleEntityTypeDto>
         implements RuleEntityTypeApi {
