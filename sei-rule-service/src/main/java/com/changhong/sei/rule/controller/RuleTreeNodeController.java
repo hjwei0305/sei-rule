@@ -4,7 +4,6 @@ import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.controller.BaseTreeController;
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.dto.ResultData;
-import com.changhong.sei.core.service.BaseEntityService;
 import com.changhong.sei.core.service.BaseTreeService;
 import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.rule.api.RuleTreeNodeApi;
