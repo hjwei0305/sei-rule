@@ -3,11 +3,17 @@ package com.changhong.sei.rule.service;
 import com.changhong.sei.core.dao.BaseEntityDao;
 import com.changhong.sei.core.service.BaseEntityService;
 import com.changhong.sei.core.service.bo.OperateResult;
+import com.changhong.sei.core.service.bo.OperateResultWithData;
+import com.changhong.sei.rule.dao.RuleEntityTypeDao;
 import com.changhong.sei.rule.dao.RuleTreeNodeDao;
 import com.changhong.sei.rule.dao.RuleTypeDao;
+import com.changhong.sei.rule.entity.RuleEntityType;
 import com.changhong.sei.rule.entity.RuleType;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 
 /**
@@ -22,10 +28,32 @@ public class RuleTypeService extends BaseEntityService<RuleType> {
     private RuleTypeDao dao;
     @Autowired
     private RuleTreeNodeDao ruleTreeNodeDao;
+    @Autowired
+    private RuleEntityTypeDao ruleEntityTypeDao;
 
     @Override
     protected BaseEntityDao<RuleType> getDao() {
         return dao;
+    }
+
+    /**
+     * 数据保存操作
+     *
+     * @param entity 规则类型
+     */
+    @Override
+    public OperateResultWithData<RuleType> save(RuleType entity) {
+        // 系统给号:类型代码-名称拼英简写（小写）
+        if (StringUtils.isBlank(entity.getCode())) {
+            // 获取规则实体类型
+            RuleEntityType entityType = ruleEntityTypeDao.findOne(entity.getRuleEntityTypeId());
+            if (Objects.isNull(entityType)) {
+                // 规则实体类型【{0}】不存在！
+                return OperateResultWithData.operationFailure("00019", entity.getRuleEntityTypeId());
+            }
+
+        }
+        return super.save(entity);
     }
 
     /**
