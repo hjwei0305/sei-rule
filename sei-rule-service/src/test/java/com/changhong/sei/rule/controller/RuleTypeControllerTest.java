@@ -3,6 +3,7 @@ package com.changhong.sei.rule.controller;
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.test.BaseUnitTest;
 import com.changhong.sei.core.util.JsonUtils;
+import com.changhong.sei.rule.BaseUnit5Test;
 import com.changhong.sei.rule.dto.RuleEntityTypeDto;
 import com.changhong.sei.rule.dto.RuleTypeDto;
 import org.junit.jupiter.api.Assertions;
@@ -17,14 +18,24 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author 王锦光 wangjg
  * @version 2021-01-13 16:25
  */
-class RuleTypeControllerTest extends BaseUnitTest {
+public class RuleTypeControllerTest extends BaseUnit5Test {
     @Autowired
     private RuleTypeController controller;
 
     @Test
     void findOne() {
-        String id = "123";
+        String id = "76E87452-562B-11EB-B2C8-3C6AA7266A51";
         ResultData<RuleTypeDto> resultData = controller.findOne(id);
+        System.out.println(JsonUtils.toJson(resultData));
+        Assertions.assertTrue(resultData.successful());
+    }
+
+    @Test
+    void save() {
+        RuleTypeDto ruleTypeDto = new RuleTypeDto();
+        ruleTypeDto.setRuleEntityTypeId("21E17C8F-562B-11EB-B2C8-3C6AA7266A51");
+        ruleTypeDto.setName("银企互联无需认款规则");
+        ResultData<RuleTypeDto> resultData = controller.save(ruleTypeDto);
         System.out.println(JsonUtils.toJson(resultData));
         Assertions.assertTrue(resultData.successful());
     }
