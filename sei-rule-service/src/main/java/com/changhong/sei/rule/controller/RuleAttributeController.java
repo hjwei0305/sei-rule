@@ -3,10 +3,14 @@ package com.changhong.sei.rule.controller;
 import com.changhong.sei.core.controller.BaseEntityController;
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.service.BaseEntityService;
+import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.rule.api.RuleAttributeApi;
 import com.changhong.sei.rule.dto.RuleAttributeDto;
+import com.changhong.sei.rule.dto.enums.ComparisonOperator;
+import com.changhong.sei.rule.dto.enums.RuleAttributeType;
 import com.changhong.sei.rule.entity.RuleAttribute;
 import com.changhong.sei.rule.service.RuleAttributeService;
+import com.changhong.sei.util.EnumUtils;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -35,6 +39,16 @@ public class RuleAttributeController extends BaseEntityController<RuleAttribute,
     @Override
     public BaseEntityService<RuleAttribute> getService() {
         return service;
+    }
+
+    /**
+     * 获取属性类型枚举值
+     *
+     * @return 枚举值清单
+     */
+    @Override
+    public ResultData<List<EnumUtils.EnumEntity>> getRuleAttributeTypeEnum() {
+        return ResultDataUtil.getEnumEntities(RuleAttributeType.class);
     }
 
     /**
