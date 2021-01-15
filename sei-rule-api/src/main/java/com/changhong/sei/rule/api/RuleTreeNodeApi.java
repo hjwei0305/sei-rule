@@ -52,13 +52,13 @@ public interface RuleTreeNodeApi extends BaseEntityApi<RuleTreeNodeDto> {
     ResultData<List<EnumUtils.EnumEntity>> getComparisonOperatorEnum();
 
     /**
-     * 通过规则类型ID获取所有规则树
-     * @param ruleTypeId 规则类型ID
-     * @return 规则树集合
+     * 通过规则树根节点Id获取规则树
+     * @param rootNodeId 根节点Id
+     * @return 规则树
      */
-    @GetMapping(path = "getRuleTrees")
-    @ApiOperation(notes = "通过规则类型ID获取所有规则树", value = "通过类型ID获取所有业务匹配规则树")
-    ResultData<List<RuleTreeNodeDto>> getRuleTrees(@RequestParam("ruleTypeId") String ruleTypeId);
+    @GetMapping(path = "getRuleTree")
+    @ApiOperation(notes = "通过规则树根节点Id获取规则树", value = "通过规则树根节点Id，获取规则树并包含子节点及其配置信息")
+    ResultData<RuleTreeNodeDto> getRuleTree(@RequestParam("rootNodeId") String rootNodeId);
 
     /**
      * 保存业务规则树

@@ -2,6 +2,7 @@ package com.changhong.sei.rule.service;
 
 import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.dao.BaseTreeDao;
+import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.service.BaseTreeService;
 import com.changhong.sei.core.service.bo.OperateResult;
@@ -10,6 +11,7 @@ import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.exception.ServiceException;
 import com.changhong.sei.rule.api.MatchingRuleComparator;
 import com.changhong.sei.rule.dao.*;
+import com.changhong.sei.rule.dto.RuleTreeNodeDto;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
 import com.changhong.sei.rule.dto.enums.RuleAttributeType;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
@@ -182,23 +184,13 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     }
 
     /**
-     * 通过规则分类Id获取所有规则树
+     * 通过规则树根节点Id获取规则树
      *
-     * @param ruleTypeId 规则分类Id
-     * @return 规则树集合
+     * @param rootNodeId 根节点Id
+     * @return 规则树
      */
-    public List<RuleTreeNode> getRuleTrees(String ruleTypeId) {
-        // 限制规则分类
-        List<RuleTreeNode> rootTree = dao.findRootNodes(ruleTypeId, ContextUtil.getTenantCode());
-        if (CollectionUtils.isEmpty(rootTree)) {
-            return new ArrayList<>();
-        }
-        List<RuleTreeNode> rootRuleTree = new ArrayList<>();
-        for (RuleTreeNode aRootTree : rootTree) {
-            RuleTreeNode rule = getTree(aRootTree.getId());
-            rootRuleTree.add(rule);
-        }
-        return rootRuleTree;
+    public RuleTreeNode getRuleTree(String rootNodeId) {
+        return getTree(rootNodeId);
     }
 
     /**

@@ -52,4 +52,12 @@ class RuleTreeNodeControllerTest extends BaseUnit5Test {
         System.out.println(JsonUtils.toJson(resultData));
         Assertions.assertTrue(resultData.successful());
     }
+
+    @Test
+    void getRuleTree() {
+        String rootId = "E4395A52-5648-11EB-9D6E-3C6AA7266A51";
+        ResultData<?> resultData = controller.getRuleTree(rootId);
+        System.out.println(JsonUtils.toJson(resultData));
+        Assertions.assertTrue(resultData.successful());
+    }
 }

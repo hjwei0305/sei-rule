@@ -126,16 +126,15 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
     }
 
     /**
-     * 通过规则类型ID获取所有规则树
+     * 通过规则树根节点Id获取规则树
      *
-     * @param ruleTypeId 规则类型ID
-     * @return 规则树集合
+     * @param rootNodeId 根节点Id
+     * @return 规则树
      */
     @Override
-    public ResultData<List<RuleTreeNodeDto>> getRuleTrees(String ruleTypeId) {
-        return ResultData.success(convertToDtos(service.getRuleTrees(ruleTypeId)));
+    public ResultData<RuleTreeNodeDto> getRuleTree(String rootNodeId) {
+        return ResultData.success(convertToDto(service.getRuleTree(rootNodeId)));
     }
-
 
     /**
      * 保存业务规则树
