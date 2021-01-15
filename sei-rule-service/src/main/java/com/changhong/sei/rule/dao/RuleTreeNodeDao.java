@@ -23,4 +23,11 @@ public interface RuleTreeNodeDao extends BaseTreeDao<RuleTreeNode> {
      */
     @Query("select node from RuleTreeNode node where node.ruleTypeId=?1 and node.tenantCode=?2 and node.parentId is null order by node.rank ")
     List<RuleTreeNode> findRootNodes(String ruleTypeId, String tenantCode);
+
+    /**
+     * 获取子节点清单
+     * @param parentId 父节点Id
+     * @return 子节点清单
+     */
+    List<RuleTreeNode> findByParentId(String parentId);
 }

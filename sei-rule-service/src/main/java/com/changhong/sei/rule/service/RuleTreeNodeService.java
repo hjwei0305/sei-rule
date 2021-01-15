@@ -2,16 +2,13 @@ package com.changhong.sei.rule.service;
 
 import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.dao.BaseTreeDao;
-import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.service.BaseTreeService;
 import com.changhong.sei.core.service.bo.OperateResult;
 import com.changhong.sei.core.service.bo.OperateResultWithData;
-import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.exception.ServiceException;
 import com.changhong.sei.rule.api.MatchingRuleComparator;
 import com.changhong.sei.rule.dao.*;
-import com.changhong.sei.rule.dto.RuleTreeNodeDto;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
 import com.changhong.sei.rule.dto.enums.RuleAttributeType;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
@@ -159,7 +156,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
             entity.setCode(serialService.getNumber(RuleTreeNode.class));
         }
         //检查逻辑表达式
-        List<LogicalExpression> expressions = entity.getExpressions();
+        List<LogicalExpression> expressions = entity.getLogicalExpressions();
         if (Objects.isNull(expressions) || expressions.isEmpty()) {
             //规则树节点[{0}]表达式不能为空！
             return OperateResultWithData.operationFailure("00020", entity.getName());
@@ -207,7 +204,61 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      * @return 规则树
      */
     public RuleTreeNode getRuleTree(String rootNodeId) {
-        return getTree(rootNodeId);
+        RuleTreeNode root = dao.findOne(rootNodeId);
+        if (Objects.isNull(root)) {
+            return null;
+        }
+        assembleNodeInfo(root);
+        return findOneTree(root);
+    }
+
+    /**
+     * 组装节点的其他信息
+     * @param node 节点
+     */
+    private void assembleNodeInfo(RuleTreeNode node) {
+        String nodeId = node.getId();
+        node.setLogicalExpressions(logicalExpressionDao.findByRuleTreeNodeId(nodeId));
+        node.setNodeReturnResults(nodeReturnResultDao.findByRuleTreeNodeId(nodeId));
+    }
+
+
+    /**
+     * 获取一颗规则树
+     * @param node 起始节点
+     * @return 规则树
+     */
+    private RuleTreeNode findOneTree(RuleTreeNode node) {
+        if (Objects.isNull(node)) {
+            return null;
+        }
+        // 递归设置所有子节点
+        setChildrenInFindOneTree(node);
+        return node;
+    }
+
+    /**
+     * 递归设置所有子节点
+     * @param node 起始节点
+     */
+    private void setChildrenInFindOneTree(RuleTreeNode node) {
+        List<RuleTreeNode> children = getChildren(node.getId());
+        if (CollectionUtils.isNotEmpty(children)) {
+            children.forEach(child -> {
+                assembleNodeInfo(child);
+                setChildrenInFindOneTree(child);
+            });
+        }
+        node.setChildren(children);
+    }
+
+    /**
+     * 获取一个节点的子节点清单（不递归）
+     * @param parentId 父节点Id
+     * @return 子节点清单
+     */
+    private List<RuleTreeNode> getChildren(String parentId) {
+        return dao.findByParentId(parentId);
     }
 
     /**
@@ -326,7 +377,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      */
     private void saveLogicalExpression(RuleTreeNode ruleNode) {
         //赋值根节点值
-        for (LogicalExpression expression : ruleNode.getExpressions()) {
+        for (LogicalExpression expression : ruleNode.getLogicalExpressions()) {
             if (StringUtils.isBlank(ruleNode.getRootId())) {
                 expression.setRuleTreeRootNodeId(ruleNode.getId());
             } else {
@@ -363,7 +414,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
             return "";
         }
         //查询逻辑表达式
-        List<LogicalExpression> expressions = ruleNode.getExpressions();
+        List<LogicalExpression> expressions = ruleNode.getLogicalExpressions();
         StringBuilder expression = new StringBuilder("(");
         expressions.forEach(ex -> expression.append(convertToExpression(ex)).append(OR_EXPRESSION));
         //去除最后一个||

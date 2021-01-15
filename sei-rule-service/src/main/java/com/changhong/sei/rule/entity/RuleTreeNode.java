@@ -3,10 +3,6 @@ package com.changhong.sei.rule.entity;
 import com.changhong.sei.core.dto.TreeEntity;
 import com.changhong.sei.core.entity.BaseAuditableEntity;
 import com.changhong.sei.core.entity.ITenant;
-import com.changhong.sei.rule.dto.LogicalExpressionDto;
-import com.changhong.sei.rule.dto.NodeReturnResultDto;
-import com.changhong.sei.rule.dto.RuleReturnTypeDto;
-import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -117,7 +113,7 @@ public class RuleTreeNode extends BaseAuditableEntity implements TreeEntity<Rule
      * 规则逻辑表达式
      */
     @Transient
-    private List<LogicalExpression> expressions;
+    private List<LogicalExpression> logicalExpressions;
 
     /**
      * 返回结果
@@ -258,12 +254,12 @@ public class RuleTreeNode extends BaseAuditableEntity implements TreeEntity<Rule
         this.expression = expression;
     }
 
-    public List<LogicalExpression> getExpressions() {
-        return expressions;
+    public List<LogicalExpression> getLogicalExpressions() {
+        return logicalExpressions;
     }
 
-    public void setExpressions(List<LogicalExpression> expressions) {
-        this.expressions = expressions;
+    public void setLogicalExpressions(List<LogicalExpression> logicalExpressions) {
+        this.logicalExpressions = logicalExpressions;
     }
 
     public List<NodeReturnResult> getNodeReturnResults() {

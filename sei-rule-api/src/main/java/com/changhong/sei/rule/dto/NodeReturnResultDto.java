@@ -57,6 +57,21 @@ public class NodeReturnResultDto extends BaseEntityDto {
      */
     @ApiModelProperty(value = "租户代码")
     private String tenantCode;
+    /**
+     * 返回结果类型代码
+     */
+    @ApiModelProperty("返回结果类型代码")
+    private String ruleReturnTypeCode;
+    /**
+     * 返回结果类型名称
+     */
+    @ApiModelProperty("返回结果类型名称")
+    private String ruleReturnTypeName;
+    /**
+     * 返回结果类型UI组件
+     */
+    @ApiModelProperty("返回结果类型UI组件")
+    private String ruleReturnTypeUiComponent;
 
     public String getRuleTreeNodeId() {
         return ruleTreeNodeId;
@@ -96,5 +111,37 @@ public class NodeReturnResultDto extends BaseEntityDto {
 
     public void setTenantCode(String tenantCode) {
         this.tenantCode = tenantCode;
+    }
+
+    public String getRuleTreeRootNodeId() {
+        return ruleTreeRootNodeId;
+    }
+
+    public void setRuleTreeRootNodeId(String ruleTreeRootNodeId) {
+        this.ruleTreeRootNodeId = ruleTreeRootNodeId;
+    }
+
+    public String getRuleReturnTypeCode() {
+        return ruleReturnTypeCode;
+    }
+
+    public void setRuleReturnTypeCode(String ruleReturnTypeCode) {
+        this.ruleReturnTypeCode = ruleReturnTypeCode;
+    }
+
+    public String getRuleReturnTypeName() {
+        return ruleReturnTypeName;
+    }
+
+    public void setRuleReturnTypeName(String ruleReturnTypeName) {
+        this.ruleReturnTypeName = ruleReturnTypeName;
+    }
+
+    public String getRuleReturnTypeUiComponent() {
+        return ruleReturnTypeUiComponent;
+    }
+
+    public void setRuleReturnTypeUiComponent(String ruleReturnTypeUiComponent) {
+        this.ruleReturnTypeUiComponent = ruleReturnTypeUiComponent;
     }
 }

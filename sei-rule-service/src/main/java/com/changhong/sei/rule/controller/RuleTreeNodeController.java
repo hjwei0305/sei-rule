@@ -4,7 +4,6 @@ import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.controller.BaseTreeController;
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.service.BaseTreeService;
-import com.changhong.sei.core.service.bo.OperateResultWithData;
 import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.rule.api.RuleTreeNodeApi;
 import com.changhong.sei.rule.dto.LogicalExpressionDto;
@@ -53,12 +52,53 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
      * 定义通用的严格匹配实体转换器
      */
     private static final ModelMapper strictModelMapper;
+    private static final ModelMapper logicalExpressionMapper;
+    private static final ModelMapper nodeReturnResultMapper;
     // 初始化静态属性
     static {
         // 初始化转换器
         strictModelMapper = new ModelMapper();
         // 设置为严格匹配
         strictModelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        logicalExpressionMapper = new ModelMapper();
+        // 创建自定义映射规则
+        PropertyMap<LogicalExpression, LogicalExpressionDto> logicalExpressionPropertyMap = new PropertyMap<LogicalExpression, LogicalExpressionDto>() {
+            @Override
+            protected void configure() {
+                // 使用自定义转换规则
+                map().setRuleAttributeId(source.getRuleAttributeId());
+            }
+        };
+        // 添加映射器
+        logicalExpressionMapper.addMappings(logicalExpressionPropertyMap);
+        nodeReturnResultMapper = new ModelMapper();
+        // 创建自定义映射规则
+        PropertyMap<NodeReturnResult, NodeReturnResultDto> nodeReturnResultPropertyMap = new PropertyMap<NodeReturnResult, NodeReturnResultDto>() {
+            @Override
+            protected void configure() {
+                // 使用自定义转换规则
+                map().setRuleReturnTypeId(source.getRuleReturnTypeId());
+            }
+        };
+        // 添加映射器
+        nodeReturnResultMapper.addMappings(nodeReturnResultPropertyMap);
+    }
+
+    /**
+     * 自定义设置Entity转换为DTO的转换器
+     */
+    @Override
+    protected void customConvertToDtoMapper() {
+        // 创建自定义映射规则
+        PropertyMap<RuleTreeNode, RuleTreeNodeDto> propertyMap = new PropertyMap<RuleTreeNode, RuleTreeNodeDto>() {
+            @Override
+            protected void configure() {
+                // 使用自定义转换规则
+                map().setRuleTypeId(source.getRuleTypeId());
+            }
+        };
+        // 添加映射器
+        dtoModelMapper.addMappings(propertyMap);
     }
 
     @Override
@@ -96,23 +136,6 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
     @Override
     public ResultData<?> updateRootNode(RuleTreeRoot ruleTreeRoot) {
         return ResultDataUtil.convertFromOperateResult(service.updateRootNode(ruleTreeRoot));
-    }
-
-    /**
-     * 自定义设置Entity转换为DTO的转换器
-     */
-    @Override
-    protected void customConvertToDtoMapper() {
-        // 创建自定义映射规则
-        PropertyMap<RuleTreeNode, RuleTreeNodeDto> propertyMap = new PropertyMap<RuleTreeNode, RuleTreeNodeDto>() {
-            @Override
-            protected void configure() {
-                // 使用自定义转换规则
-                map().setRuleTypeId(source.getRuleTypeId());
-            }
-        };
-        // 添加映射器
-        dtoModelMapper.addMappings(propertyMap);
     }
 
     /**
@@ -176,16 +199,16 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
         }
         RuleTreeNode ruleTreeNode = entityModelMapper.map(dto, getEntityClass());
         //设置表达式
-        List<LogicalExpressionDto> expressionDtos = dto.getLogicalExpressionDtos();
+        List<LogicalExpressionDto> expressionDtos = dto.getLogicalExpressions();
         if (Objects.nonNull(expressionDtos)) {
             List<LogicalExpression> expressions = new ArrayList<>();
             expressionDtos.forEach(ex -> {
                 expressions.add(entityModelMapper.map(ex, LogicalExpression.class));
             });
-            ruleTreeNode.setExpressions(expressions);
+            ruleTreeNode.setLogicalExpressions(expressions);
         }
         //设置结果
-        List<NodeReturnResultDto> returnResultDtos = dto.getNodeReturnResultDtos();
+        List<NodeReturnResultDto> returnResultDtos = dto.getNodeReturnResults();
         if (Objects.nonNull(returnResultDtos)) {
             List<NodeReturnResult> returnResults = new ArrayList<>();
             returnResultDtos.forEach(result -> {

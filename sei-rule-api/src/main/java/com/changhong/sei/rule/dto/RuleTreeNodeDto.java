@@ -107,12 +107,12 @@ public class RuleTreeNodeDto extends BaseEntityDto {
      * 规则逻辑表达式
      */
     @ApiModelProperty(value = "规则逻辑表达式")
-    private List<LogicalExpressionDto> logicalExpressionDtos;
+    private List<LogicalExpressionDto> logicalExpressions;
     /**
      * 返回结果
      */
     @ApiModelProperty(value = "返回结果")
-    private List<NodeReturnResultDto> nodeReturnResultDtos;
+    private List<NodeReturnResultDto> nodeReturnResults;
     /**
      * 子节点清单
      */
@@ -231,20 +231,20 @@ public class RuleTreeNodeDto extends BaseEntityDto {
         this.tenantCode = tenantCode;
     }
 
-    public List<LogicalExpressionDto> getLogicalExpressionDtos() {
-        return logicalExpressionDtos;
+    public List<LogicalExpressionDto> getLogicalExpressions() {
+        return logicalExpressions;
     }
 
-    public void setLogicalExpressionDtos(List<LogicalExpressionDto> logicalExpressionDtos) {
-        this.logicalExpressionDtos = logicalExpressionDtos;
+    public void setLogicalExpressions(List<LogicalExpressionDto> logicalExpressions) {
+        this.logicalExpressions = logicalExpressions;
     }
 
-    public List<NodeReturnResultDto> getNodeReturnResultDtos() {
-        return nodeReturnResultDtos;
+    public List<NodeReturnResultDto> getNodeReturnResults() {
+        return nodeReturnResults;
     }
 
-    public void setNodeReturnResultDtos(List<NodeReturnResultDto> nodeReturnResultDtos) {
-        this.nodeReturnResultDtos = nodeReturnResultDtos;
+    public void setNodeReturnResults(List<NodeReturnResultDto> nodeReturnResults) {
+        this.nodeReturnResults = nodeReturnResults;
     }
 
     public List<RuleTreeNodeDto> getChildren() {

@@ -3,6 +3,7 @@ package com.changhong.sei.rule.dto;
 import com.changhong.sei.core.dto.BaseEntityDto;
 import com.changhong.sei.core.dto.serializer.EnumJsonSerializer;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
+import com.changhong.sei.rule.dto.enums.RuleAttributeType;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -61,6 +62,26 @@ public class LogicalExpressionDto extends BaseEntityDto {
      */
     @ApiModelProperty(value = "租户代码")
     private String tenantCode;
+    /**
+     * 属性名
+     */
+    @ApiModelProperty("属性名")
+    private String ruleAttributeAttribute;
+    /**
+     * 属性名称
+     */
+    @ApiModelProperty("属性名称")
+    private String ruleAttributeName;
+    /**
+     * 属性类型
+     */
+    @ApiModelProperty(value = "属性类型", notes = "字符串：STRING,日期：DATETIME,数值：NUMBER,布尔：BOOLEAN")
+    private RuleAttributeType ruleAttributeRuleAttributeType = RuleAttributeType.STRING;
+    /**
+     * 属性UI组件
+     */
+    @ApiModelProperty("UI组件")
+    private String ruleAttributeUiComponent;
 
     public String getRuleTreeRootNodeId() {
         return ruleTreeRootNodeId;
@@ -108,5 +129,37 @@ public class LogicalExpressionDto extends BaseEntityDto {
 
     public void setTenantCode(String tenantCode) {
         this.tenantCode = tenantCode;
+    }
+
+    public String getRuleAttributeAttribute() {
+        return ruleAttributeAttribute;
+    }
+
+    public void setRuleAttributeAttribute(String ruleAttributeAttribute) {
+        this.ruleAttributeAttribute = ruleAttributeAttribute;
+    }
+
+    public String getRuleAttributeName() {
+        return ruleAttributeName;
+    }
+
+    public void setRuleAttributeName(String ruleAttributeName) {
+        this.ruleAttributeName = ruleAttributeName;
+    }
+
+    public RuleAttributeType getRuleAttributeRuleAttributeType() {
+        return ruleAttributeRuleAttributeType;
+    }
+
+    public void setRuleAttributeRuleAttributeType(RuleAttributeType ruleAttributeRuleAttributeType) {
+        this.ruleAttributeRuleAttributeType = ruleAttributeRuleAttributeType;
+    }
+
+    public String getRuleAttributeUiComponent() {
+        return ruleAttributeUiComponent;
+    }
+
+    public void setRuleAttributeUiComponent(String ruleAttributeUiComponent) {
+        this.ruleAttributeUiComponent = ruleAttributeUiComponent;
     }
 }
