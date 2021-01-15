@@ -79,10 +79,9 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      * 获取规则实体类型的所有根节点
      *
      * @param ruleTypeId 规则类型Id
-     * @param tenantCode 租户代码
      * @return 根节点清单
      */
-    public List<RuleTreeNode> findRootNodes(String ruleTypeId, String tenantCode) {
+    public List<RuleTreeNode> findRootNodes(String ruleTypeId) {
         return dao.findRootNodes(ruleTypeId, ContextUtil.getTenantCode());
     }
 
