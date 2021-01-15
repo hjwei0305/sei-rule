@@ -31,16 +31,16 @@ public class NodeReturnResult extends BaseAuditableEntity implements ITenant {
     @Column(name = "rule_tree_node_id")
     private String ruleTreeNodeId;
     /**
-     * 规则树节点
-     */
-    @ManyToOne
-    @JoinColumn(name = "rule_tree_node_id", insertable = false, updatable = false)
-    private RuleTreeNode ruleTreeNode;
-    /**
      * 返回结果类型Id
      */
     @Column(name = "rule_return_type_id")
     private String ruleReturnTypeId;
+    /**
+     * 返回结果类型
+     */
+    @ManyToOne
+    @JoinColumn(name = "rule_return_type_id", insertable = false, updatable = false)
+    private RuleReturnType ruleReturnType;
     /**
      * 返回对象Id
      */
@@ -79,6 +79,14 @@ public class NodeReturnResult extends BaseAuditableEntity implements ITenant {
 
     public void setRuleReturnTypeId(String ruleReturnTypeId) {
         this.ruleReturnTypeId = ruleReturnTypeId;
+    }
+
+    public RuleReturnType getRuleReturnType() {
+        return ruleReturnType;
+    }
+
+    public void setRuleReturnType(RuleReturnType ruleReturnType) {
+        this.ruleReturnType = ruleReturnType;
     }
 
     public String getReturnValueId() {
