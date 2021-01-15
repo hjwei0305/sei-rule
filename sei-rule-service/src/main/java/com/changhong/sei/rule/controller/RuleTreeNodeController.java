@@ -19,6 +19,8 @@ import com.changhong.sei.rule.service.RuleTreeNodeService;
 import com.changhong.sei.util.EnumUtils;
 import io.swagger.annotations.Api;
 import org.apache.commons.collections.CollectionUtils;
+import org.modelmapper.AbstractConverter;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.convention.MatchingStrategies;
@@ -95,6 +97,8 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
             protected void configure() {
                 // 使用自定义转换规则
                 map().setRuleTypeId(source.getRuleTypeId());
+                skip().setLogicalExpressions(new LinkedList<>());
+                skip().setNodeReturnResults(new LinkedList<>());
             }
         };
         // 添加映射器

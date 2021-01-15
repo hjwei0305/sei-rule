@@ -52,7 +52,7 @@ public class RuleTreeNodeControllerTest extends BaseUnitTest {
         expressionDto.setComparisonOperator(ComparisonOperator.CONTAIN);
         expressionDto.setComparisonValue("保证金");
         expressionDto.setRuleAttributeId("A68050C5-5633-11EB-8D6E-3C6AA7266A51");
-        ruleTreeNode.setLogicalExpressionDtos(Collections.singletonList(expressionDto));
+        ruleTreeNode.setLogicalExpressions(Collections.singletonList(expressionDto));
         //子节点1
         RuleTreeNodeDto child = new RuleTreeNodeDto();
         child.setName("员工保证金");
@@ -61,12 +61,12 @@ public class RuleTreeNodeControllerTest extends BaseUnitTest {
         childExpressionDto.setComparisonOperator(ComparisonOperator.CONTAIN);
         childExpressionDto.setComparisonValue("员工保证金");
         childExpressionDto.setRuleAttributeId("A68050C5-5633-11EB-8D6E-3C6AA7266A51");
-        child.setLogicalExpressionDtos(Collections.singletonList(childExpressionDto));
+        child.setLogicalExpressions(Collections.singletonList(childExpressionDto));
         NodeReturnResultDto nodeReturnResultDto = new NodeReturnResultDto();
         nodeReturnResultDto.setReturnValueId("123");
         nodeReturnResultDto.setReturnValueName("保证金款项");
         nodeReturnResultDto.setRuleReturnTypeId("EB2FA0E7-5633-11EB-8D6E-3C6AA7266A51");
-        child.setNodeReturnResultDtos(Collections.singletonList(nodeReturnResultDto));
+        child.setNodeReturnResults(Collections.singletonList(nodeReturnResultDto));
         //子节点2
         RuleTreeNodeDto child2 = new RuleTreeNodeDto();
         child2.setName("宿舍保证金");
@@ -75,12 +75,12 @@ public class RuleTreeNodeControllerTest extends BaseUnitTest {
         child2ExpressionDto.setComparisonOperator(ComparisonOperator.CONTAIN);
         child2ExpressionDto.setComparisonValue("宿舍保证金");
         child2ExpressionDto.setRuleAttributeId("A68050C5-5633-11EB-8D6E-3C6AA7266A51");
-        child2.setLogicalExpressionDtos(Collections.singletonList(child2ExpressionDto));
+        child2.setLogicalExpressions(Collections.singletonList(child2ExpressionDto));
         NodeReturnResultDto nodeReturnResultDto2 = new NodeReturnResultDto();
         nodeReturnResultDto2.setReturnValueId("456");
         nodeReturnResultDto2.setReturnValueName("保证金款项");
         nodeReturnResultDto2.setRuleReturnTypeId("EB2FA0E7-5633-11EB-8D6E-3C6AA7266A51");
-        child2.setNodeReturnResultDtos(Collections.singletonList(nodeReturnResultDto2));
+        child2.setNodeReturnResults(Collections.singletonList(nodeReturnResultDto2));
         ruleTreeNode.setChildren(Arrays.asList(child, child2));
         ResultData resultData = controller.saveRuleTree(ruleTree);
         Assert.assertTrue(resultData.getSuccess());
