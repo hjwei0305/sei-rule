@@ -2,16 +2,19 @@ package com.changhong.sei.rule.service;
 
 import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.dao.BaseTreeDao;
+import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.service.BaseTreeService;
 import com.changhong.sei.core.service.bo.OperateResult;
 import com.changhong.sei.core.service.bo.OperateResultWithData;
+import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.exception.ServiceException;
 import com.changhong.sei.rule.api.MatchingRuleComparator;
 import com.changhong.sei.rule.dao.*;
-import com.changhong.sei.rule.dto.RuleReturnTypeDto;
+import com.changhong.sei.rule.dto.RuleTreeNodeDto;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
 import com.changhong.sei.rule.dto.enums.RuleAttributeType;
+import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
 import com.changhong.sei.rule.entity.*;
 import com.changhong.sei.rule.service.exception.MatchingRuleComparatorException;
 import com.changhong.sei.serial.sdk.SerialService;
@@ -52,7 +55,6 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      */
     private static final String OR_EXPRESSION = " || ";
 
-
     @Autowired
     private RuleTreeNodeDao dao;
     @Autowired
@@ -63,7 +65,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     private RuleAttributeDao ruleAttributeDao;
     @Autowired
     private RuleTypeDao ruleTypeDao;
-    @Autowired
+    @Autowired(required = false)
     private SerialService serialService;
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -77,9 +79,10 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      * 获取规则实体类型的所有根节点
      *
      * @param ruleTypeId 规则类型Id
+     * @param tenantCode 租户代码
      * @return 根节点清单
      */
-    public List<RuleTreeNode> findRootNodes(String ruleTypeId) {
+    public List<RuleTreeNode> findRootNodes(String ruleTypeId, String tenantCode) {
         return dao.findRootNodes(ruleTypeId, ContextUtil.getTenantCode());
     }
 
@@ -95,6 +98,29 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         return expressions;
     }
 
+    /**
+     * 更新规则树根节点信息
+     *
+     * @param ruleTreeRoot 规则树根节点
+     * @return 处理结果
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public OperateResult updateRootNode(RuleTreeRoot ruleTreeRoot) {
+        String nodeId = ruleTreeRoot.getId();
+        // 获取规则树节点
+        RuleTreeNode ruleTreeNode = dao.findOne(nodeId);
+        if (Objects.isNull(ruleTreeNode)) {
+            // 规则树节点【{0}】不存在！
+            return OperateResult.operationFailure("00024", ruleTreeRoot.getId());
+        }
+        // 更新可以更新的属性
+        ruleTreeNode.setName(ruleTreeRoot.getName());
+        ruleTreeNode.setRank(ruleTreeRoot.getRank());
+        ruleTreeNode.setEnabled(ruleTreeNode.getEnabled());
+        dao.save(ruleTreeNode);
+        // 更新规则树根节点信息成功！
+        return OperateResult.operationSuccess("00025");
+    }
 
     /**
      * 检查菜单父节点
@@ -176,23 +202,13 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     }
 
     /**
-     * 通过规则分类Id获取所有规则树
+     * 通过规则树根节点Id获取规则树
      *
-     * @param ruleTypeId 规则分类Id
-     * @return 规则树集合
+     * @param rootNodeId 根节点Id
+     * @return 规则树
      */
-    public List<RuleTreeNode> getRuleTrees(String ruleTypeId) {
-        // 限制规则分类
-        List<RuleTreeNode> rootTree = dao.findRootNodes(ruleTypeId, ContextUtil.getTenantCode());
-        if (CollectionUtils.isEmpty(rootTree)) {
-            return new ArrayList<>();
-        }
-        List<RuleTreeNode> rootRuleTree = new ArrayList<>();
-        for (RuleTreeNode aRootTree : rootTree) {
-            RuleTreeNode rule = getTree(aRootTree.getId());
-            rootRuleTree.add(rule);
-        }
-        return rootRuleTree;
+    public RuleTreeNode getRuleTree(String rootNodeId) {
+        return getTree(rootNodeId);
     }
 
     /**
@@ -435,5 +451,4 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         }
         return builder.toString();
     }
-
 }

@@ -2,13 +2,11 @@ package com.changhong.sei.rule.api;
 
 import com.changhong.sei.core.api.BaseEntityApi;
 import com.changhong.sei.core.dto.ResultData;
-import com.changhong.sei.rule.dto.RuleTree;
-import com.changhong.sei.core.dto.ResultData;
+import com.changhong.sei.rule.dto.ruletree.RuleTree;
 import com.changhong.sei.rule.dto.RuleTreeNodeDto;
 import com.changhong.sei.util.EnumUtils;
 import io.swagger.annotations.ApiOperation;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +35,15 @@ public interface RuleTreeNodeApi extends BaseEntityApi<RuleTreeNodeDto> {
     ResultData<List<RuleTreeRoot>> findRootNodes(@RequestParam("ruleTypeId") String ruleTypeId);
 
     /**
+     * 更新规则树根节点信息
+     * @param ruleTreeRoot 规则树根节点
+     * @return 处理结果
+     */
+    @PostMapping(path = "updateRootNode", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "更新规则树根节点信息", notes = "更新规则树根节点信息:名称、优先级、启用")
+    ResultData<?> updateRootNode(@RequestBody RuleTreeRoot ruleTreeRoot);
+
+    /**
      * 获取比较运算符枚举值
      * @return 枚举值清单
      */
@@ -45,13 +52,13 @@ public interface RuleTreeNodeApi extends BaseEntityApi<RuleTreeNodeDto> {
     ResultData<List<EnumUtils.EnumEntity>> getComparisonOperatorEnum();
 
     /**
-     * 通过规则类型ID获取所有规则树
-     * @param ruleTypeId 规则类型ID
-     * @return 规则树集合
+     * 通过规则树根节点Id获取规则树
+     * @param rootNodeId 根节点Id
+     * @return 规则树
      */
-    @GetMapping(path = "getRuleTrees")
-    @ApiOperation(notes = "通过规则类型ID获取所有规则树", value = "通过类型ID获取所有业务匹配规则树")
-    ResultData<List<RuleTreeNodeDto>> getRuleTrees(@RequestParam("ruleTypeId") String ruleTypeId);
+    @GetMapping(path = "getRuleTree")
+    @ApiOperation(notes = "通过规则树根节点Id获取规则树", value = "通过规则树根节点Id，获取规则树并包含子节点及其配置信息")
+    ResultData<RuleTreeNodeDto> getRuleTree(@RequestParam("rootNodeId") String rootNodeId);
 
     /**
      * 保存业务规则树
@@ -70,5 +77,4 @@ public interface RuleTreeNodeApi extends BaseEntityApi<RuleTreeNodeDto> {
     @DeleteMapping(path = "deleteRuleTree/{rootId}")
     @ApiOperation(notes = "删除业务规则树", value = "删除业务规则树")
     ResultData<?> deleteRuleTree(@PathVariable("rootId") String rootId);
-
 }

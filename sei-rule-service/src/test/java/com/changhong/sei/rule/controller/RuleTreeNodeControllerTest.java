@@ -3,11 +3,21 @@ package com.changhong.sei.rule.controller;
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.test.BaseUnitTest;
 import com.changhong.sei.core.util.JsonUtils;
+import com.changhong.sei.rule.BaseUnit5Test;
+import com.changhong.sei.rule.dto.RuleTreeNodeDto;
+import com.changhong.sei.rule.dto.RuleTypeDto;
+import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import com.changhong.sei.rule.dto.*;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -74,7 +84,7 @@ public class RuleTreeNodeControllerTest extends BaseUnitTest {
         nodeReturnResultDto2.setReturnValueName("保证金款项");
         nodeReturnResultDto2.setRuleReturnTypeId("EB2FA0E7-5633-11EB-8D6E-3C6AA7266A51");
         child2.setNodeReturnResultDtos(Collections.singletonList(nodeReturnResultDto2));
-        ruleTreeNode.setChildren(Arrays.asList(child,child2));
+        ruleTreeNode.setChildren(Arrays.asList(child, child2));
         ResultData resultData = controller.saveRuleTree(ruleTree);
         Assert.assertTrue(resultData.getSuccess());
     }
@@ -82,5 +92,33 @@ public class RuleTreeNodeControllerTest extends BaseUnitTest {
     @Test
     public void deleteRuleTreeTest() {
         controller.deleteRuleTree("FA8357F6-56F5-11EB-8A46-3C6AA7266A51");
+    }
+
+    @Test
+    void findRootNodes() {
+        String ruleTypeId = "76E87452-562B-11EB-B2C8-3C6AA7266A51";
+        ResultData<List<RuleTreeRoot>> resultData = controller.findRootNodes(ruleTypeId);
+        System.out.println(JsonUtils.toJson(resultData));
+        Assertions.assertTrue(resultData.successful());
+    }
+
+    @Test
+    void updateRootNode() {
+        RuleTreeRoot root = new RuleTreeRoot();
+        root.setId("E4395A52-5648-11EB-9D6E-3C6AA7266A51");
+        root.setName("保证金认款规则");
+        root.setRank(1);
+        root.setEnabled(Boolean.TRUE);
+        ResultData<?> resultData = controller.updateRootNode(root);
+        System.out.println(JsonUtils.toJson(resultData));
+        Assertions.assertTrue(resultData.successful());
+    }
+
+    @Test
+    void getRuleTree() {
+        String rootId = "E4395A52-5648-11EB-9D6E-3C6AA7266A51";
+        ResultData<?> resultData = controller.getRuleTree(rootId);
+        System.out.println(JsonUtils.toJson(resultData));
+        Assertions.assertTrue(resultData.successful());
     }
 }
