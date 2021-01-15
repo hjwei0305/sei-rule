@@ -60,7 +60,7 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
      */
     @Override
     public ResultData<List<RuleTreeRoot>> findRootNodes(String ruleTypeId) {
-        List<RuleTreeNode> nodes = service.findRootNodes(ruleTypeId, ContextUtil.getTenantCode());
+        List<RuleTreeNode> nodes = service.findRootNodes(ruleTypeId);
         List<RuleTreeRoot> roots = new LinkedList<>();
         if (CollectionUtils.isNotEmpty(nodes)) {
             nodes.forEach(node -> {
@@ -151,6 +151,13 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
                 returnResults.add(entityModelMapper.map(result, NodeReturnResult.class));
             });
             ruleTreeNode.setNodeReturnResults(returnResults);
+        }
+        //设置子节点
+        List<RuleTreeNodeDto> childs = dto.getChildren();
+        if (Objects.nonNull(childs)) {
+            List<RuleTreeNode> childNodes = new ArrayList<>();
+            childs.forEach(child -> childNodes.add(convertToEntity(child)));
+            ruleTreeNode.setChildren(childNodes);
         }
         return ruleTreeNode;
     }
