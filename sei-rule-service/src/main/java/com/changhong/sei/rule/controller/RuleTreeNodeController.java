@@ -54,36 +54,12 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
      * 定义通用的严格匹配实体转换器
      */
     private static final ModelMapper strictModelMapper;
-    private static final ModelMapper logicalExpressionMapper;
-    private static final ModelMapper nodeReturnResultMapper;
     // 初始化静态属性
     static {
         // 初始化转换器
         strictModelMapper = new ModelMapper();
         // 设置为严格匹配
         strictModelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        logicalExpressionMapper = new ModelMapper();
-        // 创建自定义映射规则
-        PropertyMap<LogicalExpression, LogicalExpressionDto> logicalExpressionPropertyMap = new PropertyMap<LogicalExpression, LogicalExpressionDto>() {
-            @Override
-            protected void configure() {
-                // 使用自定义转换规则
-                map().setRuleAttributeId(source.getRuleAttributeId());
-            }
-        };
-        // 添加映射器
-        logicalExpressionMapper.addMappings(logicalExpressionPropertyMap);
-        nodeReturnResultMapper = new ModelMapper();
-        // 创建自定义映射规则
-        PropertyMap<NodeReturnResult, NodeReturnResultDto> nodeReturnResultPropertyMap = new PropertyMap<NodeReturnResult, NodeReturnResultDto>() {
-            @Override
-            protected void configure() {
-                // 使用自定义转换规则
-                map().setRuleReturnTypeId(source.getRuleReturnTypeId());
-            }
-        };
-        // 添加映射器
-        nodeReturnResultMapper.addMappings(nodeReturnResultPropertyMap);
     }
 
     /**
@@ -97,45 +73,26 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
             protected void configure() {
                 // 使用自定义转换规则
                 map().setRuleTypeId(source.getRuleTypeId());
-                skip().setLogicalExpressions(new LinkedList<>());
-                skip().setNodeReturnResults(new LinkedList<>());
+            }
+        };
+        PropertyMap<LogicalExpression, LogicalExpressionDto> logicalExpressionPropertyMap = new PropertyMap<LogicalExpression, LogicalExpressionDto>() {
+            @Override
+            protected void configure() {
+                // 使用自定义转换规则
+                map().setRuleAttributeId(source.getRuleAttributeId());
+            }
+        };        // 创建自定义映射规则
+        PropertyMap<NodeReturnResult, NodeReturnResultDto> nodeReturnResultPropertyMap = new PropertyMap<NodeReturnResult, NodeReturnResultDto>() {
+            @Override
+            protected void configure() {
+                // 使用自定义转换规则
+                map().setRuleReturnTypeId(source.getRuleReturnTypeId());
             }
         };
         // 添加映射器
         dtoModelMapper.addMappings(propertyMap);
-    }
-
-    /**
-     * 将数据实体转换成DTO
-     *
-     * @param entity 业务实体
-     * @return DTO
-     */
-    @Override
-    public RuleTreeNodeDto convertToDto(RuleTreeNode entity) {
-        RuleTreeNodeDto dto = super.convertToDto(entity);
-        if (Objects.isNull(dto)) {
-            return null;
-        }
-        // 转换LogicalExpressions
-        if (CollectionUtils.isNotEmpty(entity.getLogicalExpressions())) {
-            List<LogicalExpressionDto> expressionDtos = new LinkedList<>();
-            entity.getLogicalExpressions().forEach(logicalExpression -> {
-                LogicalExpressionDto logicalExpressionDto = logicalExpressionMapper.map(logicalExpression, LogicalExpressionDto.class);
-                expressionDtos.add(logicalExpressionDto);
-            });
-            dto.setLogicalExpressions(expressionDtos);
-        }
-        // 转换NodeReturnResults
-        if (CollectionUtils.isNotEmpty(entity.getNodeReturnResults())) {
-            List<NodeReturnResultDto> returnResultDtos = new LinkedList<>();
-            entity.getNodeReturnResults().forEach(nodeReturnResult -> {
-                NodeReturnResultDto nodeReturnResultDto = nodeReturnResultMapper.map(nodeReturnResult, NodeReturnResultDto.class);
-                returnResultDtos.add(nodeReturnResultDto);
-            });
-            dto.setNodeReturnResults(returnResultDtos);
-        }
-        return dto;
+        dtoModelMapper.addMappings(logicalExpressionPropertyMap);
+        dtoModelMapper.addMappings(nodeReturnResultPropertyMap);
     }
 
     @Override
