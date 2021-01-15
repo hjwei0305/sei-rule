@@ -2,13 +2,11 @@ package com.changhong.sei.rule.api;
 
 import com.changhong.sei.core.api.BaseEntityApi;
 import com.changhong.sei.core.dto.ResultData;
-import com.changhong.sei.rule.dto.RuleTree;
-import com.changhong.sei.core.dto.ResultData;
+import com.changhong.sei.rule.dto.ruletree.RuleTree;
 import com.changhong.sei.rule.dto.RuleTreeNodeDto;
 import com.changhong.sei.util.EnumUtils;
 import io.swagger.annotations.ApiOperation;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;

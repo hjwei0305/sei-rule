@@ -3,13 +3,12 @@ package com.changhong.sei.rule.controller;
 import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.controller.BaseTreeController;
 import com.changhong.sei.core.dto.ResultData;
-import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.service.BaseTreeService;
 import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.rule.api.RuleTreeNodeApi;
 import com.changhong.sei.rule.dto.LogicalExpressionDto;
 import com.changhong.sei.rule.dto.NodeReturnResultDto;
-import com.changhong.sei.rule.dto.RuleTree;
+import com.changhong.sei.rule.dto.ruletree.RuleTree;
 import com.changhong.sei.rule.dto.RuleTreeNodeDto;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
@@ -20,12 +19,14 @@ import com.changhong.sei.rule.service.RuleTreeNodeService;
 import com.changhong.sei.util.EnumUtils;
 import io.swagger.annotations.Api;
 import org.apache.commons.collections.CollectionUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.swing.text.TabExpander;
 import java.util.*;
 
 import java.util.List;
@@ -47,6 +48,18 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
     @Autowired
     private RuleTreeNodeService service;
 
+    /**
+     * 定义通用的严格匹配实体转换器
+     */
+    private static final ModelMapper strictModelMapper;
+    // 初始化静态属性
+    static {
+        // 初始化转换器
+        strictModelMapper = new ModelMapper();
+        // 设置为严格匹配
+        strictModelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+    }
+
     @Override
     public BaseTreeService<RuleTreeNode> getService() {
         return service;
@@ -64,13 +77,30 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
         List<RuleTreeRoot> roots = new LinkedList<>();
         if (CollectionUtils.isNotEmpty(nodes)) {
             nodes.forEach(node -> {
-                RuleTreeRoot root = dtoModelMapper.map(node, RuleTreeRoot.class);
+                RuleTreeRoot root = strictModelMapper.map(node, RuleTreeRoot.class);
                 if (Objects.nonNull(root)) {
                     roots.add(root);
                 }
             });
         }
         return ResultData.success(roots);
+    }
+
+    /**
+     * 自定义设置Entity转换为DTO的转换器
+     */
+    @Override
+    protected void customConvertToDtoMapper() {
+        // 创建自定义映射规则
+        PropertyMap<RuleTreeNode, RuleTreeNodeDto> propertyMap = new PropertyMap<RuleTreeNode, RuleTreeNodeDto>() {
+            @Override
+            protected void configure() {
+                // 使用自定义转换规则
+                map().setRuleTypeId(source.getRuleTypeId());
+            }
+        };
+        // 添加映射器
+        dtoModelMapper.addMappings(propertyMap);
     }
 
     /**

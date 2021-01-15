@@ -1,5 +1,6 @@
-package com.changhong.sei.rule.dto;
+package com.changhong.sei.rule.dto.ruletree;
 
+import com.changhong.sei.rule.dto.RuleTreeNodeDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
