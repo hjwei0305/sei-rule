@@ -40,4 +40,16 @@ class RuleTreeNodeControllerTest extends BaseUnit5Test {
         System.out.println(JsonUtils.toJson(resultData));
         Assertions.assertTrue(resultData.successful());
     }
+
+    @Test
+    void updateRootNode() {
+        RuleTreeRoot root = new RuleTreeRoot();
+        root.setId("E4395A52-5648-11EB-9D6E-3C6AA7266A51");
+        root.setName("保证金认款规则");
+        root.setRank(1);
+        root.setEnabled(Boolean.TRUE);
+        ResultData<?> resultData = controller.updateRootNode(root);
+        System.out.println(JsonUtils.toJson(resultData));
+        Assertions.assertTrue(resultData.successful());
+    }
 }

@@ -4,6 +4,7 @@ import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.controller.BaseTreeController;
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.service.BaseTreeService;
+import com.changhong.sei.core.service.bo.OperateResultWithData;
 import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.rule.api.RuleTreeNodeApi;
 import com.changhong.sei.rule.dto.LogicalExpressionDto;
@@ -87,6 +88,17 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
     }
 
     /**
+     * 更新规则树根节点信息
+     *
+     * @param ruleTreeRoot 规则树根节点
+     * @return 处理结果
+     */
+    @Override
+    public ResultData<?> updateRootNode(RuleTreeRoot ruleTreeRoot) {
+        return ResultDataUtil.convertFromOperateResult(service.updateRootNode(ruleTreeRoot));
+    }
+
+    /**
      * 自定义设置Entity转换为DTO的转换器
      */
     @Override
@@ -165,7 +177,7 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
         }
         RuleTreeNode ruleTreeNode = entityModelMapper.map(dto, getEntityClass());
         //设置表达式
-        List<LogicalExpressionDto> expressionDtos = dto.getExpressionDtos();
+        List<LogicalExpressionDto> expressionDtos = dto.getLogicalExpressionDtos();
         if (Objects.nonNull(expressionDtos)) {
             List<LogicalExpression> expressions = new ArrayList<>();
             expressionDtos.forEach(ex -> {

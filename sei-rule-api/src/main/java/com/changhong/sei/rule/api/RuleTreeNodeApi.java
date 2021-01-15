@@ -35,6 +35,15 @@ public interface RuleTreeNodeApi extends BaseEntityApi<RuleTreeNodeDto> {
     ResultData<List<RuleTreeRoot>> findRootNodes(@RequestParam("ruleTypeId") String ruleTypeId);
 
     /**
+     * 更新规则树根节点信息
+     * @param ruleTreeRoot 规则树根节点
+     * @return 处理结果
+     */
+    @PostMapping(path = "updateRootNode", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "更新规则树根节点信息", notes = "更新规则树根节点信息:名称、优先级、启用")
+    ResultData<?> updateRootNode(@RequestBody RuleTreeRoot ruleTreeRoot);
+
+    /**
      * 获取比较运算符枚举值
      * @return 枚举值清单
      */
@@ -68,5 +77,4 @@ public interface RuleTreeNodeApi extends BaseEntityApi<RuleTreeNodeDto> {
     @DeleteMapping(path = "deleteRuleTree/{rootId}")
     @ApiOperation(notes = "删除业务规则树", value = "删除业务规则树")
     ResultData<?> deleteRuleTree(@PathVariable("rootId") String rootId);
-
 }

@@ -107,7 +107,7 @@ public class RuleTreeNodeDto extends BaseEntityDto {
      * 规则逻辑表达式
      */
     @ApiModelProperty(value = "规则逻辑表达式")
-    private List<LogicalExpressionDto> expressionDtos;
+    private List<LogicalExpressionDto> logicalExpressionDtos;
     /**
      * 返回结果
      */
@@ -231,12 +231,12 @@ public class RuleTreeNodeDto extends BaseEntityDto {
         this.tenantCode = tenantCode;
     }
 
-    public List<LogicalExpressionDto> getExpressionDtos() {
-        return expressionDtos;
+    public List<LogicalExpressionDto> getLogicalExpressionDtos() {
+        return logicalExpressionDtos;
     }
 
-    public void setExpressionDtos(List<LogicalExpressionDto> expressionDtos) {
-        this.expressionDtos = expressionDtos;
+    public void setLogicalExpressionDtos(List<LogicalExpressionDto> logicalExpressionDtos) {
+        this.logicalExpressionDtos = logicalExpressionDtos;
     }
 
     public List<NodeReturnResultDto> getNodeReturnResultDtos() {
