@@ -105,6 +105,39 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
         dtoModelMapper.addMappings(propertyMap);
     }
 
+    /**
+     * 将数据实体转换成DTO
+     *
+     * @param entity 业务实体
+     * @return DTO
+     */
+    @Override
+    public RuleTreeNodeDto convertToDto(RuleTreeNode entity) {
+        RuleTreeNodeDto dto = super.convertToDto(entity);
+        if (Objects.isNull(dto)) {
+            return null;
+        }
+        // 转换LogicalExpressions
+        if (CollectionUtils.isNotEmpty(entity.getLogicalExpressions())) {
+            List<LogicalExpressionDto> expressionDtos = new LinkedList<>();
+            entity.getLogicalExpressions().forEach(logicalExpression -> {
+                LogicalExpressionDto logicalExpressionDto = logicalExpressionMapper.map(logicalExpression, LogicalExpressionDto.class);
+                expressionDtos.add(logicalExpressionDto);
+            });
+            dto.setLogicalExpressions(expressionDtos);
+        }
+        // 转换NodeReturnResults
+        if (CollectionUtils.isNotEmpty(entity.getNodeReturnResults())) {
+            List<NodeReturnResultDto> returnResultDtos = new LinkedList<>();
+            entity.getNodeReturnResults().forEach(nodeReturnResult -> {
+                NodeReturnResultDto nodeReturnResultDto = nodeReturnResultMapper.map(nodeReturnResult, NodeReturnResultDto.class);
+                returnResultDtos.add(nodeReturnResultDto);
+            });
+            dto.setNodeReturnResults(returnResultDtos);
+        }
+        return dto;
+    }
+
     @Override
     public BaseTreeService<RuleTreeNode> getService() {
         return service;

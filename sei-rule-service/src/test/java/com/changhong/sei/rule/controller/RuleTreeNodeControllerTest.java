@@ -1,23 +1,21 @@
 package com.changhong.sei.rule.controller;
 
 import com.changhong.sei.core.dto.ResultData;
-import com.changhong.sei.core.test.BaseUnitTest;
 import com.changhong.sei.core.util.JsonUtils;
+import com.changhong.sei.rule.BaseUnit5Test;
+import com.changhong.sei.rule.dto.LogicalExpressionDto;
+import com.changhong.sei.rule.dto.NodeReturnResultDto;
 import com.changhong.sei.rule.dto.RuleTreeNodeDto;
+import com.changhong.sei.rule.dto.enums.ComparisonOperator;
 import com.changhong.sei.rule.dto.ruletree.RuleTree;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import com.changhong.sei.rule.dto.*;
-import com.changhong.sei.rule.dto.enums.ComparisonOperator;
-import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
-
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -28,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author 王锦光 wangjg
  * @version 2021-01-13 16:53
  */
-public class RuleTreeNodeControllerTest extends BaseUnitTest {
+public class RuleTreeNodeControllerTest extends BaseUnit5Test {
     @Autowired
     private RuleTreeNodeController controller;
 
@@ -83,7 +81,7 @@ public class RuleTreeNodeControllerTest extends BaseUnitTest {
         child2.setNodeReturnResults(Collections.singletonList(nodeReturnResultDto2));
         ruleTreeNode.setChildren(Arrays.asList(child, child2));
         ResultData resultData = controller.saveRuleTree(ruleTree);
-        Assert.assertTrue(resultData.getSuccess());
+        Assertions.assertTrue(resultData.getSuccess());
     }
 
     @Test
