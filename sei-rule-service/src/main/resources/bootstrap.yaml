@@ -28,3 +28,6 @@ spring:
       enabled: true
       discovery:
         register: true
+  service-registry: # 不自动注册到注册中心
+    auto-registration:
+      enabled: false
