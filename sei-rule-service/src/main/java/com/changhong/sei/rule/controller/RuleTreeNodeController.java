@@ -1,6 +1,5 @@
 package com.changhong.sei.rule.controller;
 
-import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.controller.BaseTreeController;
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.service.BaseTreeService;
@@ -8,9 +7,9 @@ import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.rule.api.RuleTreeNodeApi;
 import com.changhong.sei.rule.dto.LogicalExpressionDto;
 import com.changhong.sei.rule.dto.NodeReturnResultDto;
-import com.changhong.sei.rule.dto.ruletree.RuleTree;
 import com.changhong.sei.rule.dto.RuleTreeNodeDto;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
+import com.changhong.sei.rule.dto.ruletree.RuleTree;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
 import com.changhong.sei.rule.entity.LogicalExpression;
 import com.changhong.sei.rule.entity.NodeReturnResult;
@@ -19,8 +18,6 @@ import com.changhong.sei.rule.service.RuleTreeNodeService;
 import com.changhong.sei.util.EnumUtils;
 import io.swagger.annotations.Api;
 import org.apache.commons.collections.CollectionUtils;
-import org.modelmapper.AbstractConverter;
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.convention.MatchingStrategies;
@@ -29,9 +26,10 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 规则树节点(RuleTreeNode)控制类
