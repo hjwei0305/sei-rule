@@ -1,5 +1,6 @@
 package com.changhong.sei.rule.service;
 
+import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.dao.BaseEntityDao;
 import com.changhong.sei.core.service.BaseEntityService;
 import com.changhong.sei.core.service.bo.OperateResult;
@@ -14,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -82,5 +84,14 @@ public class RuleTypeService extends BaseEntityService<RuleType> {
             return OperateResult.operationFailure("00014");
         }
         return super.preDelete(id);
+    }
+
+    /**
+     * 获取规则业务实体配置的规则类型
+     * @param ruleEntityTypeId 规则业务实体类型Id
+     * @return 规则类型清单
+     */
+    public List<RuleType> findByRuleEntityTypeId(String ruleEntityTypeId) {
+        return dao.findByRuleEntityTypeIdAndTenantCode(ruleEntityTypeId, ContextUtil.getTenantCode());
     }
 }

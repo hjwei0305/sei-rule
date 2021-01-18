@@ -4,9 +4,12 @@ import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.util.JsonUtils;
 import com.changhong.sei.rule.BaseUnit5Test;
 import com.changhong.sei.rule.dto.RuleTypeDto;
+import com.changhong.sei.rule.dto.ruletree.RuleTypeTree;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
  * 实现功能: 规则类型单元测试
@@ -32,6 +35,13 @@ public class RuleTypeControllerTest extends BaseUnit5Test {
         ruleTypeDto.setRuleEntityTypeId("21E17C8F-562B-11EB-B2C8-3C6AA7266A51");
         ruleTypeDto.setName("银企互联无需认款规则");
         ResultData<RuleTypeDto> resultData = controller.save(ruleTypeDto);
+        System.out.println(JsonUtils.toJson(resultData));
+        Assertions.assertTrue(resultData.successful());
+    }
+
+    @Test
+    void getRuleTypeTrees() {
+        ResultData<List<RuleTypeTree>> resultData = controller.getRuleTypeTrees();
         System.out.println(JsonUtils.toJson(resultData));
         Assertions.assertTrue(resultData.successful());
     }
