@@ -1,6 +1,5 @@
 package com.changhong.sei.rule.service;
 
-import com.changhong.sei.rule.api.MatchingRuleComparator;
 import com.changhong.sei.rule.dao.RuleAttributeDao;
 import com.changhong.sei.rule.dao.RuleComparatorDao;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
@@ -15,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
