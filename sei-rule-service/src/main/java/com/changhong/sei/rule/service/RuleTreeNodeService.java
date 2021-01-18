@@ -56,7 +56,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     @Autowired
     private AviatorExpressionService aviatorExpressionService;
     @Autowired
-    private RedisTemplate<String,RuleChain> redisTemplate;
+    private RedisTemplate redisTemplate;
 
     @Override
     protected BaseTreeDao<RuleTreeNode> getDao() {
@@ -381,8 +381,10 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         }
         ruleChain.setReturnEntities(returnEntities);
         //执行方法
-        RuleServiceMethod method = ruleServiceMethodDao.findOne(ruleNode.getRuleServiceMethodId());
-        ruleChain.setRuleServiceMethod(method);
+        if (StringUtils.isNotBlank(ruleNode.getRuleServiceMethodId())){
+            RuleServiceMethod method = ruleServiceMethodDao.findOne(ruleNode.getRuleServiceMethodId());
+            ruleChain.setRuleServiceMethod(method);
+        }
         return ruleChain;
     }
 
