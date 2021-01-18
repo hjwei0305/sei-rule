@@ -56,7 +56,7 @@ public class AviatorExpressionService {
             return "";
         }
         //查询逻辑表达式
-        List<LogicalExpression> expressions = ruleNode.getExpressions();
+        List<LogicalExpression> expressions = ruleNode.getLogicalExpressions();
         StringBuilder expression = new StringBuilder("(");
         expressions.forEach(ex -> expression.append(convertToExpression(ex)).append(OR_EXPRESSION));
         //去除最后一个||

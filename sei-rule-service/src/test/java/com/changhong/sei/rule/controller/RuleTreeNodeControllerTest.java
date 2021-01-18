@@ -79,6 +79,7 @@ public class RuleTreeNodeControllerTest extends BaseUnit5Test {
         nodeReturnResultDto2.setReturnValueName("保证金款项");
         nodeReturnResultDto2.setRuleReturnTypeId("EB2FA0E7-5633-11EB-8D6E-3C6AA7266A51");
         child2.setNodeReturnResults(Collections.singletonList(nodeReturnResultDto2));
+        child2.setRuleServiceMethodId("9D6DC62B-3FAE-4555-A0E5-E2AB587F43CB");
         ruleTreeNode.setChildren(Arrays.asList(child, child2));
         ResultData resultData = controller.saveRuleTree(ruleTree);
         Assertions.assertTrue(resultData.getSuccess());
