@@ -7,27 +7,22 @@ import com.changhong.sei.core.service.BaseTreeService;
 import com.changhong.sei.core.service.bo.OperateResult;
 import com.changhong.sei.core.service.bo.OperateResultWithData;
 import com.changhong.sei.exception.ServiceException;
-import com.changhong.sei.rule.api.MatchingRuleComparator;
 import com.changhong.sei.rule.dao.*;
-import com.changhong.sei.rule.dto.enums.ComparisonOperator;
-import com.changhong.sei.rule.dto.enums.RuleAttributeType;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
 import com.changhong.sei.rule.entity.*;
-import com.changhong.sei.rule.service.exception.MatchingRuleComparatorException;
+import com.changhong.sei.rule.sdk.dto.RuleReturnEntity;
+import com.changhong.sei.rule.service.bo.RuleChain;
 import com.changhong.sei.serial.sdk.SerialService;
-import com.changhong.sei.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundListOperations;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.changhong.sei.util.DateUtils.DEFAULT_DATE_FORMAT;
 
 
 /**
@@ -43,14 +38,6 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      * 表达式缓存key
      */
     public static final String RULE_CHAIN_CACHE_KEY_PREFIX = "sei:sei-rule:rule-chains:";
-    /**
-     * 表达式前缀
-     */
-    public static final String RULE_CHAIN_PARAM_PREFIX = "param.";
-    /**
-     * 或表达式
-     */
-    private static final String OR_EXPRESSION = " || ";
 
     @Autowired
     private RuleTreeNodeDao dao;
@@ -59,13 +46,17 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     @Autowired
     private NodeReturnResultDao nodeReturnResultDao;
     @Autowired
-    private RuleAttributeDao ruleAttributeDao;
-    @Autowired
     private RuleTypeDao ruleTypeDao;
+    @Autowired
+    private NodeReturnResultDao returnResultDao;
+    @Autowired
+    private RuleServiceMethodDao ruleServiceMethodDao;
     @Autowired(required = false)
     private SerialService serialService;
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private AviatorExpressionService aviatorExpressionService;
+    @Autowired
+    private RedisTemplate<String,RuleChain> redisTemplate;
 
     @Override
     protected BaseTreeDao<RuleTreeNode> getDao() {
@@ -88,10 +79,9 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      * @param rootNodeId 规则类型Id
      * @return 根节点清单
      */
-    public List<String> getExpressionByRootNode(String rootNodeId) {
-        BoundListOperations<String, String> operations = redisTemplate.boundListOps(RULE_CHAIN_CACHE_KEY_PREFIX + rootNodeId);
-        List<String> expressions = operations.range(0, operations.size());
-        return expressions;
+    public List<RuleChain> getExpressionByRootNode(String rootNodeId) {
+        BoundListOperations<String, RuleChain> operations = redisTemplate.boundListOps(RULE_CHAIN_CACHE_KEY_PREFIX + rootNodeId);
+        return operations.range(0, operations.size());
     }
 
     /**
@@ -334,7 +324,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         }
 
         //获得当前节点表达式
-        String expression = convertToExpression(ruleNode);
+        String expression = aviatorExpressionService.convertToExpression(ruleNode);
         //循环拼接表达式
         if (StringUtils.isNotBlank(expression)) {
             //判断前面是否已经有节点生成表达式
@@ -349,8 +339,9 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
             //子节点为空，则把这一条规则链的表达式保存起来
             //00004 = 规则[{0}]:规则叶子节点[{1}]生成表达式{2}！
             LogUtil.bizLog("00004", ruleNode.getRootId(), ruleNode.getId(), ruleNode.getExpression());
-            BoundListOperations<String, String> operations = redisTemplate.boundListOps(RULE_CHAIN_CACHE_KEY_PREFIX + ruleNode.getRootId());
-            operations.leftPush(ruleNode.getExpression());
+            RuleChain ruleChain = constructRuleChain(ruleNode);
+            BoundListOperations<String, RuleChain> operations = redisTemplate.boundListOps(RULE_CHAIN_CACHE_KEY_PREFIX + ruleNode.getRootId());
+            operations.leftPush(ruleChain);
             return;
         }
         children.forEach(node -> {
@@ -368,6 +359,31 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
             }
             saveChildren(saveResult.getData(), node.getChildren());
         });
+    }
+
+    /**
+     * 组装规则链
+     * @param ruleNode 规则树节点
+     * @return
+     */
+    private RuleChain constructRuleChain(RuleTreeNode ruleNode) {
+        RuleChain ruleChain = new RuleChain();
+        //表达式
+        ruleChain.setExpression(ruleNode.getExpression());
+        //返回对象
+        List<NodeReturnResult>  returnResults = returnResultDao.findByRuleTreeNodeId(ruleNode.getId());
+        List<RuleReturnEntity>  returnEntities = new ArrayList<>();
+        for (NodeReturnResult result : returnResults){
+            RuleReturnEntity entity = new RuleReturnEntity();
+            entity.setId(result.getReturnValueId());
+            entity.setName(result.getReturnValueName());
+            returnEntities.add(entity);
+        }
+        ruleChain.setReturnEntities(returnEntities);
+        //执行方法
+        RuleServiceMethod method = ruleServiceMethodDao.findOne(ruleNode.getRuleServiceMethodId());
+        ruleChain.setRuleServiceMethod(method);
+        return ruleChain;
     }
 
     /**
@@ -408,97 +424,4 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         }
     }
 
-    private String convertToExpression(RuleTreeNode ruleNode) {
-        //真节点跳过
-        if (ruleNode.getTrueNode()) {
-            return "";
-        }
-        //查询逻辑表达式
-        List<LogicalExpression> expressions = ruleNode.getLogicalExpressions();
-        StringBuilder expression = new StringBuilder("(");
-        expressions.forEach(ex -> expression.append(convertToExpression(ex)).append(OR_EXPRESSION));
-        //去除最后一个||
-        if (expression.toString().endsWith(OR_EXPRESSION)) {
-            int expressionLength = expression.toString().length();
-            expression.delete(expressionLength - OR_EXPRESSION.length(), expressionLength);
-        }
-        expression.append(")");
-        return expression.toString();
-    }
-
-    /**
-     * 根据逻辑表达式返回对应的表达式
-     *
-     * @param expression 逻辑表达式
-     * @return 表达式
-     */
-    private String convertToExpression(LogicalExpression expression) {
-        ComparisonOperator operator = expression.getComparisonOperator();
-        RuleAttribute ruleAttribute = ruleAttributeDao.findOne(expression.getRuleAttributeId());
-        String propertyCode = ruleAttribute.getAttribute();
-        String comparisonValue = expression.getComparisonValue();
-        RuleAttributeType ruleAttributeType = ruleAttribute.getRuleAttributeType();
-        switch (ruleAttributeType) {
-            case STRING:
-                //字符串类型需要在两侧加单引号
-                comparisonValue = "'" + comparisonValue + "'";
-                break;
-            case DATETIME:
-                //日期类型需要转化为yyyy-MM-dd HH:mm:ss:SS 格式 在两侧加单引号
-                Date date = DateUtils.parseDate(comparisonValue, DEFAULT_DATE_FORMAT);
-                comparisonValue = "'" + DateUtils.formatDate(date, "yyyy-MM-dd HH:mm:ss:SS") + "'";
-                break;
-            default:
-                break;
-        }
-        //需要在参数上加上前缀
-        propertyCode = RULE_CHAIN_PARAM_PREFIX + propertyCode;
-        StringBuilder builder = new StringBuilder();
-        switch (operator) {
-            case EQUAL:
-                builder.append(propertyCode).append("==").append(comparisonValue);
-                break;
-            case NOTEQUAL:
-                builder.append(propertyCode).append("!=").append(comparisonValue);
-                break;
-            case LESS:
-                builder.append(propertyCode).append("<").append(comparisonValue);
-                break;
-            case GREATER:
-                builder.append(propertyCode).append(">").append(comparisonValue);
-                break;
-            case LESS_EQUAL:
-                builder.append(propertyCode).append("<=").append(comparisonValue);
-                break;
-            case GREATER_EQUAL:
-                builder.append(propertyCode).append(">=").append(comparisonValue);
-                break;
-            case CONTAIN:
-                builder.append("string.contains(").append(propertyCode).append(",").append(comparisonValue).append(")");
-                break;
-            case MATCH:
-                builder.append(propertyCode).append("=~").append(comparisonValue);
-                break;
-            case COMPARER:
-                //MatchRuleComparator('sei-rule','demoHello/matchRuleComparator')
-                //comparisonValue中模块名与url路径以:相隔
-                String[] splits = StringUtils.split(comparisonValue, MatchingRuleComparator.SPLIT_CHAR);
-                if (splits.length != MatchingRuleComparator.SPLIT_LENGTH) {
-                    throw new MatchingRuleComparatorException("匹配规则计算接口实现[" + comparisonValue + "]不符合定义,正确定义为[模块名" + MatchingRuleComparator.SPLIT_CHAR + "URL路径]");
-                }
-                String module = splits[0];
-                String url = splits[1];
-                if (StringUtils.isBlank(module)) {
-                    throw new MatchingRuleComparatorException("匹配规则计算接口实现[" + comparisonValue + "]模块名为空");
-                }
-                if (StringUtils.isBlank(url)) {
-                    throw new MatchingRuleComparatorException("匹配规则计算接口实现[" + comparisonValue + "]URL路径为空");
-                }
-                builder.append("MatchRuleComparator('").append(module).append("','").append(url).append("')");
-                break;
-            default:
-                break;
-        }
-        return builder.toString();
-    }
 }

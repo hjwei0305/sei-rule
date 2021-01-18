@@ -1,12 +1,11 @@
 package com.changhong.sei.rule.service;
 
-import com.changhong.sei.core.test.BaseUnitTest;
-import com.changhong.sei.rule.dao.RuleTreeNodeDao;
+import com.changhong.sei.rule.BaseUnit5Test;
 import com.changhong.sei.rule.entity.RuleTreeNode;
+import com.changhong.sei.rule.service.bo.RuleChain;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
-import junit.runner.BaseTestRunner;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
@@ -16,7 +15,7 @@ import java.util.Map;
 /**
  * 规则树节点测试
  */
-public class RuleTreeNodeServiceTest extends BaseUnitTest {
+public class RuleTreeNodeServiceTest extends BaseUnit5Test {
 
     @Autowired
     private RuleTreeNodeService service;
@@ -31,10 +30,10 @@ public class RuleTreeNodeServiceTest extends BaseUnitTest {
         env.put("param", param);
         List<RuleTreeNode> nodes =  service.findRootNodes(ruleTypeId);
         for (RuleTreeNode node : nodes) {
-            List<String> expressions = service.getExpressionByRootNode(node.getId());
-            for (String expression : expressions) {
+            List<RuleChain> ruleChains = service.getExpressionByRootNode(node.getId());
+            for (RuleChain ruleChain : ruleChains) {
                 // 编译表达式
-                Expression compiledExp = AviatorEvaluator.compile(expression, true);
+                Expression compiledExp = AviatorEvaluator.compile(ruleChain.getExpression(), true);
                 Boolean result = (Boolean) compiledExp.execute(env);
                 System.out.println(result);
             }

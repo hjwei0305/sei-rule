@@ -1,4 +1,4 @@
-package com.changhong.sei.rule.service.aviatorFunction;
+package com.changhong.sei.rule.service.aviator.function;
 
 import com.googlecode.aviator.runtime.function.AbstractFunction;
 import com.googlecode.aviator.runtime.function.FunctionUtils;

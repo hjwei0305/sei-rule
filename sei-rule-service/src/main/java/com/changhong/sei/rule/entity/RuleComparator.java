@@ -4,9 +4,7 @@ import com.changhong.sei.core.entity.BaseAuditableEntity;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -26,6 +24,12 @@ public class RuleComparator extends BaseAuditableEntity {
      */
     @Column(name = "rule_entity_type_id")
     private String ruleEntityTypeId;
+    /**
+     * 规则业务实体
+     */
+    @ManyToOne
+    @JoinColumn(name = "rule_entity_type_id", insertable = false, updatable = false)
+    private RuleEntityType ruleEntityType;
     /**
      * 方法名
      */
@@ -48,6 +52,14 @@ public class RuleComparator extends BaseAuditableEntity {
 
     public void setRuleEntityTypeId(String ruleEntityTypeId) {
         this.ruleEntityTypeId = ruleEntityTypeId;
+    }
+
+    public RuleEntityType getRuleEntityType() {
+        return ruleEntityType;
+    }
+
+    public void setRuleEntityType(RuleEntityType ruleEntityType) {
+        this.ruleEntityType = ruleEntityType;
     }
 
     public String getMethod() {

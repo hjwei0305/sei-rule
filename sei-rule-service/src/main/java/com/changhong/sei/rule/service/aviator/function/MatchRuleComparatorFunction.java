@@ -1,4 +1,4 @@
-package com.changhong.sei.rule.service.aviatorFunction;
+package com.changhong.sei.rule.service.aviator.function;
 
 import com.changhong.sei.apitemplate.ApiTemplate;
 import com.changhong.sei.core.context.ContextUtil;
