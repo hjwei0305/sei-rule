@@ -5,8 +5,9 @@ import com.changhong.sei.core.entity.ITenant;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * 规则树节点返回结果(NodeReturnResult)实体类
@@ -35,12 +36,6 @@ public class NodeReturnResult extends BaseAuditableEntity implements ITenant {
      */
     @Column(name = "rule_return_type_id")
     private String ruleReturnTypeId;
-    /**
-     * 返回结果类型
-     */
-    @ManyToOne
-    @JoinColumn(name = "rule_return_type_id", insertable = false, updatable = false)
-    private RuleReturnType ruleReturnType;
     /**
      * 返回对象Id
      */
@@ -79,14 +74,6 @@ public class NodeReturnResult extends BaseAuditableEntity implements ITenant {
 
     public void setRuleReturnTypeId(String ruleReturnTypeId) {
         this.ruleReturnTypeId = ruleReturnTypeId;
-    }
-
-    public RuleReturnType getRuleReturnType() {
-        return ruleReturnType;
-    }
-
-    public void setRuleReturnType(RuleReturnType ruleReturnType) {
-        this.ruleReturnType = ruleReturnType;
     }
 
     public String getReturnValueId() {

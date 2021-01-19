@@ -19,6 +19,11 @@ public class RuleChain implements Serializable {
     private String expression;
 
     /**
+     * 结果节点ID
+     */
+    private String ruleTreeNodeId;
+
+    /**
      * 返回对象类名
      */
     private String returnEntityClass;
@@ -33,12 +38,25 @@ public class RuleChain implements Serializable {
      */
     private RuleServiceMethod ruleServiceMethod;
 
+    /**
+     * 执行方法是异步执行
+     */
+    private Boolean asyncExecute = Boolean.FALSE;
+
     public String getExpression() {
         return expression;
     }
 
     public void setExpression(String expression) {
         this.expression = expression;
+    }
+
+    public String getRuleTreeNodeId() {
+        return ruleTreeNodeId;
+    }
+
+    public void setRuleTreeNodeId(String ruleTreeNodeId) {
+        this.ruleTreeNodeId = ruleTreeNodeId;
     }
 
     public String getReturnEntityClass() {
@@ -63,5 +81,13 @@ public class RuleChain implements Serializable {
 
     public void setRuleServiceMethod(RuleServiceMethod ruleServiceMethod) {
         this.ruleServiceMethod = ruleServiceMethod;
+    }
+
+    public Boolean getAsyncExecute() {
+        return asyncExecute;
+    }
+
+    public void setAsyncExecute(Boolean asyncExecute) {
+        this.asyncExecute = asyncExecute;
     }
 }

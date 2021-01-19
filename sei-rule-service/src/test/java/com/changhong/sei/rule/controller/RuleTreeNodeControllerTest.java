@@ -39,7 +39,7 @@ public class RuleTreeNodeControllerTest extends BaseUnit5Test {
     }
 
     @Test
-    public void saveRuleTreeTest() {
+    public void saveRuleTreeTest() throws InterruptedException {
         RuleTree ruleTree = new RuleTree();
         ruleTree.setName("保证金规则");
         ruleTree.setRuleTypeId("76E87452-562B-11EB-B2C8-3C6AA7266A51");
@@ -82,12 +82,14 @@ public class RuleTreeNodeControllerTest extends BaseUnit5Test {
         child2.setRuleServiceMethodId("90BB80A7-5968-11EB-94B4-3C6AA7266A52");
         ruleTreeNode.setChildren(Arrays.asList(child, child2));
         ResultData resultData = controller.saveRuleTree(ruleTree);
+        //等待建立缓存
+        Thread.sleep(5000);
         Assertions.assertTrue(resultData.getSuccess());
     }
 
     @Test
     public void deleteRuleTreeTest() {
-        controller.deleteRuleTree("FA8357F6-56F5-11EB-8A46-3C6AA7266A51");
+        controller.deleteRuleTree("4163CEF7-5A22-11EB-A788-3C6AA7266A51");
     }
 
     @Test

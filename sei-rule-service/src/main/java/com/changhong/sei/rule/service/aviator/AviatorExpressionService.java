@@ -31,7 +31,7 @@ public class AviatorExpressionService {
     /**
      * 表达式前缀
      */
-    public static final String RULE_CHAIN_PARAM_PREFIX = "param.";
+    public static final String RULE_CHAIN_PARAM_PREFIX = "param";
     /**
      * 或表达式
      */
@@ -92,7 +92,7 @@ public class AviatorExpressionService {
                 break;
         }
         //需要在参数上加上前缀
-        propertyCode = RULE_CHAIN_PARAM_PREFIX + propertyCode;
+        propertyCode = RULE_CHAIN_PARAM_PREFIX + "." + propertyCode;
         StringBuilder builder = new StringBuilder();
         switch (operator) {
             case EQUAL:

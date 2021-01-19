@@ -1,5 +1,6 @@
 package com.changhong.sei.rule.service;
 
+import com.changhong.sei.core.util.JsonUtils;
 import com.changhong.sei.rule.BaseUnit5Test;
 import com.changhong.sei.rule.entity.RuleTreeNode;
 import com.changhong.sei.rule.service.bo.RuleChain;
@@ -38,6 +39,12 @@ public class RuleTreeNodeServiceTest extends BaseUnit5Test {
                 System.out.println(result);
             }
         }
+    }
+
+    @Test
+    void getExpressionByRootNode() {
+        List<RuleChain> ruleChains = service.getExpressionByRootNode("E572FF56-5A29-11EB-82F6-3C6AA7266A51");
+        System.out.println(JsonUtils.toJson(ruleChains));
     }
 
 }

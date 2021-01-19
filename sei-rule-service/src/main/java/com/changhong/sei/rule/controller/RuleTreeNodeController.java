@@ -125,10 +125,10 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
      * @param ruleTreeRoot 规则树根节点
      * @return 处理结果
      */
-/*    @Override
+    @Override
     public ResultData<?> updateRootNode(RuleTreeRoot ruleTreeRoot) {
         return ResultDataUtil.convertFromOperateResult(service.updateRootNode(ruleTreeRoot));
-    }*/
+    }
 
     /**
      * 获取比较运算符枚举值

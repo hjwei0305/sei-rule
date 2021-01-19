@@ -2,16 +2,14 @@ package com.changhong.sei.rule.api;
 
 import com.changhong.sei.core.api.BaseEntityApi;
 import com.changhong.sei.core.dto.ResultData;
-import com.changhong.sei.rule.dto.ruletree.RuleTree;
 import com.changhong.sei.rule.dto.RuleTreeNodeDto;
+import com.changhong.sei.rule.dto.ruletree.RuleTree;
+import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
 import com.changhong.sei.util.EnumUtils;
 import io.swagger.annotations.ApiOperation;
-import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -36,12 +34,13 @@ public interface RuleTreeNodeApi extends BaseEntityApi<RuleTreeNodeDto> {
 
     /**
      * 更新规则树根节点信息
+     *
      * @param ruleTreeRoot 规则树根节点
      * @return 处理结果
      */
-/*    @PostMapping(path = "updateRootNode", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "updateRootNode", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "更新规则树根节点信息", notes = "更新规则树根节点信息:名称、优先级、启用")
-    ResultData<?> updateRootNode(@RequestBody RuleTreeRoot ruleTreeRoot);*/
+    ResultData<?> updateRootNode(@RequestBody RuleTreeRoot ruleTreeRoot);
 
     /**
      * 获取比较运算符枚举值

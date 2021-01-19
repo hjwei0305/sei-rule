@@ -14,6 +14,7 @@ import com.changhong.sei.rule.sdk.dto.RuleReturnEntity;
 import com.changhong.sei.rule.service.aviator.AviatorExpressionService;
 import com.changhong.sei.rule.service.bo.RuleChain;
 import com.changhong.sei.serial.sdk.SerialService;
+import com.changhong.sei.utils.AsyncRunUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     @Autowired
     private RuleTypeDao ruleTypeDao;
     @Autowired
-    private NodeReturnResultDao returnResultDao;
+    private RuleReturnTypeDao ruleReturnTypeDao;
     @Autowired
     private RuleServiceMethodDao ruleServiceMethodDao;
     @Autowired(required = false)
@@ -58,6 +59,8 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     private AviatorExpressionService aviatorExpressionService;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private AsyncRunUtil asyncRunUtil;
 
     @Override
     protected BaseTreeDao<RuleTreeNode> getDao() {
@@ -77,12 +80,20 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     /**
      * 根据根节点Id查询对应的规则链表达式列表
      *
-     * @param rootNodeId 规则类型Id
-     * @return 根节点清单
+     * @param rootNodeId 根节点Id
+     * @return 规则链表达式列表
      */
     public List<RuleChain> getExpressionByRootNode(String rootNodeId) {
         BoundListOperations<String, RuleChain> operations = redisTemplate.boundListOps(RULE_CHAIN_CACHE_KEY_PREFIX + rootNodeId);
-        return operations.range(0, operations.size());
+        List<RuleChain> ruleChains = operations.range(0, operations.size());
+        if (Objects.isNull(ruleChains) || ruleChains.isEmpty()) {
+            //重新建立缓存
+            RuleTreeNode rootNode = getRuleTree(rootNodeId);
+            buildCache(rootNode);
+            //再去获取
+            ruleChains = operations.range(0, operations.size());
+        }
+        return ruleChains;
     }
 
     /**
@@ -91,7 +102,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      * @param ruleTreeRoot 规则树根节点
      * @return 处理结果
      */
-/*    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public OperateResult updateRootNode(RuleTreeRoot ruleTreeRoot) {
         String nodeId = ruleTreeRoot.getId();
         // 获取规则树节点
@@ -107,7 +118,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         dao.save(ruleTreeNode);
         // 更新规则树根节点信息成功！
         return OperateResult.operationSuccess("00025");
-    }*/
+    }
 
     /**
      * 检查菜单父节点
@@ -205,6 +216,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
 
     /**
      * 组装节点的其他信息
+     *
      * @param node 节点
      */
     private void assembleNodeInfo(RuleTreeNode node) {
@@ -216,6 +228,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
 
     /**
      * 获取一颗规则树
+     *
      * @param node 起始节点
      * @return 规则树
      */
@@ -230,6 +243,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
 
     /**
      * 递归设置所有子节点
+     *
      * @param node 起始节点
      */
     private void setChildrenInFindOneTree(RuleTreeNode node) {
@@ -245,6 +259,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
 
     /**
      * 获取一个节点的子节点清单（不递归）
+     *
      * @param parentId 父节点Id
      * @return 子节点清单
      */
@@ -306,6 +321,8 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         }
         //保存子节点
         saveChildren(saveResult.getData(), ruleNode.getChildren());
+        //异步构建缓存
+        asyncRunUtil.runAsync(() -> buildCache(ruleNode));
         // 业务规则【{0}】保存成功！
         return OperateResult.operationSuccess("00017", ruleNode.getName());
     }
@@ -317,36 +334,10 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      * @param children 子节点清单
      */
     private void saveChildren(RuleTreeNode ruleNode, List<RuleTreeNode> children) {
-        //循环传递根节点的id
-        if (StringUtils.isBlank(ruleNode.getParentId())) {
-            ruleNode.setRootId(ruleNode.getId());
-        } else {
-            ruleNode.setRootId(ruleNode.getRootId());
-        }
-        //获得当前节点表达式
-        String expression = aviatorExpressionService.convertToExpression(ruleNode);
-        //循环拼接表达式
-        if (StringUtils.isNotBlank(expression)) {
-            //判断前面是否已经有节点生成表达式
-            String parentExpression = ruleNode.getExpression();
-            if (StringUtils.isNotBlank(parentExpression)) {
-                ruleNode.setExpression(parentExpression + " && " + expression);
-            } else {
-                ruleNode.setExpression(expression);
-            }
-        }
-        if (ruleNode.getFinished()) {
-            //子节点为空，则把这一条规则链的表达式保存起来
-            //00004 = 规则[{0}]:规则叶子节点[{1}]生成表达式{2}！
-            LogUtil.bizLog("00004", ruleNode.getRootId(), ruleNode.getId(), ruleNode.getExpression());
-            RuleChain ruleChain = constructRuleChain(ruleNode);
-            BoundListOperations<String, RuleChain> operations = redisTemplate.boundListOps(RULE_CHAIN_CACHE_KEY_PREFIX + ruleNode.getRootId());
-            operations.leftPush(ruleChain);
+        if (CollectionUtils.isEmpty(children)) {
             return;
         }
-        //对字节的按照rank倒叙排序
-        List<RuleTreeNode> rankedChildren = children.stream().sorted(Comparator.comparing(RuleTreeNode::getRank).reversed()).collect(Collectors.toList());
-        rankedChildren.forEach(node -> {
+        children.forEach(node -> {
             // 重新创建节点
             node.setId(null);
             node.setCode(null);
@@ -364,7 +355,49 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     }
 
     /**
+     * 重新建立缓存
+     *
+     * @param ruleNode 树节点
+     */
+    private void buildCache(RuleTreeNode ruleNode) {
+        //循环传递根节点的id
+        if (StringUtils.isBlank(ruleNode.getParentId())) {
+            ruleNode.setRootId(ruleNode.getId());
+        }
+        //获得当前节点表达式
+        String expression = aviatorExpressionService.convertToExpression(ruleNode);
+        //循环拼接表达式
+        if (StringUtils.isNotBlank(expression)) {
+            //判断前面是否已经有节点生成表达式
+            String parentExpression = ruleNode.getExpression();
+            if (StringUtils.isNotBlank(parentExpression)) {
+                ruleNode.setExpression(parentExpression + " && " + expression);
+            } else {
+                ruleNode.setExpression(expression);
+            }
+        }
+        if (ruleNode.getFinished()) {
+            //子节点为空，则把这一条规则链的表达式保存起来
+            //00004 = 规则[{0}]:规则叶子节点[{1}]生成表达式{2}！
+            LogUtil.bizLog("00004", ruleNode.getCode(), ruleNode.getCode(), ruleNode.getExpression());
+            RuleChain ruleChain = constructRuleChain(ruleNode);
+            BoundListOperations<String, RuleChain> operations = redisTemplate.boundListOps(RULE_CHAIN_CACHE_KEY_PREFIX + ruleNode.getRootId());
+            operations.leftPush(ruleChain);
+            return;
+        }
+        List<RuleTreeNode> children = ruleNode.getChildren();
+        //对字节的按照rank倒叙排序
+        List<RuleTreeNode> rankedChildren = children.stream().sorted(Comparator.comparing(RuleTreeNode::getRank).reversed()).collect(Collectors.toList());
+        rankedChildren.forEach(node -> {
+            node.setRootId(ruleNode.getRootId());
+            node.setExpression(ruleNode.getExpression());
+            buildCache(node);
+        });
+    }
+
+    /**
      * 组装规则链
+     *
      * @param ruleNode 规则树节点
      * @return
      */
@@ -372,21 +405,28 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         RuleChain ruleChain = new RuleChain();
         //表达式
         ruleChain.setExpression(ruleNode.getExpression());
+        //节点Id
+        ruleChain.setRuleTreeNodeId(ruleNode.getId());
         //返回对象
-        List<NodeReturnResult>  returnResults = returnResultDao.findByRuleTreeNodeId(ruleNode.getId());
-        List<RuleReturnEntity>  returnEntities = new ArrayList<>();
-        for (NodeReturnResult result : returnResults){
+        List<NodeReturnResult> returnResults = ruleNode.getNodeReturnResults();
+        List<RuleReturnEntity> returnEntities = new ArrayList<>();
+        for (NodeReturnResult result : returnResults) {
             RuleReturnEntity entity = new RuleReturnEntity();
-            entity.setClassName(result.getRuleReturnType().getCode());
+            RuleReturnType ruleReturnType = ruleReturnTypeDao.findOne(result.getRuleReturnTypeId());
+            entity.setClassName(ruleReturnType.getCode());
             entity.setId(result.getReturnValueId());
             entity.setName(result.getReturnValueName());
             returnEntities.add(entity);
         }
         ruleChain.setReturnEntities(returnEntities);
         //执行方法
-        if (StringUtils.isNotBlank(ruleNode.getRuleServiceMethodId())){
+        if (StringUtils.isNotBlank(ruleNode.getRuleServiceMethodId())) {
             RuleServiceMethod method = ruleServiceMethodDao.findOne(ruleNode.getRuleServiceMethodId());
             ruleChain.setRuleServiceMethod(method);
+        }
+        //是否异步执行
+        if (ruleNode.getAsyncExecute()) {
+            ruleChain.setAsyncExecute(Boolean.TRUE);
         }
         return ruleChain;
     }
