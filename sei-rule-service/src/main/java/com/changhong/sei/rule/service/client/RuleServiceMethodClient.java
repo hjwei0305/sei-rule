@@ -28,7 +28,7 @@ public class RuleServiceMethodClient {
      * @param params        参数
      * @return 调用结果
      */
-    public ResultData<String> post(String appModuleCode, String path, Object params, Boolean asyncExecute) {
+    public ResultData<?> post(String appModuleCode, String path, Object params, Boolean asyncExecute) {
         if (asyncExecute) {
             return postAsync(appModuleCode, path, params);
         } else {
@@ -44,7 +44,7 @@ public class RuleServiceMethodClient {
      * @param params        参数
      * @return 调用结果
      */
-    public ResultData<String> post(String appModuleCode, String path, Object params) {
+    private ResultData<?> post(String appModuleCode, String path, Object params) {
         return apiTemplate.postByAppModuleCode(appModuleCode, path, ResultData.class, params);
     }
 
@@ -55,10 +55,8 @@ public class RuleServiceMethodClient {
      * @param path          路径
      * @param params        参数
      */
-    public ResultData<String> postAsync(String appModuleCode, String path, Object params) {
+    private ResultData<?> postAsync(String appModuleCode, String path, Object params) {
         asyncRunUtil.runAsync(() -> apiTemplate.postByAppModuleCode(appModuleCode, path, ResultData.class, params));
         return ResultData.success();
     }
-
-
 }

@@ -126,7 +126,7 @@ public class RuleEngineService {
                             RuleServiceMethodParam methodParam = new RuleServiceMethodParam();
                             methodParam.setReturnEntityMap(response.getReturnEntityMap());
                             methodParam.setRequest(request);
-                            ResultData<String> apiResult = ruleServiceMethodClient.post(ruleEntityType.getServiceName(), url.toString(), methodParam, ruleChain.getAsyncExecute());
+                            ResultData<?> apiResult = ruleServiceMethodClient.post(ruleEntityType.getServiceName(), url.toString(), methodParam, ruleChain.getAsyncExecute());
                             if (apiResult.successful()) {
                                 //设置方法已执行
                                 response.setExecuted(true);
