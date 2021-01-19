@@ -78,72 +78,110 @@ public class RuleEngineService {
             throw new RuleEngineException("00029");
         }
         env.put(RULE_CHAIN_PARAM_PREFIX, param);
+        //根据优先级依次匹配多个规则
         for (RuleTreeNode ruleTree : ruleTrees) {
-            //获得
+            //获得规则链
             List<RuleChain> ruleChains = ruleTreeNodeService.getExpressionByRootNode(ruleTree.getId());
             for (RuleChain ruleChain : ruleChains) {
-                // 编译表达式
-                Expression compiledExp = AviatorEvaluator.compile(ruleChain.getExpression(), true);
-                Boolean result = (Boolean) compiledExp.execute(env);
-                //匹配成功
-                if (result) {
-                    //记录日志
-                    //规则类型[{0}]已匹配上规则节点[{1}]，输入参数:{2}，匹配表达式:[{3}]
-                    LogUtil.bizLog("00031", request.getRuleTypeCode(), ruleChain.getRuleTreeNodeId(), request.getRuleEntityJson(), ruleChain.getExpression());
-                    //设置是否匹配标识
-                    response.setMatched(true);
-                    //返回对象
-                    List<RuleReturnEntity> returnEntities = ruleChain.getReturnEntities();
-                    if (!Objects.isNull(returnEntities) && !returnEntities.isEmpty()) {
-                        //组装Map key：类名 enties:实体对象列表
-                        Map<String, List<RuleReturnEntity>> returnEntityMap = new HashMap<>();
-                        returnEntities.forEach(e -> {
-                            List<RuleReturnEntity> entries = returnEntityMap.get(e.getClassName());
-                            if (Objects.isNull(entries)) {
-                                entries = new ArrayList<>();
-                            }
-                            entries.add(e);
-                            returnEntityMap.put(e.getClassName(), entries);
-                        });
-                        response.setReturnEntityMap(returnEntityMap);
-                    }
-                    //执行方法
-                    RuleServiceMethod method = ruleChain.getRuleServiceMethod();
-                    if (Objects.nonNull(method)) {
-                        RuleEntityType ruleEntityType = ruleEntityTypeDao.findOne(method.getRuleEntityTypeId());
-                        if (Objects.isNull(ruleEntityType)) {
-                            //指定规则业务实体[{0}]不存在！
-                            throw new RuleEngineException("00030", method.getRuleEntityTypeId());
-                        }
-                        try {
-                            StringBuilder url = new StringBuilder();
-                            if (method.getPath().endsWith("/")) {
-                                url.append(method.getPath());
-                            } else {
-                                url.append(method.getPath()).append("/");
-                            }
-                            url.append(method.getMethod());
-                            RuleServiceMethodParam methodParam = new RuleServiceMethodParam();
-                            methodParam.setReturnEntityMap(response.getReturnEntityMap());
-                            methodParam.setRequest(request);
-                            ResultData<?> apiResult = ruleServiceMethodClient.post(ruleEntityType.getServiceName(), url.toString(), methodParam, ruleChain.getAsyncExecute());
-                            if (apiResult.successful()) {
-                                //设置方法已执行
-                                response.setExecuted(true);
-                            } else {
-                                LogUtil.error("访问外部服务模块返回失败:" + apiResult.getMessage());
-                                //访问外部服务模块{0}，path={1}自定义方法返回失败:[message={2}]，请查看应用模块[{0}]的异常日志！
-                                throw new RuleEngineException("00001", ruleEntityType.getServiceName(), url.toString(), apiResult.getMessage());
-                            }
-                        } catch (Exception e) {
-                            LogUtil.error("访问外部服务模块自定义方法异常:" + e.getMessage(), e);
-                            throw new RuleEngineException("访问外部服务模块自定义方法异常:" + e.getMessage(), e);
-                        }
-                    }
-                    break;
+                //是否匹配成功
+                if (ruleChainMatch(env, ruleChain)) {
+                    //匹配成功后执行操作
+                    matchSuccess(request, response, ruleChain);
+                    //匹配上一个直接返回
+                    return response;
                 }
             }
         }
+        //未匹配上 返回默认响应
         return response;
+    }
+
+    /**
+     * 规则链匹配
+     *
+     * @param env       匹配参数
+     * @param ruleChain 规则链
+     * @return 匹配结果
+     */
+    private boolean ruleChainMatch(Map<String, Object> env, RuleChain ruleChain) {
+        // 编译表达式
+        Expression compiledExp = AviatorEvaluator.compile(ruleChain.getExpression(), true);
+        return (Boolean) compiledExp.execute(env);
+    }
+
+    /**
+     * 匹配成功后执行的方法
+     *
+     * @param request   匹配请求
+     * @param response  匹配结果
+     * @param ruleChain 规则链
+     */
+    private void matchSuccess(RuleRunRequest request, RuleRunResponse response, RuleChain ruleChain) {
+        //记录日志
+        //规则类型[{0}]已匹配上规则节点[{1}]，输入参数:{2}，匹配表达式:[{3}]
+        LogUtil.bizLog("00031", request.getRuleTypeCode(), ruleChain.getRuleTreeNodeId(), request.getRuleEntityJson(), ruleChain.getExpression());
+        //设置是否匹配标识
+        response.setMatched(true);
+        response.setMatchedNodeId(ruleChain.getRuleTreeNodeId());
+        //返回对象
+        List<RuleReturnEntity> returnEntities = ruleChain.getReturnEntities();
+        if (!Objects.isNull(returnEntities) && !returnEntities.isEmpty()) {
+            //组装Map key：类名 enties:实体对象列表
+            Map<String, List<RuleReturnEntity>> returnEntityMap = new HashMap<>();
+            returnEntities.forEach(e -> {
+                List<RuleReturnEntity> entries = returnEntityMap.get(e.getClassName());
+                if (Objects.isNull(entries)) {
+                    entries = new ArrayList<>();
+                }
+                entries.add(e);
+                returnEntityMap.put(e.getClassName(), entries);
+            });
+            response.setReturnEntityMap(returnEntityMap);
+        }
+        //执行方法
+        RuleServiceMethod method = ruleChain.getRuleServiceMethod();
+        if (Objects.nonNull(method)) {
+            serviceMethodExecute(request, response, ruleChain, method);
+        }
+    }
+
+    /**
+     * 执行自定义规则执行方法
+     *
+     * @param request   匹配请求
+     * @param response  匹配结果
+     * @param ruleChain 规则链
+     * @param method    自定义规则方法
+     */
+    private void serviceMethodExecute(RuleRunRequest request, RuleRunResponse response, RuleChain ruleChain, RuleServiceMethod method) {
+        RuleEntityType ruleEntityType = ruleEntityTypeDao.findOne(method.getRuleEntityTypeId());
+        if (Objects.isNull(ruleEntityType)) {
+            //指定规则业务实体[{0}]不存在！
+            throw new RuleEngineException("00030", method.getRuleEntityTypeId());
+        }
+        try {
+            StringBuilder url = new StringBuilder();
+            if (method.getPath().endsWith("/")) {
+                url.append(method.getPath());
+            } else {
+                url.append(method.getPath()).append("/");
+            }
+            url.append(method.getMethod());
+            RuleServiceMethodParam methodParam = new RuleServiceMethodParam();
+            methodParam.setReturnEntityMap(response.getReturnEntityMap());
+            methodParam.setRequest(request);
+            ResultData<?> apiResult = ruleServiceMethodClient.post(ruleEntityType.getServiceName(), url.toString(), methodParam, ruleChain.getAsyncExecute());
+            if (apiResult.successful()) {
+                //设置方法已执行
+                response.setExecuted(true);
+            } else {
+                LogUtil.error("访问外部服务模块返回失败:" + apiResult.getMessage());
+                //访问外部服务模块{0}，path={1}自定义方法返回失败:[message={2}]，请查看应用模块[{0}]的异常日志！
+                throw new RuleEngineException("00001", ruleEntityType.getServiceName(), url.toString(), apiResult.getMessage());
+            }
+        } catch (Exception e) {
+            LogUtil.error("访问外部服务模块自定义方法异常:" + e.getMessage(), e);
+            throw new RuleEngineException("访问外部服务模块自定义方法异常:" + e.getMessage(), e);
+        }
     }
 }
