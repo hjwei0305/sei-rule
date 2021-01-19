@@ -1,4 +1,4 @@
-package com.changhong.sei.rule.service;
+package com.changhong.sei.rule.service.aviator;
 
 import com.changhong.sei.rule.dao.RuleAttributeDao;
 import com.changhong.sei.rule.dao.RuleComparatorDao;

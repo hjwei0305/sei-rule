@@ -26,7 +26,7 @@ public class RuleTreeNodeServiceTest extends BaseUnit5Test {
         String ruleTypeId = "76E87452-562B-11EB-B2C8-3C6AA7266A51";
         Map<String, Object> env = new HashMap<>();
         Map<String,Object> param = new HashMap<>();
-        param.put("postscript","44保证金565");
+        param.put("postscript","44宿舍保证金565");
         env.put("param", param);
         List<RuleTreeNode> nodes =  service.findRootNodes(ruleTypeId);
         for (RuleTreeNode node : nodes) {

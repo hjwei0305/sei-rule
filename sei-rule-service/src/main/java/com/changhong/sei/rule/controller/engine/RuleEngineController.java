@@ -1,11 +1,15 @@
 package com.changhong.sei.rule.controller.engine;
 
 import com.changhong.sei.core.dto.ResultData;
+import com.changhong.sei.core.log.LogUtil;
+import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.rule.sdk.api.RuleEngineApi;
 import com.changhong.sei.rule.sdk.dto.RuleReturnEntity;
 import com.changhong.sei.rule.sdk.dto.RuleRunRequest;
 import com.changhong.sei.rule.sdk.dto.RuleRunResponse;
+import com.changhong.sei.rule.service.RuleEngineService;
 import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +28,10 @@ import java.util.Map;
 @Api(value = "RuleEngineApi", tags = "规则引擎OpenAPI服务实现")
 @RequestMapping(path = "ruleEngine", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RuleEngineController implements RuleEngineApi {
+
+    @Autowired
+    private RuleEngineService service;
+
     /**
      * 执行规则
      *
@@ -32,15 +40,13 @@ public class RuleEngineController implements RuleEngineApi {
      */
     @Override
     public ResultData<RuleRunResponse> run(@Valid RuleRunRequest request) {
-        RuleRunResponse response = new RuleRunResponse();
-        response.setMatched(Boolean.TRUE);
-        response.setExecuted(Boolean.TRUE);
-        Map<String, RuleReturnEntity> returnEntityMap = new HashMap<>();
-        RuleReturnEntity returnEntity1 = new RuleReturnEntity("001", "认款业务类型1");
-        RuleReturnEntity returnEntity2 = new RuleReturnEntity("002", "认款记账类型2");
-        returnEntityMap.put("com.changhong.beis.entity.ItemBusinessType", returnEntity1);
-        returnEntityMap.put("com.changhong.beis.entity.ItemAccountType", returnEntity2);
-        response.setReturnEntityMap(returnEntityMap);
+        RuleRunResponse response;
+        try {
+            response = service.run(request);
+        } catch (Exception e) {
+            LogUtil.error("规则引擎执行异常:" + e.getMessage(), e);
+            return ResultDataUtil.fail("规则引擎执行异常:" + e.getMessage());
+        }
         return ResultData.success(response);
     }
 }
