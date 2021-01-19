@@ -1,15 +1,20 @@
 package com.changhong.sei.rule.service;
 
 import com.changhong.sei.core.dao.BaseEntityDao;
+import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.service.BaseEntityService;
 import com.changhong.sei.core.service.bo.OperateResult;
 import com.changhong.sei.rule.dao.LogicalExpressionDao;
 import com.changhong.sei.rule.dao.RuleAttributeDao;
+import com.changhong.sei.rule.dto.engine.CanUseOperator;
 import com.changhong.sei.rule.entity.RuleAttribute;
+import com.changhong.sei.rule.service.utils.CanUseOperatorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -52,5 +57,20 @@ public class RuleAttributeService extends BaseEntityService<RuleAttribute> {
             return OperateResult.operationFailure("00012");
         }
         return super.preDelete(id);
+    }
+
+    /**
+     * 通过规则属性获取可使用的运算符
+     *
+     * @param ruleAttributeId 规则属性Id
+     * @return 可使用的运算符
+     */
+    public List<CanUseOperator> getCanUseOperators(String ruleAttributeId) {
+        // 获取股则属性
+        RuleAttribute attribute = dao.findOne(ruleAttributeId);
+        if (Objects.isNull(attribute)) {
+            return new LinkedList<>();
+        }
+        return CanUseOperatorUtil.getOperators(attribute.getRuleAttributeType());
     }
 }
