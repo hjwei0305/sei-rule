@@ -6,6 +6,7 @@ import com.changhong.sei.core.service.BaseEntityService;
 import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.rule.api.RuleAttributeApi;
 import com.changhong.sei.rule.dto.RuleAttributeDto;
+import com.changhong.sei.rule.dto.engine.CanUseOperator;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
 import com.changhong.sei.rule.dto.enums.RuleAttributeType;
 import com.changhong.sei.rule.entity.RuleAttribute;
@@ -60,5 +61,16 @@ public class RuleAttributeController extends BaseEntityController<RuleAttribute,
     @Override
     public ResultData<List<RuleAttributeDto>> findByRuleEntityTypeId(String ruleEntityTypeId) {
         return ResultData.success(convertToDtos(service.findByRuleEntityTypeId(ruleEntityTypeId)));
+    }
+
+    /**
+     * 通过规则属性获取可使用的运算符
+     *
+     * @param ruleAttributeId 规则属性Id
+     * @return 可使用的运算符
+     */
+    @Override
+    public ResultData<List<CanUseOperator>> getCanUseOperators(String ruleAttributeId) {
+        return ResultData.success(service.getCanUseOperators(ruleAttributeId));
     }
 }

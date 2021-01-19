@@ -3,6 +3,7 @@ package com.changhong.sei.rule.api;
 import com.changhong.sei.core.api.BaseEntityApi;
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.rule.dto.RuleAttributeDto;
+import com.changhong.sei.rule.dto.engine.CanUseOperator;
 import com.changhong.sei.util.EnumUtils;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -37,4 +38,13 @@ public interface RuleAttributeApi extends BaseEntityApi<RuleAttributeDto> {
     @GetMapping(path = "findByRuleEntityTypeId")
     @ApiOperation(value = "获取规则业务实体配置的属性清单", notes = "通过业务实体类型Id,获取配置的属性清单")
     ResultData<List<RuleAttributeDto>> findByRuleEntityTypeId(@RequestParam("ruleEntityTypeId") String ruleEntityTypeId);
+
+    /**
+     * 通过规则属性获取可使用的运算符
+     * @param ruleAttributeId 规则属性Id
+     * @return 可使用的运算符
+     */
+    @GetMapping(path = "getCanUseOperators")
+    @ApiOperation(value = "通过规则属性获取可使用的运算符", notes = "通过规则属性Id,获取可使用的运算符以及是否需要属性和匹配值")
+    ResultData<List<CanUseOperator>> getCanUseOperators(@RequestParam("ruleAttributeId") String ruleAttributeId);
 }
