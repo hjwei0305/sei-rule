@@ -19,6 +19,11 @@ public class RuleChain implements Serializable {
     private String expression;
 
     /**
+     * 返回对象类名
+     */
+    private String returnEntityClass;
+
+    /**
      * 返回对象
      */
     private List<RuleReturnEntity> returnEntities;
@@ -34,6 +39,14 @@ public class RuleChain implements Serializable {
 
     public void setExpression(String expression) {
         this.expression = expression;
+    }
+
+    public String getReturnEntityClass() {
+        return returnEntityClass;
+    }
+
+    public void setReturnEntityClass(String returnEntityClass) {
+        this.returnEntityClass = returnEntityClass;
     }
 
     public List<RuleReturnEntity> getReturnEntities() {
