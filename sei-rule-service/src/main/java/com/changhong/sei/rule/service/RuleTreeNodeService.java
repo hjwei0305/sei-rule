@@ -91,7 +91,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      * @param ruleTreeRoot 规则树根节点
      * @return 处理结果
      */
-    @Transactional(rollbackFor = Exception.class)
+/*    @Transactional(rollbackFor = Exception.class)
     public OperateResult updateRootNode(RuleTreeRoot ruleTreeRoot) {
         String nodeId = ruleTreeRoot.getId();
         // 获取规则树节点
@@ -107,7 +107,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         dao.save(ruleTreeNode);
         // 更新规则树根节点信息成功！
         return OperateResult.operationSuccess("00025");
-    }
+    }*/
 
     /**
      * 检查菜单父节点
@@ -323,7 +323,6 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         } else {
             ruleNode.setRootId(ruleNode.getRootId());
         }
-
         //获得当前节点表达式
         String expression = aviatorExpressionService.convertToExpression(ruleNode);
         //循环拼接表达式
@@ -336,7 +335,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
                 ruleNode.setExpression(expression);
             }
         }
-        if (CollectionUtils.isEmpty(children)) {
+        if (ruleNode.getFinished()) {
             //子节点为空，则把这一条规则链的表达式保存起来
             //00004 = 规则[{0}]:规则叶子节点[{1}]生成表达式{2}！
             LogUtil.bizLog("00004", ruleNode.getRootId(), ruleNode.getId(), ruleNode.getExpression());
@@ -345,7 +344,9 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
             operations.leftPush(ruleChain);
             return;
         }
-        children.forEach(node -> {
+        //对字节的按照rank倒叙排序
+        List<RuleTreeNode> rankedChildren = children.stream().sorted(Comparator.comparing(RuleTreeNode::getRank).reversed()).collect(Collectors.toList());
+        rankedChildren.forEach(node -> {
             // 重新创建节点
             node.setId(null);
             node.setCode(null);
@@ -376,6 +377,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         List<RuleReturnEntity>  returnEntities = new ArrayList<>();
         for (NodeReturnResult result : returnResults){
             RuleReturnEntity entity = new RuleReturnEntity();
+            entity.setClassName(result.getRuleReturnType().getCode());
             entity.setId(result.getReturnValueId());
             entity.setName(result.getReturnValueName());
             returnEntities.add(entity);

@@ -22,4 +22,12 @@ public interface RuleTypeDao extends BaseEntityDao<RuleType> {
      * @return 规则类型清单
      */
     List<RuleType> findByRuleEntityTypeIdAndTenantCode(String ruleEntityTypeId, String tenantCode);
+
+    /**
+     * 根据代码获取指定规则类型
+     * @param code 代码
+     * @param tenantCode 租户代码
+     * @return 规则类型
+     */
+    RuleType findByCodeAndTenantCode(String code, String tenantCode);
 }

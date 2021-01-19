@@ -16,6 +16,15 @@ import java.io.Serializable;
 @ApiModel("规则返回的实体")
 public class RuleReturnEntity implements Serializable {
     private static final long serialVersionUID = 45697932739016187L;
+
+    /**
+     * 实体类名
+     */
+    @NotBlank
+    @Size(max = 100)
+    @ApiModelProperty(value = "实体类名", required = true)
+    private String className;
+
     /**
      * 实体Id标识
      */
@@ -38,6 +47,14 @@ public class RuleReturnEntity implements Serializable {
     public RuleReturnEntity(@NotBlank @Size(max = 36) String id, @NotBlank @Size(max = 100) String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 
     public String getId() {

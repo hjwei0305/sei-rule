@@ -39,9 +39,9 @@ public interface RuleTreeNodeApi extends BaseEntityApi<RuleTreeNodeDto> {
      * @param ruleTreeRoot 规则树根节点
      * @return 处理结果
      */
-    @PostMapping(path = "updateRootNode", consumes = MediaType.APPLICATION_JSON_VALUE)
+/*    @PostMapping(path = "updateRootNode", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "更新规则树根节点信息", notes = "更新规则树根节点信息:名称、优先级、启用")
-    ResultData<?> updateRootNode(@RequestBody RuleTreeRoot ruleTreeRoot);
+    ResultData<?> updateRootNode(@RequestBody RuleTreeRoot ruleTreeRoot);*/
 
     /**
      * 获取比较运算符枚举值
