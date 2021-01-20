@@ -1,4 +1,4 @@
-package com.changhong.sei.rule.service;
+package com.changhong.sei.rule.service.engine;
 
 import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.dto.ResultData;
@@ -14,6 +14,7 @@ import com.changhong.sei.rule.sdk.dto.RuleReturnEntity;
 import com.changhong.sei.rule.sdk.dto.RuleRunRequest;
 import com.changhong.sei.rule.sdk.dto.RuleRunResponse;
 import com.changhong.sei.rule.sdk.dto.RuleServiceMethodParam;
+import com.changhong.sei.rule.service.RuleTreeNodeService;
 import com.changhong.sei.rule.service.bo.RuleChain;
 import com.changhong.sei.rule.service.client.RuleServiceMethodClient;
 import com.changhong.sei.rule.service.exception.RuleEngineException;
@@ -119,7 +120,7 @@ public class RuleEngineService {
     private void matchSuccess(RuleRunRequest request, RuleRunResponse response, RuleChain ruleChain) {
         //记录日志
         //规则类型[{0}]已匹配上规则节点[{1}]，输入参数:{2}，匹配表达式:[{3}]
-        LogUtil.bizLog("00031", request.getRuleTypeCode(), ruleChain.getRuleTreeNodeId(), request.getRuleEntityJson(), ruleChain.getExpression());
+        LogUtil.bizLog(ContextUtil.getMessage("00031", request.getRuleTypeCode(), ruleChain.getRuleTreeNodeId(), request.getRuleEntityJson(), ruleChain.getExpression()));
         //设置是否匹配标识
         response.setMatched(true);
         response.setMatchedNodeId(ruleChain.getRuleTreeNodeId());

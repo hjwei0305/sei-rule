@@ -4,10 +4,9 @@ import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.rule.sdk.api.RuleEngineApi;
-import com.changhong.sei.rule.sdk.dto.RuleReturnEntity;
 import com.changhong.sei.rule.sdk.dto.RuleRunRequest;
 import com.changhong.sei.rule.sdk.dto.RuleRunResponse;
-import com.changhong.sei.rule.service.RuleEngineService;
+import com.changhong.sei.rule.service.engine.RuleEngineService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 实现功能: 规则引擎OpenAPI服务实现

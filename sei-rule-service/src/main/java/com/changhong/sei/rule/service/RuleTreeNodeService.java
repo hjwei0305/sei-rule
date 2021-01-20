@@ -159,9 +159,12 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         }
         //检查逻辑表达式
         List<LogicalExpression> expressions = entity.getLogicalExpressions();
-        if (Objects.isNull(expressions) || expressions.isEmpty()) {
-            //规则树节点[{0}]表达式不能为空！
-            return OperateResultWithData.operationFailure("00020", entity.getName());
+        //不是真节点 需要填表达式
+        if (!entity.getTrueNode()) {
+            if (Objects.isNull(expressions) || expressions.isEmpty()) {
+                //规则树节点[{0}]表达式不能为空！
+                return OperateResultWithData.operationFailure("00020", entity.getName());
+            }
         }
         //检查结果
         if (entity.getFinished()) {
@@ -170,7 +173,6 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
                 //规则树节点[{0}]已勾结束节点,返回结果不能为空！
                 return OperateResultWithData.operationFailure("00021", entity.getName());
             }
-
         }
         OperateResultWithData<RuleTreeNode> result = super.save(entity);
         if (result.notSuccessful()) {
@@ -178,7 +180,9 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         }
         //放在后面是因为需要获取保存后的id
         //保存逻辑表达式
-        saveLogicalExpression(entity);
+        if (!entity.getTrueNode()) {
+            saveLogicalExpression(entity);
+        }
         //保存规则结果
         if (entity.getFinished()) {
             saveNodeResult(entity);
@@ -264,7 +268,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      * @return 子节点清单
      */
     private List<RuleTreeNode> getChildren(String parentId) {
-        return dao.findByParentId(parentId);
+        return dao.findByParentIdOrderByRankAsc(parentId);
     }
 
     /**
@@ -379,16 +383,16 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         if (ruleNode.getFinished()) {
             //子节点为空，则把这一条规则链的表达式保存起来
             //00004 = 规则[{0}]:规则叶子节点[{1}]生成表达式{2}！
-            LogUtil.bizLog("00004", ruleNode.getCode(), ruleNode.getCode(), ruleNode.getExpression());
+            LogUtil.bizLog(ContextUtil.getMessage("00004", ruleNode.getCode(), ruleNode.getCode(), ruleNode.getExpression()));
             RuleChain ruleChain = constructRuleChain(ruleNode);
             BoundListOperations<String, RuleChain> operations = redisTemplate.boundListOps(RULE_CHAIN_CACHE_KEY_PREFIX + ruleNode.getRootId());
             operations.leftPush(ruleChain);
             return;
         }
         List<RuleTreeNode> children = ruleNode.getChildren();
-        //对字节的按照rank倒叙排序
-        List<RuleTreeNode> rankedChildren = children.stream().sorted(Comparator.comparing(RuleTreeNode::getRank).reversed()).collect(Collectors.toList());
-        rankedChildren.forEach(node -> {
+        //对字节的按照rank顺序排序 数据库查询已rank顺序排序 这里不再排序
+        // List<RuleTreeNode> rankedChildren = children.stream().sorted(Comparator.comparing(RuleTreeNode::getRank)).collect(Collectors.toList());
+        children.forEach(node -> {
             node.setRootId(ruleNode.getRootId());
             node.setExpression(ruleNode.getExpression());
             buildCache(node);

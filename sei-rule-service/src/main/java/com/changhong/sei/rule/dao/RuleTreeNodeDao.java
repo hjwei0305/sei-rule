@@ -21,13 +21,14 @@ public interface RuleTreeNodeDao extends BaseTreeDao<RuleTreeNode> {
      * @param tenantCode 租户代码
      * @return 根节点清单
      */
-    @Query("select node from RuleTreeNode node where node.ruleTypeId=?1 and node.tenantCode=?2 and node.parentId is null order by node.rank desc ")
+    @Query("select node from RuleTreeNode node where node.ruleTypeId=?1 and node.tenantCode=?2 and node.parentId is null order by node.rank asc ")
     List<RuleTreeNode> findRootNodes(String ruleTypeId, String tenantCode);
 
     /**
-     * 获取子节点清单
+     * 获取子节点清单(根据rank倒叙排序)
+     *
      * @param parentId 父节点Id
      * @return 子节点清单
      */
-    List<RuleTreeNode> findByParentId(String parentId);
+    List<RuleTreeNode> findByParentIdOrderByRankAsc(String parentId);
 }
