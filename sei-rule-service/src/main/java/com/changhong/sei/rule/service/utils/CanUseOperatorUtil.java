@@ -47,6 +47,8 @@ public class CanUseOperatorUtil {
                 operators.add(new CanUseOperator(ComparisonOperator.LESS));
                 operators.add(new CanUseOperator(ComparisonOperator.LESS_EQUAL));
                 break;
+            default:
+                break;
         }
         // 公共操作符
         operators.add(new CanUseOperator(ComparisonOperator.COMPARER, Boolean.FALSE, Boolean.FALSE));

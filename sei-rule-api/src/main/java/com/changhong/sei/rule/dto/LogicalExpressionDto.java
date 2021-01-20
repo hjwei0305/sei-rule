@@ -38,7 +38,6 @@ public class LogicalExpressionDto extends BaseEntityDto {
     /**
      * 规则属性Id
      */
-    @NotBlank
     @Size(max = 36)
     @ApiModelProperty(value = "规则属性Id", required = true)
     private String ruleAttributeId;

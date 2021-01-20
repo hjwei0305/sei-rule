@@ -3,7 +3,9 @@ package com.changhong.sei.rule.service.aviator.function;
 import com.changhong.sei.apitemplate.ApiTemplate;
 import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.dto.ResultData;
+import com.changhong.sei.core.util.JsonUtils;
 import com.changhong.sei.exception.ServiceException;
+import com.changhong.sei.rule.service.aviator.cache.SimpleCache;
 import com.googlecode.aviator.runtime.function.AbstractFunction;
 import com.googlecode.aviator.runtime.function.FunctionUtils;
 import com.googlecode.aviator.runtime.type.AviatorBoolean;
@@ -12,7 +14,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+
+import static com.changhong.sei.rule.service.aviator.AviatorExpressionService.RULE_CHAIN_PARAM_PREFIX;
 
 /**
  * @author <a href="mailto:xiaogang.su@changhong.com">粟小刚</a>
@@ -21,6 +27,12 @@ import java.util.Map;
  */
 @Component("MatchRuleComparator")
 public class MatchRuleComparatorFunction extends AbstractFunction {
+
+    /**
+     * 单次调用（同一线程）外部比较器缓存
+     */
+    private final ThreadLocal<SimpleCache<String, Boolean>> cacheHolder = ThreadLocal.withInitial(() -> new SimpleCache<>(new HashMap<>()));
+
 
     /**
      * 函数名称
@@ -49,14 +61,24 @@ public class MatchRuleComparatorFunction extends AbstractFunction {
             //00003 = 访问外部服务API路径不能为空！
             throw new ServiceException(ContextUtil.getMessage("00003"));
         }
-        ResultData<Boolean> result = apiTemplate.postByAppModuleCode(appModuleCode, path, ResultData.class, env);
-        if (result.successful()) {
-            return AviatorBoolean.valueOf(result.getData());
+        //先从缓存中获取
+        SimpleCache<String, Boolean> cache = cacheHolder.get();
+        String cacheKey = appModuleCode + ":" + path;
+        Boolean cacheResult = cache.get(cacheKey);
+        if (Objects.nonNull(cacheResult)) {
+            return AviatorBoolean.valueOf(cacheResult);
         } else {
-            // = 访问外部服务模块{0}，path={1}返回失败，请查看应用模块[{0}]的异常日志！
-            throw new ServiceException(ContextUtil.getMessage("00001", appModuleCode, path));
+            //获取传入的参数
+            String param = JsonUtils.toJson(env.get(RULE_CHAIN_PARAM_PREFIX));
+            ResultData<Boolean> apiResult = apiTemplate.postByAppModuleCode(appModuleCode, path, ResultData.class, param);
+            if (apiResult.successful()) {
+                cache.put(cacheKey, apiResult.getData());
+                return AviatorBoolean.valueOf(apiResult.getData());
+            } else {
+                // 访问外部服务模块{0}，path={1}自定义方法返回失败:[message={2}]，请查看应用模块[{0}]的异常日志！
+                throw new ServiceException(ContextUtil.getMessage("00001", appModuleCode, path, apiResult.getMessage()));
+            }
         }
-
     }
 
     @Override

@@ -18,7 +18,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.changhong.sei.util.DateUtils.DEFAULT_DATE_FORMAT;
+import static com.changhong.sei.rule.dto.enums.ComparisonOperator.COMPARER;
+import static com.changhong.sei.util.DateUtils.DEFAULT_TIME_FORMAT;
 
 /**
  * @author <a href="mailto:xiaogang.su@changhong.com">粟小刚</a>
@@ -74,25 +75,29 @@ public class AviatorExpressionService {
      */
     private String convertToExpression(LogicalExpression expression) {
         ComparisonOperator operator = expression.getComparisonOperator();
-        RuleAttribute ruleAttribute = ruleAttributeDao.findOne(expression.getRuleAttributeId());
-        String propertyCode = ruleAttribute.getAttribute();
+        String propertyCode = "";
         String comparisonValue = expression.getComparisonValue();
-        RuleAttributeType ruleAttributeType = ruleAttribute.getRuleAttributeType();
-        switch (ruleAttributeType) {
-            case STRING:
-                //字符串类型需要在两侧加单引号
-                comparisonValue = "'" + comparisonValue + "'";
-                break;
-            case DATETIME:
-                //日期类型需要转化为yyyy-MM-dd HH:mm:ss:SS 格式 在两侧加单引号
-                Date date = DateUtils.parseDate(comparisonValue, DEFAULT_DATE_FORMAT);
-                comparisonValue = "'" + DateUtils.formatDate(date, "yyyy-MM-dd HH:mm:ss:SS") + "'";
-                break;
-            default:
-                break;
+        //比较器不需要规则属性
+        if (!COMPARER.equals(operator)) {
+            RuleAttribute ruleAttribute = ruleAttributeDao.findOne(expression.getRuleAttributeId());
+            propertyCode = ruleAttribute.getAttribute();
+            RuleAttributeType ruleAttributeType = ruleAttribute.getRuleAttributeType();
+            switch (ruleAttributeType) {
+                case STRING:
+                    //字符串类型需要在两侧加单引号
+                    comparisonValue = "'" + comparisonValue + "'";
+                    break;
+                case DATETIME:
+                    //日期类型需要转化为yyyy-MM-dd HH:mm:ss:SS 格式 在两侧加单引号
+                    Date date = DateUtils.parseDate(comparisonValue, DEFAULT_TIME_FORMAT);
+                    comparisonValue = "'" + DateUtils.formatDate(date, "yyyy-MM-dd HH:mm:ss:SS") + "'";
+                    break;
+                default:
+                    break;
+            }
+            //需要在参数上加上前缀
+            propertyCode = RULE_CHAIN_PARAM_PREFIX + "." + propertyCode;
         }
-        //需要在参数上加上前缀
-        propertyCode = RULE_CHAIN_PARAM_PREFIX + "." + propertyCode;
         StringBuilder builder = new StringBuilder();
         switch (operator) {
             case EQUAL:
