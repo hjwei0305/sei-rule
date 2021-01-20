@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * 实现功能: 规则引擎单元测试
  *
@@ -25,7 +23,7 @@ class RuleEngineControllerTest extends BaseUnit5Test {
     void run() {
         RuleRunRequest request = new RuleRunRequest();
         request.setRuleTypeCode("beis-recongnize");
-        String json = "{\"id\": \"001\",\"name\": \"认款业务类型001\"}";
+        String json = "{\"postscript\":\"保证金\",\"amount\":200,\"tradeDate\":\"2021-01-20 14:18:05\",\"enable\":true,\"idCard\":\"511621199301012355\"}";
         request.setRuleEntityJson(json);
         ResultData<RuleRunResponse> resultData = controller.run(request);
         System.out.println(JsonUtils.toJson(resultData));
