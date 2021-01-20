@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.changhong.sei.rule.dto.enums.ComparisonOperator.COMPARER;
+import static com.changhong.sei.rule.dto.enums.ComparisonOperator.MATCH;
 import static com.changhong.sei.util.DateUtils.DEFAULT_TIME_FORMAT;
 
 /**
@@ -84,8 +85,13 @@ public class AviatorExpressionService {
             RuleAttributeType ruleAttributeType = ruleAttribute.getRuleAttributeType();
             switch (ruleAttributeType) {
                 case STRING:
-                    //字符串类型需要在两侧加单引号
-                    comparisonValue = "'" + comparisonValue + "'";
+                    //如果是正则表达式匹配则 两边加/ 否则加' 单引号
+                    if (MATCH.equals(operator)) {
+                        comparisonValue = "/" + comparisonValue + "/";
+                    } else {
+                        //字符串类型需要在两侧加单引号
+                        comparisonValue = "'" + comparisonValue + "'";
+                    }
                     break;
                 case DATETIME:
                     //日期类型需要转化为yyyy-MM-dd HH:mm:ss:SS 格式 在两侧加单引号

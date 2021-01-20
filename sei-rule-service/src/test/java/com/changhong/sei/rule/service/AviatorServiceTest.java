@@ -132,4 +132,16 @@ public class AviatorServiceTest extends BaseUnit5Test {
         endTime = System.nanoTime(); //获取结束时间
         System.out.println("执行结果:" + (result) + "，消耗时间:" + (endTime - startTime) / 1000 + "ms");
     }
+
+    @Test
+    public void testExpressionMatch() {
+        String expression = "idCard=~/^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}([\\d|x|X]{1})$/";
+        // 编译表达式
+        Expression compiledExp = AviatorEvaluator.compile(expression, true);
+        Map<String, Object> env = new HashMap<>();
+        env.put("idCard", "5116211994030523555");
+        // 执行表达式
+        Boolean result = (Boolean) compiledExp.execute(env);
+        System.out.println(result);
+    }
 }

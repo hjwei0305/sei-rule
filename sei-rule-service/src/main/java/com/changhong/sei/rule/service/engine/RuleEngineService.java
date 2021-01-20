@@ -107,7 +107,13 @@ public class RuleEngineService {
     private boolean ruleChainMatch(Map<String, Object> env, RuleChain ruleChain) {
         // 编译表达式
         Expression compiledExp = AviatorEvaluator.compile(ruleChain.getExpression(), true);
-        return (Boolean) compiledExp.execute(env);
+        try {
+            return (Boolean) compiledExp.execute(env);
+        } catch (NullPointerException e) {
+            //00032 = 必要的规则匹配参数未传入,请检查！
+            throw new RuleEngineException("00032");
+        }
+
     }
 
     /**

@@ -386,7 +386,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
             LogUtil.bizLog(ContextUtil.getMessage("00004", ruleNode.getCode(), ruleNode.getCode(), ruleNode.getExpression()));
             RuleChain ruleChain = constructRuleChain(ruleNode);
             BoundListOperations<String, RuleChain> operations = redisTemplate.boundListOps(RULE_CHAIN_CACHE_KEY_PREFIX + ruleNode.getRootId());
-            operations.leftPush(ruleChain);
+            operations.rightPush(ruleChain);
             return;
         }
         List<RuleTreeNode> children = ruleNode.getChildren();
