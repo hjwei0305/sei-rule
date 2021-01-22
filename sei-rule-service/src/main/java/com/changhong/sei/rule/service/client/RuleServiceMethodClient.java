@@ -26,6 +26,7 @@ public class RuleServiceMethodClient {
      * @param appModuleCode 模块名
      * @param path          路径
      * @param params        参数
+     * @param asyncExecute        异步执行
      * @return 调用结果
      */
     public ResultData<?> post(String appModuleCode, String path, Object params, Boolean asyncExecute) {
