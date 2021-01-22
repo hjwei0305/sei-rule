@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 实现功能: 规则执行结果
+ * 实现功能: 规则执行服务方法的输入参数
  *
  * @author 王锦光 wangjg
  * @version 2021-01-17 15:51
  */
-@ApiModel("规则执行结果")
+@ApiModel("规则执行服务方法的输入参数")
 public class RuleServiceMethodParam implements Serializable {
     private static final long serialVersionUID = 9105930593111033729L;
 

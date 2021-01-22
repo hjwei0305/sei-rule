@@ -1,6 +1,5 @@
 package com.changhong.sei.rule.dao;
 
-import com.changhong.sei.core.test.BaseUnitTest;
 import com.changhong.sei.rule.BaseUnit5Test;
 import com.changhong.sei.rule.entity.LogicalExpression;
 import org.junit.jupiter.api.Assertions;
@@ -8,8 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 实现功能: 逻辑表达式

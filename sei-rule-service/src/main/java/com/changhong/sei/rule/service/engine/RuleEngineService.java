@@ -70,7 +70,7 @@ public class RuleEngineService {
             throw new RuleEngineException("00028");
         }
         Map<String, Object> env = new HashMap<>();
-        Object param = null;
+        Object param;
         try {
             param = JsonUtils.fromJson(request.getRuleEntityJson(), Object.class);
         } catch (RuntimeException e) {
