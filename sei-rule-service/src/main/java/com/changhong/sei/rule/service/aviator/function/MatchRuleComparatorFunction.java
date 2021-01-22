@@ -4,6 +4,7 @@ import com.changhong.sei.apitemplate.ApiTemplate;
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.util.JsonUtils;
+import com.changhong.sei.rule.sdk.dto.RuleRunRequest;
 import com.changhong.sei.rule.service.aviator.cache.SimpleCache;
 import com.changhong.sei.rule.service.exception.RuleEngineException;
 import com.googlecode.aviator.runtime.function.AbstractFunction;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.changhong.sei.rule.service.aviator.AviatorExpressionService.RULE_CHAIN_PARAM_PREFIX;
+import static com.changhong.sei.rule.service.aviator.AviatorExpressionService.RULE_TYPE_CODE;
 
 /**
  * @author <a href="mailto:xiaogang.su@changhong.com">粟小刚</a>
@@ -70,8 +72,12 @@ public class MatchRuleComparatorFunction extends AbstractFunction {
         } else {
             //获取传入的参数
             String param = JsonUtils.toJson(env.get(RULE_CHAIN_PARAM_PREFIX));
+            String ruleTypeCode = String.valueOf(env.get(RULE_TYPE_CODE));
+            RuleRunRequest request = new RuleRunRequest();
+            request.setRuleEntityJson(param);
+            request.setRuleTypeCode(ruleTypeCode);
             try {
-                ResultData<Boolean> apiResult = apiTemplate.postByAppModuleCode(appModuleCode, path, ResultData.class, param);
+                ResultData<Boolean> apiResult = apiTemplate.postByAppModuleCode(appModuleCode, path, ResultData.class, request);
                 if (apiResult.successful()) {
                     cache.put(cacheKey, apiResult.getData());
                     return AviatorBoolean.valueOf(apiResult.getData());

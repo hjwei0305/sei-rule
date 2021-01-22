@@ -35,6 +35,10 @@ public class AviatorExpressionService {
      */
     public static final String RULE_CHAIN_PARAM_PREFIX = "param";
     /**
+     * 规则代码前缀
+     */
+    public static final String RULE_TYPE_CODE = "code";
+    /**
      * 或表达式
      */
     private static final String OR_EXPRESSION = " || ";

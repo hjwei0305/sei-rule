@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 import static com.changhong.sei.rule.service.aviator.AviatorExpressionService.RULE_CHAIN_PARAM_PREFIX;
+import static com.changhong.sei.rule.service.aviator.AviatorExpressionService.RULE_TYPE_CODE;
 
 /**
  * @author <a href="mailto:xiaogang.su@changhong.com">粟小刚</a>
@@ -79,6 +80,7 @@ public class RuleEngineService {
             throw new RuleEngineException("00029");
         }
         env.put(RULE_CHAIN_PARAM_PREFIX, param);
+        env.put(RULE_TYPE_CODE, request.getRuleTypeCode());
         //根据优先级依次匹配多个规则
         for (RuleTreeNode ruleTree : ruleTrees) {
             //获得规则链
