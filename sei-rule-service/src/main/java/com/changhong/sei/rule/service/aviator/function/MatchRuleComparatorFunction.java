@@ -33,8 +33,16 @@ public class MatchRuleComparatorFunction extends AbstractFunction {
     /**
      * 单次调用（同一线程）外部比较器缓存
      */
-    private final ThreadLocal<SimpleCache<String, Boolean>> cacheHolder = ThreadLocal.withInitial(() -> new SimpleCache<>(new HashMap<>()));
+    private static final ThreadLocal<SimpleCache<String, Boolean>> cacheHolder = ThreadLocal.withInitial(() -> new SimpleCache<>(new HashMap<>()));
 
+    /**
+     * 获取当前线程的cacheHolder
+     *
+     * @return cacheHolder
+     */
+    public static ThreadLocal<SimpleCache<String, Boolean>> getCacheHolder() {
+        return cacheHolder;
+    }
 
     /**
      * 函数名称
@@ -68,6 +76,7 @@ public class MatchRuleComparatorFunction extends AbstractFunction {
         String cacheKey = appModuleCode + ":" + path;
         Boolean cacheResult = cache.get(cacheKey);
         if (Objects.nonNull(cacheResult)) {
+            LogUtil.bizLog("自定义比较器命中缓存:[key=" + cacheKey + ",result=" + cacheResult + "]");
             return AviatorBoolean.valueOf(cacheResult);
         } else {
             //获取传入的参数
@@ -76,6 +85,7 @@ public class MatchRuleComparatorFunction extends AbstractFunction {
             RuleRunRequest request = new RuleRunRequest();
             request.setRuleEntityJson(param);
             request.setRuleTypeCode(ruleTypeCode);
+            LogUtil.bizLog("自定义比较器开始外部请求:[appModuleCode=" + appModuleCode + ",path=" + path + ",param=" + param + "]");
             try {
                 ResultData<Boolean> apiResult = apiTemplate.postByAppModuleCode(appModuleCode, path, ResultData.class, request);
                 if (apiResult.successful()) {
