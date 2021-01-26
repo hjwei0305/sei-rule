@@ -15,6 +15,7 @@ import com.changhong.sei.rule.sdk.dto.RuleRunRequest;
 import com.changhong.sei.rule.sdk.dto.RuleRunResponse;
 import com.changhong.sei.rule.sdk.dto.RuleServiceMethodParam;
 import com.changhong.sei.rule.service.RuleTreeNodeService;
+import com.changhong.sei.rule.service.aviator.function.MatchRuleComparatorFunction;
 import com.changhong.sei.rule.service.bo.RuleChain;
 import com.changhong.sei.rule.service.client.RuleServiceMethodClient;
 import com.changhong.sei.rule.service.exception.RuleEngineException;
@@ -84,19 +85,26 @@ public class RuleEngineService {
         }
         env.put(RULE_CHAIN_PARAM_PREFIX, param);
         env.put(RULE_TYPE_CODE, request.getRuleTypeCode());
-        //根据优先级依次匹配多个规则
-        for (RuleTreeNode ruleTree : ruleTrees) {
-            //获得规则链
-            List<RuleChain> ruleChains = ruleTreeNodeService.getExpressionByRootNode(ruleTree.getId());
-            for (RuleChain ruleChain : ruleChains) {
-                //是否匹配成功
-                if (ruleChainMatch(env, ruleChain)) {
-                    //匹配成功后执行操作
-                    matchSuccess(request, response, ruleChain);
-                    //匹配上一个直接返回
-                    return response;
+        try {
+            //根据优先级依次匹配多个规则
+            for (RuleTreeNode ruleTree : ruleTrees) {
+                //获得规则链
+                List<RuleChain> ruleChains = ruleTreeNodeService.getExpressionByRootNode(ruleTree.getId());
+                for (RuleChain ruleChain : ruleChains) {
+                    //是否匹配成功
+                    if (ruleChainMatch(env, ruleChain)) {
+                        //匹配成功后执行操作
+                        matchSuccess(request, response, ruleChain);
+                        //匹配上一个直接返回
+                        return response;
+                    }
                 }
             }
+        } catch (Exception e) {
+            throw new RuleEngineException(e.getMessage(), e);
+        } finally {
+            //清理掉自定义比较器的线程的缓存,避免web容器等线程池复用线程导致缓存不清理
+            MatchRuleComparatorFunction.getCacheHolder().remove();
         }
         //未匹配上 返回默认响应
         return response;
