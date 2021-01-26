@@ -2,7 +2,9 @@ package com.changhong.sei.rule.service.bo;
 
 import com.changhong.sei.rule.entity.RuleServiceMethod;
 import com.changhong.sei.rule.sdk.dto.RuleReturnEntity;
+import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
@@ -12,7 +14,7 @@ import java.util.List;
  * @date 2021/01/18 15:26
  */
 public class RuleChain implements Serializable {
-
+    private static final long serialVersionUID = -1494565377707568667L;
     /**
      * 表达式
      */
@@ -24,10 +26,9 @@ public class RuleChain implements Serializable {
     private String ruleTreeNodeId;
 
     /**
-     * 返回对象类名
+     * 规则返回结果（返回一个字符串常量）
      */
-    private String returnEntityClass;
-
+    private String returnConstant;
     /**
      * 返回对象
      */
@@ -59,12 +60,12 @@ public class RuleChain implements Serializable {
         this.ruleTreeNodeId = ruleTreeNodeId;
     }
 
-    public String getReturnEntityClass() {
-        return returnEntityClass;
+    public String getReturnConstant() {
+        return returnConstant;
     }
 
-    public void setReturnEntityClass(String returnEntityClass) {
-        this.returnEntityClass = returnEntityClass;
+    public void setReturnConstant(String returnConstant) {
+        this.returnConstant = returnConstant;
     }
 
     public List<RuleReturnEntity> getReturnEntities() {

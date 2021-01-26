@@ -81,6 +81,12 @@ public class RuleTreeNodeDto extends BaseEntityDto {
     @ApiModelProperty(value = "规则结束", required = true)
     private Boolean finished = Boolean.FALSE;
     /**
+     * 规则返回结果（返回一个字符串常量）
+     */
+    @Size(max = 100)
+    @ApiModelProperty(value = "规则返回结果")
+    private String returnConstant;
+    /**
      * 服务方法Id
      */
     @Size(max = 36)
@@ -197,6 +203,14 @@ public class RuleTreeNodeDto extends BaseEntityDto {
 
     public void setFinished(Boolean finished) {
         this.finished = finished;
+    }
+
+    public String getReturnConstant() {
+        return returnConstant;
+    }
+
+    public void setReturnConstant(String returnConstant) {
+        this.returnConstant = returnConstant;
     }
 
     public String getRuleServiceMethodId() {
