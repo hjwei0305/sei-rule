@@ -24,7 +24,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import static com.changhong.sei.rule.service.aviator.AviatorExpressionService.RULE_CHAIN_PARAM_PREFIX;
 import static com.changhong.sei.rule.service.aviator.AviatorExpressionService.RULE_TYPE_CODE;
@@ -135,15 +138,10 @@ public class RuleEngineService {
         //返回对象
         List<RuleReturnEntity> returnEntities = ruleChain.getReturnEntities();
         if (!Objects.isNull(returnEntities) && !returnEntities.isEmpty()) {
-            //组装Map key：类名 enties:实体对象列表
-            Map<String, List<RuleReturnEntity>> returnEntityMap = new HashMap<>();
+            //组装Map key：类名 enties:实体对象
+            Map<String, RuleReturnEntity> returnEntityMap = new HashMap<>();
             returnEntities.forEach(e -> {
-                List<RuleReturnEntity> entries = returnEntityMap.get(e.getClassName());
-                if (Objects.isNull(entries)) {
-                    entries = new ArrayList<>();
-                }
-                entries.add(e);
-                returnEntityMap.put(e.getClassName(), entries);
+                returnEntityMap.put(e.getClassName(), e);
             });
             response.setReturnEntityMap(returnEntityMap);
         }

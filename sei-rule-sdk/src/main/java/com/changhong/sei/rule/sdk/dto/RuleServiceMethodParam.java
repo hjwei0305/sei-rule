@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,7 +28,7 @@ public class RuleServiceMethodParam implements Serializable {
      * 返回的实体MAP
      */
     @ApiModelProperty(value = "返回的实体", notes = "返回的实体MAP,key为返回结果类型的代码(全类名)")
-    private Map<String, List<RuleReturnEntity>> returnEntityMap;
+    private Map<String, RuleReturnEntity> returnEntityMap;
 
     public RuleRunRequest getRequest() {
         return request;
@@ -39,11 +38,11 @@ public class RuleServiceMethodParam implements Serializable {
         this.request = request;
     }
 
-    public Map<String, List<RuleReturnEntity>> getReturnEntityMap() {
+    public Map<String, RuleReturnEntity> getReturnEntityMap() {
         return returnEntityMap;
     }
 
-    public void setReturnEntityMap(Map<String, List<RuleReturnEntity>> returnEntityMap) {
+    public void setReturnEntityMap(Map<String, RuleReturnEntity> returnEntityMap) {
         this.returnEntityMap = returnEntityMap;
     }
 }
