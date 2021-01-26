@@ -78,6 +78,11 @@ public class RuleTreeNode extends BaseAuditableEntity implements TreeEntity<Rule
     @Column(name = "finished")
     private Boolean finished = Boolean.FALSE;
     /**
+     * 规则返回结果（返回一个字符串常量）
+     */
+    @Column(name = "return_constant")
+    private String returnConstant;
+    /**
      * 服务方法Id
      */
     @Column(name = "rule_service_method_id")
@@ -212,6 +217,14 @@ public class RuleTreeNode extends BaseAuditableEntity implements TreeEntity<Rule
 
     public void setFinished(Boolean finished) {
         this.finished = finished;
+    }
+
+    public String getReturnConstant() {
+        return returnConstant;
+    }
+
+    public void setReturnConstant(String returnConstant) {
+        this.returnConstant = returnConstant;
     }
 
     public String getRuleServiceMethodId() {

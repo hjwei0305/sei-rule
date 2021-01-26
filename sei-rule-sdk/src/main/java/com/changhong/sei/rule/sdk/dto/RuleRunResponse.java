@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -39,6 +40,13 @@ public class RuleRunResponse implements Serializable {
     private Boolean executed = Boolean.FALSE;
 
     /**
+     * 规则返回结果（返回一个字符串常量）
+     */
+    @Size(max = 100)
+    @ApiModelProperty(value = "规则返回结果", notes = "规则返回结果（返回一个字符串常量）")
+    private String returnConstant;
+
+    /**
      * 返回的实体MAP
      */
     @ApiModelProperty(value = "返回的实体", notes = "返回的实体MAP,key为返回结果类型的代码(全类名)")
@@ -67,6 +75,14 @@ public class RuleRunResponse implements Serializable {
 
     public void setExecuted(Boolean executed) {
         this.executed = executed;
+    }
+
+    public String getReturnConstant() {
+        return returnConstant;
+    }
+
+    public void setReturnConstant(String returnConstant) {
+        this.returnConstant = returnConstant;
     }
 
     public Map<String, RuleReturnEntity> getReturnEntityMap() {

@@ -412,6 +412,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         //节点Id
         ruleChain.setRuleTreeNodeId(ruleNode.getId());
         //返回对象
+        ruleChain.setReturnConstant(ruleNode.getReturnConstant());
         List<NodeReturnResult> returnResults = ruleNode.getNodeReturnResults();
         List<RuleReturnEntity> returnEntities = new ArrayList<>();
         for (NodeReturnResult result : returnResults) {

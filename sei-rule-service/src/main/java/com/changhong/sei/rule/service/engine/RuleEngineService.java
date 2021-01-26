@@ -136,6 +136,7 @@ public class RuleEngineService {
         response.setMatched(true);
         response.setMatchedNodeId(ruleChain.getRuleTreeNodeId());
         //返回对象
+        response.setReturnConstant(ruleChain.getReturnConstant());
         List<RuleReturnEntity> returnEntities = ruleChain.getReturnEntities();
         if (!Objects.isNull(returnEntities) && !returnEntities.isEmpty()) {
             //组装Map key：类名 enties:实体对象
