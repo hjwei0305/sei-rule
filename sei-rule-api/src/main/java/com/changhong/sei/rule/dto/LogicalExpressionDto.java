@@ -57,6 +57,12 @@ public class LogicalExpressionDto extends BaseEntityDto {
     @ApiModelProperty(value = "匹配值", required = true)
     private String comparisonValue;
     /**
+     * 匹配的显示值
+     */
+    @Size(max = 200)
+    @ApiModelProperty(value = "匹配的显示值")
+    private String displayValue;
+    /**
      * 租户代码
      */
     @ApiModelProperty(value = "租户代码")
@@ -81,6 +87,16 @@ public class LogicalExpressionDto extends BaseEntityDto {
      */
     @ApiModelProperty("UI组件")
     private String ruleAttributeUiComponent;
+    /**
+     * 匹配值使用的字段
+     */
+    @ApiModelProperty("匹配值使用的字段")
+    private String ruleAttributeMatchField;
+    /**
+     * 获取数据的url
+     */
+    @ApiModelProperty("获取数据的url")
+    private String ruleAttributeFindDataUrl;
 
     public String getRuleTreeRootNodeId() {
         return ruleTreeRootNodeId;
@@ -122,6 +138,14 @@ public class LogicalExpressionDto extends BaseEntityDto {
         this.comparisonValue = comparisonValue;
     }
 
+    public String getDisplayValue() {
+        return displayValue;
+    }
+
+    public void setDisplayValue(String displayValue) {
+        this.displayValue = displayValue;
+    }
+
     public String getTenantCode() {
         return tenantCode;
     }
@@ -160,5 +184,21 @@ public class LogicalExpressionDto extends BaseEntityDto {
 
     public void setRuleAttributeUiComponent(String ruleAttributeUiComponent) {
         this.ruleAttributeUiComponent = ruleAttributeUiComponent;
+    }
+
+    public String getRuleAttributeMatchField() {
+        return ruleAttributeMatchField;
+    }
+
+    public void setRuleAttributeMatchField(String ruleAttributeMatchField) {
+        this.ruleAttributeMatchField = ruleAttributeMatchField;
+    }
+
+    public String getRuleAttributeFindDataUrl() {
+        return ruleAttributeFindDataUrl;
+    }
+
+    public void setRuleAttributeFindDataUrl(String ruleAttributeFindDataUrl) {
+        this.ruleAttributeFindDataUrl = ruleAttributeFindDataUrl;
     }
 }

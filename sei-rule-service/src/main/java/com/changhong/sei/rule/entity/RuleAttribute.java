@@ -46,6 +46,16 @@ public class RuleAttribute extends BaseAuditableEntity {
      */
     @Column(name = "ui_component")
     private String uiComponent;
+    /**
+     * 匹配值使用的字段
+     */
+    @Column(name = "match_field")
+    private String matchField;
+    /**
+     * 获取数据的url
+     */
+    @Column(name = "find_data_url")
+    private String findDataUrl;
 
     public String getRuleEntityTypeId() {
         return ruleEntityTypeId;
@@ -85,5 +95,21 @@ public class RuleAttribute extends BaseAuditableEntity {
 
     public void setUiComponent(String uiComponent) {
         this.uiComponent = uiComponent;
+    }
+
+    public String getMatchField() {
+        return matchField;
+    }
+
+    public void setMatchField(String matchField) {
+        this.matchField = matchField;
+    }
+
+    public String getFindDataUrl() {
+        return findDataUrl;
+    }
+
+    public void setFindDataUrl(String findDataUrl) {
+        this.findDataUrl = findDataUrl;
     }
 }

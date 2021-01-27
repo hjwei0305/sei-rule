@@ -52,10 +52,21 @@ public class RuleAttributeDto extends BaseEntityDto {
     /**
      * UI组件
      */
-    @NotBlank
     @Size(max = 100)
     @ApiModelProperty(value = "UI组件")
     private String uiComponent;
+    /**
+     * 匹配值使用的字段
+     */
+    @Size(max = 50)
+    @ApiModelProperty(value = "匹配值使用的字段")
+    private String matchField;
+    /**
+     * 获取数据的url
+     */
+    @Size(max = 200)
+    @ApiModelProperty(value = "获取数据的url")
+    private String findDataUrl;
 
     public String getRuleEntityTypeId() {
         return ruleEntityTypeId;
@@ -95,5 +106,21 @@ public class RuleAttributeDto extends BaseEntityDto {
 
     public void setUiComponent(String uiComponent) {
         this.uiComponent = uiComponent;
+    }
+
+    public String getMatchField() {
+        return matchField;
+    }
+
+    public void setMatchField(String matchField) {
+        this.matchField = matchField;
+    }
+
+    public String getFindDataUrl() {
+        return findDataUrl;
+    }
+
+    public void setFindDataUrl(String findDataUrl) {
+        this.findDataUrl = findDataUrl;
     }
 }

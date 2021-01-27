@@ -56,6 +56,11 @@ public class LogicalExpression extends BaseAuditableEntity implements ITenant {
     @Column(name = "comparison_value")
     private String comparisonValue;
     /**
+     * 匹配的显示值
+     */
+    @Column(name = "display_value")
+    private String displayValue;
+    /**
      * 租户代码
      */
     @Column(name = "tenant_code")
@@ -108,6 +113,14 @@ public class LogicalExpression extends BaseAuditableEntity implements ITenant {
 
     public void setComparisonValue(String comparisonValue) {
         this.comparisonValue = comparisonValue;
+    }
+
+    public String getDisplayValue() {
+        return displayValue;
+    }
+
+    public void setDisplayValue(String displayValue) {
+        this.displayValue = displayValue;
     }
 
     @Override
