@@ -78,7 +78,7 @@ public class RuleTreeNode extends BaseAuditableEntity implements TreeEntity<Rule
     @Column(name = "finished")
     private Boolean finished = Boolean.FALSE;
     /**
-     * 规则返回结果（返回一个字符串常量）
+     * 规则返回常量（返回一个字符串常量）
      */
     @Column(name = "return_constant")
     private String returnConstant;

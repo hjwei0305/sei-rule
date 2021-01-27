@@ -81,7 +81,7 @@ public class RuleTreeNodeDto extends BaseEntityDto {
     @ApiModelProperty(value = "规则结束", required = true)
     private Boolean finished = Boolean.FALSE;
     /**
-     * 规则返回结果（返回一个字符串常量）
+     * 规则返回常量（返回一个字符串常量）
      */
     @Size(max = 100)
     @ApiModelProperty(value = "规则返回结果")
