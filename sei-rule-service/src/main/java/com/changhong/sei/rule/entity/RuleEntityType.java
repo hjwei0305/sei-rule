@@ -1,6 +1,7 @@
 package com.changhong.sei.rule.entity;
 
 import com.changhong.sei.core.entity.BaseAuditableEntity;
+import com.changhong.sei.core.entity.ICodeUnique;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -19,7 +20,7 @@ import java.io.Serializable;
 @Table(name = "rule_entity_type")
 @DynamicInsert
 @DynamicUpdate
-public class RuleEntityType extends BaseAuditableEntity {
+public class RuleEntityType extends BaseAuditableEntity implements ICodeUnique {
     private static final long serialVersionUID = 7228765445477082669L;
     /**
      * 代码
