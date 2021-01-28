@@ -4,10 +4,13 @@ import com.changhong.sei.core.controller.BaseEntityController;
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.service.BaseEntityService;
 import com.changhong.sei.rule.api.RuleComparatorApi;
+import com.changhong.sei.rule.dto.RuleAttributeDto;
 import com.changhong.sei.rule.dto.RuleComparatorDto;
+import com.changhong.sei.rule.entity.RuleAttribute;
 import com.changhong.sei.rule.entity.RuleComparator;
 import com.changhong.sei.rule.service.RuleComparatorService;
 import io.swagger.annotations.Api;
+import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +38,23 @@ public class RuleComparatorController extends BaseEntityController<RuleComparato
     @Override
     public BaseEntityService<RuleComparator> getService() {
         return service;
+    }
+
+    /**
+     * 自定义设置Entity转换为DTO的转换器
+     */
+    @Override
+    protected void customConvertToDtoMapper() {
+        // 创建自定义映射规则
+        PropertyMap<RuleComparator, RuleComparatorDto> propertyMap = new PropertyMap<RuleComparator, RuleComparatorDto>() {
+            @Override
+            protected void configure() {
+                // 使用自定义转换规则
+                map().setRuleEntityTypeId(source.getRuleEntityTypeId());
+            }
+        };
+        // 添加映射器
+        dtoModelMapper.addMappings(propertyMap);
     }
 
     /**

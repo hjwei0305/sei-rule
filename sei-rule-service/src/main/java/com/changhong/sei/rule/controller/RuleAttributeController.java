@@ -6,13 +6,16 @@ import com.changhong.sei.core.service.BaseEntityService;
 import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.rule.api.RuleAttributeApi;
 import com.changhong.sei.rule.dto.RuleAttributeDto;
+import com.changhong.sei.rule.dto.RuleTreeNodeDto;
 import com.changhong.sei.rule.dto.engine.CanUseOperator;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
 import com.changhong.sei.rule.dto.enums.RuleAttributeType;
 import com.changhong.sei.rule.entity.RuleAttribute;
+import com.changhong.sei.rule.entity.RuleTreeNode;
 import com.changhong.sei.rule.service.RuleAttributeService;
 import com.changhong.sei.util.EnumUtils;
 import io.swagger.annotations.Api;
+import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +43,23 @@ public class RuleAttributeController extends BaseEntityController<RuleAttribute,
     @Override
     public BaseEntityService<RuleAttribute> getService() {
         return service;
+    }
+
+    /**
+     * 自定义设置Entity转换为DTO的转换器
+     */
+    @Override
+    protected void customConvertToDtoMapper() {
+        // 创建自定义映射规则
+        PropertyMap<RuleAttribute, RuleAttributeDto> propertyMap = new PropertyMap<RuleAttribute, RuleAttributeDto>() {
+            @Override
+            protected void configure() {
+                // 使用自定义转换规则
+                map().setRuleEntityTypeId(source.getRuleEntityTypeId());
+            }
+        };
+        // 添加映射器
+        dtoModelMapper.addMappings(propertyMap);
     }
 
     /**

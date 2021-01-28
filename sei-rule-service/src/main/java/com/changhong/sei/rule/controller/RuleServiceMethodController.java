@@ -4,10 +4,13 @@ import com.changhong.sei.core.controller.BaseEntityController;
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.service.BaseEntityService;
 import com.changhong.sei.rule.api.RuleServiceMethodApi;
+import com.changhong.sei.rule.dto.RuleReturnTypeDto;
 import com.changhong.sei.rule.dto.RuleServiceMethodDto;
+import com.changhong.sei.rule.entity.RuleReturnType;
 import com.changhong.sei.rule.entity.RuleServiceMethod;
 import com.changhong.sei.rule.service.RuleServiceMethodService;
 import io.swagger.annotations.Api;
+import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +38,23 @@ public class RuleServiceMethodController extends BaseEntityController<RuleServic
     @Override
     public BaseEntityService<RuleServiceMethod> getService() {
         return service;
+    }
+
+    /**
+     * 自定义设置Entity转换为DTO的转换器
+     */
+    @Override
+    protected void customConvertToDtoMapper() {
+        // 创建自定义映射规则
+        PropertyMap<RuleServiceMethod, RuleServiceMethodDto> propertyMap = new PropertyMap<RuleServiceMethod, RuleServiceMethodDto>() {
+            @Override
+            protected void configure() {
+                // 使用自定义转换规则
+                map().setRuleEntityTypeId(source.getRuleEntityTypeId());
+            }
+        };
+        // 添加映射器
+        dtoModelMapper.addMappings(propertyMap);
     }
 
     /**
