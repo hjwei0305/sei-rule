@@ -43,6 +43,11 @@ public class RuleReturnType extends BaseAuditableEntity {
      */
     @Column(name = "ui_component")
     private String uiComponent;
+    /**
+     * 获取数据的url
+     */
+    @Column(name = "find_data_url")
+    private String findDataUrl;
 
     public String getRuleEntityTypeId() {
         return ruleEntityTypeId;
@@ -74,5 +79,13 @@ public class RuleReturnType extends BaseAuditableEntity {
 
     public void setUiComponent(String uiComponent) {
         this.uiComponent = uiComponent;
+    }
+
+    public String getFindDataUrl() {
+        return findDataUrl;
+    }
+
+    public void setFindDataUrl(String findDataUrl) {
+        this.findDataUrl = findDataUrl;
     }
 }

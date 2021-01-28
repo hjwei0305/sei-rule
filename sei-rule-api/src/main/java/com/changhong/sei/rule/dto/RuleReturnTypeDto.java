@@ -39,12 +39,19 @@ public class RuleReturnTypeDto extends BaseEntityDto {
     @ApiModelProperty(value = "名称", required = true)
     private String name;
     /**
-     * UI组件
+     * 前端UI组件
      */
     @NotBlank
     @Size(max = 100)
-    @ApiModelProperty(value = "UI组件")
+    @ApiModelProperty(value = "UI组件", required = true)
     private String uiComponent;
+    /**
+     * 获取数据的url
+     */
+    @NotBlank
+    @Size(max = 200)
+    @ApiModelProperty(value = "获取数据的url", required = true)
+    private String findDataUrl;
 
     public String getRuleEntityTypeId() {
         return ruleEntityTypeId;
@@ -76,5 +83,13 @@ public class RuleReturnTypeDto extends BaseEntityDto {
 
     public void setUiComponent(String uiComponent) {
         this.uiComponent = uiComponent;
+    }
+
+    public String getFindDataUrl() {
+        return findDataUrl;
+    }
+
+    public void setFindDataUrl(String findDataUrl) {
+        this.findDataUrl = findDataUrl;
     }
 }
