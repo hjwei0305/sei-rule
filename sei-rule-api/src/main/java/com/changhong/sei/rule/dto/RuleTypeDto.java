@@ -21,28 +21,27 @@ public class RuleTypeDto extends BaseEntityDto {
      */
     @NotBlank
     @Size(max = 36)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "规则业务实体Id", required = true)
     private String ruleEntityTypeId;
     /**
      * 代码
      */
     @NotBlank
     @Size(max = 100)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "代码", required = true)
     private String code;
     /**
      * 名称
      */
     @NotBlank
     @Size(max = 50)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})", required = true)
+    @ApiModelProperty(value = "名称", required = true)
     private String name;
     /**
      * 业务描述
      */
-    @NotBlank
     @Size(max = 200)
-    @ApiModelProperty(value = "$tool.trim(${column.comment})")
+    @ApiModelProperty(value = "业务描述")
     private String remark;
     /**
      * 租户代码
