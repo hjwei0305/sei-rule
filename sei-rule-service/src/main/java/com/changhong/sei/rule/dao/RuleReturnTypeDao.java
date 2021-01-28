@@ -20,4 +20,12 @@ public interface RuleReturnTypeDao extends BaseEntityDao<RuleReturnType> {
      * @return 返回实体类型清单
      */
     List<RuleReturnType> findByRuleEntityTypeId(String ruleEntityTypeId);
+
+    /**
+     * 通过唯一索引获取返回实体类型
+     * @param ruleEntityTypeId 规则业务实体类型Id
+     * @param code 代码（全类名）
+     * @return 返回实体类型
+     */
+    RuleReturnType findByRuleEntityTypeIdAndCode(String ruleEntityTypeId, String code);
 }

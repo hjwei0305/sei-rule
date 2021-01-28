@@ -1,7 +1,6 @@
 package com.changhong.sei.rule.dao;
 
 import com.changhong.sei.core.dao.BaseEntityDao;
-import com.changhong.sei.rule.entity.RuleReturnType;
 import com.changhong.sei.rule.entity.RuleServiceMethod;
 import org.springframework.stereotype.Repository;
 
@@ -21,4 +20,13 @@ public interface RuleServiceMethodDao extends BaseEntityDao<RuleServiceMethod> {
      * @return 服务方法清单
      */
     List<RuleServiceMethod> findByRuleEntityTypeId(String ruleEntityTypeId);
+
+    /**
+     * 通过唯一索引获取服务方法定义
+     * @param ruleEntityTypeId 规则业务实体类型Id
+     * @param path 路径
+     * @param method 方法
+     * @return 服务方法定义
+     */
+    RuleServiceMethod findByRuleEntityTypeIdAndPathAndMethod(String ruleEntityTypeId, String path, String method);
 }

@@ -20,4 +20,12 @@ public interface RuleAttributeDao extends BaseEntityDao<RuleAttribute> {
      * @return 属性清单
      */
     List<RuleAttribute> findByRuleEntityTypeId(String ruleEntityTypeId);
+
+    /**
+     * 通过唯一索引获取规则属性
+     * @param ruleEntityTypeId 规则业务实体类型Id
+     * @param attribute 属性名
+     * @return 规则属性
+     */
+    RuleAttribute findByRuleEntityTypeIdAndAttribute(String ruleEntityTypeId, String attribute);
 }

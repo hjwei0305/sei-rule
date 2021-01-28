@@ -3,13 +3,16 @@ package com.changhong.sei.rule.service;
 import com.changhong.sei.core.dao.BaseEntityDao;
 import com.changhong.sei.core.service.BaseEntityService;
 import com.changhong.sei.core.service.bo.OperateResult;
+import com.changhong.sei.core.service.bo.OperateResultWithData;
 import com.changhong.sei.rule.dao.RuleServiceMethodDao;
 import com.changhong.sei.rule.dao.RuleTreeNodeDao;
 import com.changhong.sei.rule.entity.RuleServiceMethod;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -28,6 +31,22 @@ public class RuleServiceMethodService extends BaseEntityService<RuleServiceMetho
     @Override
     protected BaseEntityDao<RuleServiceMethod> getDao() {
         return dao;
+    }
+
+    /**
+     * 数据保存操作
+     *
+     * @param entity 服务方法定义
+     */
+    @Override
+    public OperateResultWithData<RuleServiceMethod> save(RuleServiceMethod entity) {
+        // 检查唯一索引：实体类型Id+路径+方法
+        RuleServiceMethod ruleServiceMethod = dao.findByRuleEntityTypeIdAndPathAndMethod(entity.getRuleEntityTypeId(), entity.getPath(), entity.getMethod());
+        if (Objects.nonNull(ruleServiceMethod) && !StringUtils.equals(ruleServiceMethod.getId(), entity.getId())) {
+            // 业务实体类型已经配置了服务方法【{0}/{1}】！
+            return OperateResultWithData.operationFailure("00035", entity.getPath(), entity.getMethod());
+        }
+        return super.save(entity);
     }
 
     /**

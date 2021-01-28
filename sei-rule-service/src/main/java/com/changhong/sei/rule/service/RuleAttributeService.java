@@ -4,11 +4,13 @@ import com.changhong.sei.core.dao.BaseEntityDao;
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.service.BaseEntityService;
 import com.changhong.sei.core.service.bo.OperateResult;
+import com.changhong.sei.core.service.bo.OperateResultWithData;
 import com.changhong.sei.rule.dao.LogicalExpressionDao;
 import com.changhong.sei.rule.dao.RuleAttributeDao;
 import com.changhong.sei.rule.dto.engine.CanUseOperator;
 import com.changhong.sei.rule.entity.RuleAttribute;
 import com.changhong.sei.rule.service.utils.CanUseOperatorUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +59,22 @@ public class RuleAttributeService extends BaseEntityService<RuleAttribute> {
             return OperateResult.operationFailure("00012");
         }
         return super.preDelete(id);
+    }
+
+    /**
+     * 数据保存操作
+     *
+     * @param entity 规则属性
+     */
+    @Override
+    public OperateResultWithData<RuleAttribute> save(RuleAttribute entity) {
+        // 检查唯一索引：实体类型Id+属性名
+        RuleAttribute ruleAttribute = dao.findByRuleEntityTypeIdAndAttribute(entity.getRuleEntityTypeId(), entity.getAttribute());
+        if (Objects.nonNull(ruleAttribute) && !StringUtils.equals(ruleAttribute.getId(), entity.getId())) {
+            // 业务实体类型已经配置了规则属性【{0}】！
+            return OperateResultWithData.operationFailure("00033", entity.getAttribute());
+        }
+        return super.save(entity);
     }
 
     /**
