@@ -12,7 +12,6 @@ import com.changhong.sei.rule.service.RuleEntityTypeService;
 import com.changhong.sei.rule.service.RuleTypeService;
 import io.swagger.annotations.Api;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 /**
  * 规则类型(RuleType)控制类
@@ -62,30 +59,21 @@ public class RuleTypeController extends BaseEntityController<RuleType, RuleTypeD
         }
         // 循环获取规则类型
         entityTypes.forEach( entityType -> {
+            // 构建根节点
+            RuleTypeTree ruleTypeTree = new RuleTypeTree();
+            ruleTypeTree.setId(entityType.getId());
+            ruleTypeTree.setCode(entityType.getCode());
+            ruleTypeTree.setName(entityType.getName());
+            ruleTypeTrees.add(ruleTypeTree);
             List<RuleType> ruleTypes = service.findByRuleEntityTypeId(entityType.getId());
             List<RuleTypeDto> ruleTypeDtos = convertToDtos(ruleTypes);
             if (CollectionUtils.isNotEmpty(ruleTypeDtos)) {
-                // 判断返回结果中是否已经存在
-                Optional<RuleTypeTree> typeTreeOptional = ruleTypeTrees
-                        .stream()
-                        .filter(node -> StringUtils.equals(node.getId(), entityType.getId()))
-                        .findFirst();
-                RuleTypeTree ruleTypeTree;
-                if (typeTreeOptional.isPresent()) {
-                    ruleTypeTree = typeTreeOptional.get();
-                } else {
-                    ruleTypeTree = new RuleTypeTree();
-                    ruleTypeTree.setId(entityType.getId());
-                    ruleTypeTree.setCode(entityType.getCode());
-                    ruleTypeTree.setName(entityType.getName());
-                }
                 // 添加子节点
                 List<RuleTypeTree> children = new LinkedList<>();
                 ruleTypeDtos.forEach(ruleTypeDto -> {
                     children.add(new RuleTypeTree(ruleTypeDto));
                 });
                 ruleTypeTree.setChildren(children);
-                ruleTypeTrees.add(ruleTypeTree);
             }
         });
         return ResultData.success(ruleTypeTrees);
