@@ -66,10 +66,10 @@ public class RuleEngineService {
         }
         RuleType ruleType = ruleTypeDao.findByCodeAndTenantCode(ruleTypeCode, ContextUtil.getTenantCode());
         if (Objects.isNull(ruleType)) {
-            //指定规则类型不存在！
-            throw new RuleEngineException("00027");
+            // 指定规则类型不存在！【{0}】
+            throw new RuleEngineException("00027", ruleTypeCode);
         }
-        List<RuleTreeNode> ruleTrees = ruleTreeNodeService.findRootNodes(ruleType.getId());
+        List<RuleTreeNode> ruleTrees = ruleTreeNodeService.findRuleTreeRootNodes(ruleType.getId());
         if (Objects.isNull(ruleTrees) || ruleTrees.isEmpty()) {
             //指定规则类型规则列表为空！
             throw new RuleEngineException("00028");

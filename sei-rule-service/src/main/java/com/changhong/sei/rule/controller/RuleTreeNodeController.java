@@ -106,17 +106,18 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
      */
     @Override
     public ResultData<List<RuleTreeRoot>> findRootNodes(String ruleTypeId) {
-        List<RuleTreeNode> nodes = service.findRootNodes(ruleTypeId);
-        List<RuleTreeRoot> roots = new LinkedList<>();
-        if (CollectionUtils.isNotEmpty(nodes)) {
-            nodes.forEach(node -> {
-                RuleTreeRoot root = strictModelMapper.map(node, RuleTreeRoot.class);
-                if (Objects.nonNull(root)) {
-                    roots.add(root);
-                }
-            });
-        }
-        return ResultData.success(roots);
+        return ResultData.success(service.findRootNodes(ruleTypeId));
+    }
+
+    /**
+     * 创建规则树根节点信息
+     *
+     * @param ruleTreeRoot 规则树根节点
+     * @return 处理结果
+     */
+    @Override
+    public ResultData<?> createRootNode(RuleTreeRoot ruleTreeRoot) {
+        return ResultDataUtil.convertFromOperateResult(service.createRootNode(ruleTreeRoot));
     }
 
     /**

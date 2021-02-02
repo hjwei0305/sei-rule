@@ -53,6 +53,12 @@ public class RuleTypeTree extends BaseEntityDto {
         this.name = ruleType.getName();
         this.nodeLevel = 1;
     }
+    public RuleTypeTree(RuleTreeRoot treeRoot) {
+        this.id = treeRoot.getId();
+        this.code = treeRoot.getCode();
+        this.name = treeRoot.getName();
+        this.nodeLevel = 2;
+    }
 
     public String getCode() {
         return code;

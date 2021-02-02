@@ -2,6 +2,7 @@ package com.changhong.sei.rule.service;
 
 import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.dao.BaseTreeDao;
+import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.service.BaseTreeService;
 import com.changhong.sei.core.service.bo.OperateResult;
@@ -17,6 +18,8 @@ import com.changhong.sei.serial.sdk.SerialService;
 import com.changhong.sei.utils.AsyncRunUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -68,13 +71,45 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     }
 
     /**
+     * 定义通用的严格匹配实体转换器
+     */
+    private static final ModelMapper strictModelMapper;
+    // 初始化静态属性
+    static {
+        // 初始化转换器
+        strictModelMapper = new ModelMapper();
+        // 设置为严格匹配
+        strictModelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+    }
+
+    /**
      * 获取规则实体类型的所有根节点
      *
      * @param ruleTypeId 规则类型Id
      * @return 根节点清单
      */
-    public List<RuleTreeNode> findRootNodes(String ruleTypeId) {
+    public List<RuleTreeNode> findRuleTreeRootNodes(String ruleTypeId) {
         return dao.findRootNodes(ruleTypeId, ContextUtil.getTenantCode());
+    }
+
+    /**
+     * 获取规则实体类型的所有根节点
+     *
+     * @param ruleTypeId 规则类型Id
+     * @return 根节点清单
+     */
+    public List<RuleTreeRoot> findRootNodes(String ruleTypeId) {
+        List<RuleTreeNode> nodes = findRuleTreeRootNodes(ruleTypeId);
+        List<RuleTreeRoot> roots = new LinkedList<>();
+        if (CollectionUtils.isNotEmpty(nodes)) {
+            nodes.forEach(node -> {
+                RuleTreeRoot root = strictModelMapper.map(node, RuleTreeRoot.class);
+                if (Objects.nonNull(root)) {
+                    roots.add(root);
+                }
+            });
+        }
+        return roots;
     }
 
     /**
@@ -97,6 +132,35 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     }
 
     /**
+     * 创建规则树根节点信息
+     *
+     * @param ruleTreeRoot 规则树根节点
+     * @return 处理结果
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public OperateResult createRootNode(RuleTreeRoot ruleTreeRoot) {
+        // 构造一个规则树根节点
+        RuleTreeNode ruleTreeNode = new RuleTreeNode();
+        // 给号
+        if (StringUtils.isBlank(ruleTreeNode.getCode())) {
+            ruleTreeNode.setCode(serialService.getNumber(RuleTreeNode.class));
+        }
+        RuleType ruleType = ruleTypeDao.findOne(ruleTreeRoot.getRuleTypeId());
+        if (Objects.isNull(ruleType)) {
+            // 指定规则类型不存在！【{0}】
+            return OperateResult.operationFailure("00027", ruleTreeRoot.getRuleTypeId());
+        }
+        ruleTreeNode.setNodeLevel(0);
+        ruleTreeNode.setRuleTypeId(ruleTreeRoot.getRuleTypeId());
+        ruleTreeNode.setName(ruleTreeRoot.getName());
+        ruleTreeNode.setRank(ruleTreeRoot.getRank());
+        ruleTreeNode.setEnabled(ruleTreeNode.getEnabled());
+        dao.save(ruleTreeNode);
+        // 规则树根节点信息创建成功！
+        return OperateResult.operationSuccess("00037");
+    }
+
+    /**
      * 更新规则树根节点信息
      *
      * @param ruleTreeRoot 规则树根节点
@@ -116,7 +180,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         ruleTreeNode.setRank(ruleTreeRoot.getRank());
         ruleTreeNode.setEnabled(ruleTreeNode.getEnabled());
         dao.save(ruleTreeNode);
-        // 更新规则树根节点信息成功！
+        // 规则树根节点信息更新成功！
         return OperateResult.operationSuccess("00025");
     }
 

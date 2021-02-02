@@ -5,10 +5,12 @@ import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.service.BaseEntityService;
 import com.changhong.sei.rule.api.RuleTypeApi;
 import com.changhong.sei.rule.dto.RuleTypeDto;
+import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
 import com.changhong.sei.rule.dto.ruletree.RuleTypeTree;
 import com.changhong.sei.rule.entity.RuleEntityType;
 import com.changhong.sei.rule.entity.RuleType;
 import com.changhong.sei.rule.service.RuleEntityTypeService;
+import com.changhong.sei.rule.service.RuleTreeNodeService;
 import com.changhong.sei.rule.service.RuleTypeService;
 import io.swagger.annotations.Api;
 import org.apache.commons.collections.CollectionUtils;
@@ -38,6 +40,8 @@ public class RuleTypeController extends BaseEntityController<RuleType, RuleTypeD
     private RuleTypeService service;
     @Autowired
     private RuleEntityTypeService ruleEntityTypeService;
+    @Autowired
+    private RuleTreeNodeService ruleTreeNodeService;
 
     @Override
     public BaseEntityService<RuleType> getService() {

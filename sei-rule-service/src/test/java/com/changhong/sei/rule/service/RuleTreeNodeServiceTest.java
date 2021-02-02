@@ -29,7 +29,7 @@ public class RuleTreeNodeServiceTest extends BaseUnit5Test {
         Map<String,Object> param = new HashMap<>();
         param.put("postscript","44宿舍保证金565");
         env.put("param", param);
-        List<RuleTreeNode> nodes =  service.findRootNodes(ruleTypeId);
+        List<RuleTreeNode> nodes =  service.findRuleTreeRootNodes(ruleTypeId);
         for (RuleTreeNode node : nodes) {
             List<RuleChain> ruleChains = service.getExpressionByRootNode(node.getId());
             for (RuleChain ruleChain : ruleChains) {

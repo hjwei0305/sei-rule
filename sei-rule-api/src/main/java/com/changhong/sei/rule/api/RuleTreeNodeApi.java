@@ -33,6 +33,16 @@ public interface RuleTreeNodeApi extends BaseEntityApi<RuleTreeNodeDto> {
     ResultData<List<RuleTreeRoot>> findRootNodes(@RequestParam("ruleTypeId") String ruleTypeId);
 
     /**
+     * 创建规则树根节点信息
+     *
+     * @param ruleTreeRoot 规则树根节点
+     * @return 处理结果
+     */
+    @PostMapping(path = "createRootNode", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "创建规则树根节点信息", notes = "创建规则树根节点信息:名称、优先级、启用等")
+    ResultData<?> createRootNode(@RequestBody RuleTreeRoot ruleTreeRoot);
+
+    /**
      * 更新规则树根节点信息
      *
      * @param ruleTreeRoot 规则树根节点
