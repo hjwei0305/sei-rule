@@ -538,4 +538,48 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         }
     }
 
+    /**
+     * 删除业务规则树节点(级联删除子节点)
+     *
+     * @param nodeId 节点Id
+     * @return 处理结果
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public OperateResult deleteNode(String nodeId) {
+        // 获取当前节点
+        RuleTreeNode node = dao.findOne(nodeId);
+        if (Objects.isNull(node)) {
+            // 规则树节点【{0}】不存在！
+            return OperateResult.operationFailure("00024", nodeId);
+        }
+        // 删除一个节点（递归）
+        deleteOneNode(node);
+        // 规则树节点【{0}】删除成功！
+        return OperateResult.operationSuccess("00038", node.getName());
+    }
+
+    /**
+     * 删除一个节点（递归）
+     * @param node 树节点
+     */
+    private void deleteOneNode(RuleTreeNode node) {
+        String nodeId = node.getId();
+        // 删除逻辑表达式
+        List<LogicalExpression> logicalExpressions = logicalExpressionDao.findByRuleTreeNodeId(nodeId);
+        if (CollectionUtils.isNotEmpty(logicalExpressions)) {
+            logicalExpressions.forEach(logicalExpression -> logicalExpressionDao.delete(logicalExpression));
+        }
+        // 删除返回实体结果
+        List<NodeReturnResult> nodeReturnResults = nodeReturnResultDao.findByRuleTreeNodeId(nodeId);
+        if (CollectionUtils.isNotEmpty(nodeReturnResults)) {
+            nodeReturnResults.forEach(nodeReturnResult -> nodeReturnResultDao.delete(nodeReturnResult));
+        }
+        // 获取子节点清单
+        List<RuleTreeNode> children = getChildren(nodeId);
+        if (CollectionUtils.isNotEmpty(children)) {
+            children.forEach(this::deleteOneNode);
+        }
+        // 删除本节点
+        dao.delete(node);
+    }
 }

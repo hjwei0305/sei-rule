@@ -132,4 +132,12 @@ public class RuleTreeNodeControllerTest extends BaseUnit5Test {
         System.out.println(JsonUtils.toJson(resultData));
         Assertions.assertTrue(resultData.successful());
     }
+
+    @Test
+    void deleteNode() {
+        String nodeId = "D63735C5-56F9-11EB-8B50-3C6AA7266A51";
+        ResultData<?> resultData = controller.deleteNode(nodeId);
+        System.out.println(JsonUtils.toJson(resultData));
+        Assertions.assertTrue(resultData.successful());
+    }
 }

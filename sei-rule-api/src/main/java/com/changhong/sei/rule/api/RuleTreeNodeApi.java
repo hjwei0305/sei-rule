@@ -86,4 +86,13 @@ public interface RuleTreeNodeApi extends BaseEntityApi<RuleTreeNodeDto> {
     @DeleteMapping(path = "deleteRuleTree/{rootId}")
     @ApiOperation(notes = "删除业务规则树", value = "删除业务规则树")
     ResultData<?> deleteRuleTree(@PathVariable("rootId") String rootId);
+
+    /**
+     * 删除业务规则树节点
+     * @param nodeId 节点Id
+     * @return 处理结果
+     */
+    @DeleteMapping(path = "deleteNode/{nodeId}")
+    @ApiOperation(notes = "删除业务规则树节点", value = "删除业务规则树的一个节点，并且级联删除所有子节点")
+    ResultData<?> deleteNode(@PathVariable("nodeId") String nodeId);
 }

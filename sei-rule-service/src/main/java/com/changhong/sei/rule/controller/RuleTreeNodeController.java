@@ -185,6 +185,17 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
         return ResultDataUtil.success("00018");
     }
 
+    /**
+     * 删除业务规则树节点
+     *
+     * @param nodeId 节点Id
+     * @return 处理结果
+     */
+    @Override
+    public ResultData<?> deleteNode(String nodeId) {
+        return ResultDataUtil.convertFromOperateResult(service.deleteNode(nodeId));
+    }
+
     @Override
     public RuleTreeNode convertToEntity(RuleTreeNodeDto dto) {
         if (Objects.isNull(dto)) {
