@@ -154,7 +154,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         ruleTreeNode.setRuleTypeId(ruleTreeRoot.getRuleTypeId());
         ruleTreeNode.setName(ruleTreeRoot.getName());
         ruleTreeNode.setRank(ruleTreeRoot.getRank());
-        ruleTreeNode.setEnabled(ruleTreeNode.getEnabled());
+        ruleTreeNode.setEnabled(Boolean.FALSE);
         dao.save(ruleTreeNode);
         // 规则树根节点信息创建成功！
         return OperateResult.operationSuccess("00037");
