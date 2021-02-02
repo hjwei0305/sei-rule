@@ -51,7 +51,7 @@ class RuleChainServiceTest extends BaseUnit5Test {
 
     @Test
     void getExpressionByRootNode() {
-        String rootNodeId = "E572FF56-5A29-11EB-82F6-3C6AA7266A51";
+        String rootNodeId = "E9F3CDCC-5AE2-11EB-81CA-3C6AA7266A52";
         // 获取规则树
         RuleTreeNode tree = ruleTreeNodeService.getRuleTree(rootNodeId);
         Assertions.assertNotNull(tree);
