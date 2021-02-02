@@ -2,18 +2,20 @@ package com.changhong.sei.rule.service;
 
 import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.dao.BaseTreeDao;
-import com.changhong.sei.core.dto.ResultData;
-import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.service.BaseTreeService;
 import com.changhong.sei.core.service.bo.OperateResult;
 import com.changhong.sei.core.service.bo.OperateResultWithData;
 import com.changhong.sei.exception.ServiceException;
-import com.changhong.sei.rule.dao.*;
+import com.changhong.sei.rule.dao.LogicalExpressionDao;
+import com.changhong.sei.rule.dao.NodeReturnResultDao;
+import com.changhong.sei.rule.dao.RuleTreeNodeDao;
+import com.changhong.sei.rule.dao.RuleTypeDao;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
-import com.changhong.sei.rule.entity.*;
-import com.changhong.sei.rule.sdk.dto.RuleReturnEntity;
-import com.changhong.sei.rule.service.aviator.AviatorExpressionService;
-import com.changhong.sei.rule.service.bo.RuleChain;
+import com.changhong.sei.rule.entity.LogicalExpression;
+import com.changhong.sei.rule.entity.NodeReturnResult;
+import com.changhong.sei.rule.entity.RuleTreeNode;
+import com.changhong.sei.rule.entity.RuleType;
+import com.changhong.sei.rule.service.engine.RuleChainService;
 import com.changhong.sei.serial.sdk.SerialService;
 import com.changhong.sei.utils.AsyncRunUtil;
 import org.apache.commons.collections.CollectionUtils;
@@ -21,8 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.BoundListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,12 +38,6 @@ import java.util.stream.Collectors;
  */
 @Service("ruleTreeNodeService")
 public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
-
-    /**
-     * 表达式缓存key
-     */
-    public static final String RULE_CHAIN_CACHE_KEY_PREFIX = "sei:sei-rule:rule-chains:";
-
     @Autowired
     private RuleTreeNodeDao dao;
     @Autowired
@@ -52,18 +46,12 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     private NodeReturnResultDao nodeReturnResultDao;
     @Autowired
     private RuleTypeDao ruleTypeDao;
-    @Autowired
-    private RuleReturnTypeDao ruleReturnTypeDao;
-    @Autowired
-    private RuleServiceMethodDao ruleServiceMethodDao;
     @Autowired(required = false)
     private SerialService serialService;
     @Autowired
-    private AviatorExpressionService aviatorExpressionService;
-    @Autowired
-    private RedisTemplate redisTemplate;
-    @Autowired
     private AsyncRunUtil asyncRunUtil;
+    @Autowired
+    private RuleChainService ruleChainService;
 
     @Override
     protected BaseTreeDao<RuleTreeNode> getDao() {
@@ -110,25 +98,6 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
             });
         }
         return roots;
-    }
-
-    /**
-     * 根据根节点Id查询对应的规则链表达式列表
-     *
-     * @param rootNodeId 根节点Id
-     * @return 规则链表达式列表
-     */
-    public List<RuleChain> getExpressionByRootNode(String rootNodeId) {
-        BoundListOperations<String, RuleChain> operations = redisTemplate.boundListOps(RULE_CHAIN_CACHE_KEY_PREFIX + rootNodeId);
-        List<RuleChain> ruleChains = operations.range(0, operations.size());
-        if (Objects.isNull(ruleChains) || ruleChains.isEmpty()) {
-            //重新建立缓存
-            RuleTreeNode rootNode = getRuleTree(rootNodeId);
-            buildCache(rootNode);
-            //再去获取
-            ruleChains = operations.range(0, operations.size());
-        }
-        return ruleChains;
     }
 
     /**
@@ -349,7 +318,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
             return;
         }
         //删除规则链缓存
-        redisTemplate.delete(RULE_CHAIN_CACHE_KEY_PREFIX + rootNodeId);
+        ruleChainService.deleteRuleChainCache(rootNodeId);
         //删除逻辑表达式
         logicalExpressionDao.deleteByRuleTreeRootNodeId(rootNodeId);
         //删除结果
@@ -390,7 +359,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         //保存子节点
         saveChildren(saveResult.getData(), ruleNode.getChildren());
         //异步构建缓存
-        asyncRunUtil.runAsync(() -> buildCache(ruleNode));
+        asyncRunUtil.runAsync(() -> ruleChainService.buildCache(ruleNode));
         // 业务规则【{0}】保存成功！
         return OperateResult.operationSuccess("00017", ruleNode.getName());
     }
@@ -420,84 +389,6 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
             }
             saveChildren(saveResult.getData(), node.getChildren());
         });
-    }
-
-    /**
-     * 重新建立缓存
-     *
-     * @param ruleNode 树节点
-     */
-    private void buildCache(RuleTreeNode ruleNode) {
-        //循环传递根节点的id
-        if (StringUtils.isBlank(ruleNode.getParentId())) {
-            ruleNode.setRootId(ruleNode.getId());
-        }
-        //获得当前节点表达式
-        String expression = aviatorExpressionService.convertToExpression(ruleNode);
-        //循环拼接表达式
-        if (StringUtils.isNotBlank(expression)) {
-            //判断前面是否已经有节点生成表达式
-            String parentExpression = ruleNode.getExpression();
-            if (StringUtils.isNotBlank(parentExpression)) {
-                ruleNode.setExpression(parentExpression + " && " + expression);
-            } else {
-                ruleNode.setExpression(expression);
-            }
-        }
-        if (ruleNode.getFinished()) {
-            //子节点为空，则把这一条规则链的表达式保存起来
-            //00004 = 规则[{0}]:规则叶子节点[{1}]生成表达式{2}！
-            LogUtil.bizLog(ContextUtil.getMessage("00004", ruleNode.getCode(), ruleNode.getCode(), ruleNode.getExpression()));
-            RuleChain ruleChain = constructRuleChain(ruleNode);
-            BoundListOperations<String, RuleChain> operations = redisTemplate.boundListOps(RULE_CHAIN_CACHE_KEY_PREFIX + ruleNode.getRootId());
-            operations.rightPush(ruleChain);
-            return;
-        }
-        List<RuleTreeNode> children = ruleNode.getChildren();
-        //对字节的按照rank顺序排序 数据库查询已rank顺序排序 这里不再排序
-        // List<RuleTreeNode> rankedChildren = children.stream().sorted(Comparator.comparing(RuleTreeNode::getRank)).collect(Collectors.toList());
-        children.forEach(node -> {
-            node.setRootId(ruleNode.getRootId());
-            node.setExpression(ruleNode.getExpression());
-            buildCache(node);
-        });
-    }
-
-    /**
-     * 组装规则链
-     *
-     * @param ruleNode 规则树节点
-     * @return
-     */
-    private RuleChain constructRuleChain(RuleTreeNode ruleNode) {
-        RuleChain ruleChain = new RuleChain();
-        //表达式
-        ruleChain.setExpression(ruleNode.getExpression());
-        //节点Id
-        ruleChain.setRuleTreeNodeId(ruleNode.getId());
-        //返回对象
-        ruleChain.setReturnConstant(ruleNode.getReturnConstant());
-        List<NodeReturnResult> returnResults = ruleNode.getNodeReturnResults();
-        List<RuleReturnEntity> returnEntities = new ArrayList<>();
-        for (NodeReturnResult result : returnResults) {
-            RuleReturnEntity entity = new RuleReturnEntity();
-            RuleReturnType ruleReturnType = ruleReturnTypeDao.findOne(result.getRuleReturnTypeId());
-            entity.setClassName(ruleReturnType.getCode());
-            entity.setId(result.getReturnValueId());
-            entity.setName(result.getReturnValueName());
-            returnEntities.add(entity);
-        }
-        ruleChain.setReturnEntities(returnEntities);
-        //执行方法
-        if (StringUtils.isNotBlank(ruleNode.getRuleServiceMethodId())) {
-            RuleServiceMethod method = ruleServiceMethodDao.findOne(ruleNode.getRuleServiceMethodId());
-            ruleChain.setRuleServiceMethod(method);
-        }
-        //是否异步执行
-        if (ruleNode.getAsyncExecute()) {
-            ruleChain.setAsyncExecute(Boolean.TRUE);
-        }
-        return ruleChain;
     }
 
     /**

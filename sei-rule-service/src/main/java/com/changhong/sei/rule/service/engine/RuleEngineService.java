@@ -6,6 +6,7 @@ import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.util.JsonUtils;
 import com.changhong.sei.rule.dao.RuleEntityTypeDao;
 import com.changhong.sei.rule.dao.RuleTypeDao;
+import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
 import com.changhong.sei.rule.entity.RuleEntityType;
 import com.changhong.sei.rule.entity.RuleServiceMethod;
 import com.changhong.sei.rule.entity.RuleTreeNode;
@@ -21,6 +22,7 @@ import com.changhong.sei.rule.service.client.RuleServiceMethodClient;
 import com.changhong.sei.rule.service.exception.RuleEngineException;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,6 +51,8 @@ public class RuleEngineService {
     private RuleEntityTypeDao ruleEntityTypeDao;
     @Autowired
     private RuleServiceMethodClient ruleServiceMethodClient;
+    @Autowired
+    private RuleChainService ruleChainService;
 
 
     /**
@@ -69,8 +73,8 @@ public class RuleEngineService {
             // 指定规则类型不存在！【{0}】
             throw new RuleEngineException("00027", ruleTypeCode);
         }
-        List<RuleTreeNode> ruleTrees = ruleTreeNodeService.findRuleTreeRootNodes(ruleType.getId());
-        if (Objects.isNull(ruleTrees) || ruleTrees.isEmpty()) {
+        List<RuleTreeRoot> roots = ruleTreeNodeService.findRootNodes(ruleType.getId());
+        if (CollectionUtils.isEmpty(roots)) {
             //指定规则类型规则列表为空！
             throw new RuleEngineException("00028");
         }
@@ -87,9 +91,22 @@ public class RuleEngineService {
         env.put(RULE_TYPE_CODE, request.getRuleTypeCode());
         try {
             //根据优先级依次匹配多个规则
-            for (RuleTreeNode ruleTree : ruleTrees) {
-                //获得规则链
-                List<RuleChain> ruleChains = ruleTreeNodeService.getExpressionByRootNode(ruleTree.getId());
+            for (RuleTreeRoot root : roots) {
+                // 检查是否启用
+                if (!root.getEnabled()) {
+                    continue;
+                }
+                // 从缓存获取规则链
+                List<RuleChain> ruleChains = ruleChainService.getRuleChainsFromCache(root.getId());
+                if (CollectionUtils.isEmpty(ruleChains)) {
+                    // 再从规则树生成
+                    RuleTreeNode tree = ruleTreeNodeService.getRuleTree(root.getId());
+                    ruleChains = ruleChainService.getExpressionByTree(tree);
+                }
+                // 如果没有可用的规则链，则退出
+                if (CollectionUtils.isEmpty(ruleChains)) {
+                    continue;
+                }
                 for (RuleChain ruleChain : ruleChains) {
                     //是否匹配成功
                     if (ruleChainMatch(env, ruleChain)) {
