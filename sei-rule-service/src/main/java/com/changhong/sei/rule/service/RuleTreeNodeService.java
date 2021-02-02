@@ -178,7 +178,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         // 更新可以更新的属性
         ruleTreeNode.setName(ruleTreeRoot.getName());
         ruleTreeNode.setRank(ruleTreeRoot.getRank());
-        ruleTreeNode.setEnabled(ruleTreeNode.getEnabled());
+        ruleTreeNode.setEnabled(ruleTreeRoot.getEnabled());
         dao.save(ruleTreeNode);
         // 规则树根节点信息更新成功！
         return OperateResult.operationSuccess("00025");
@@ -577,6 +577,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         // 获取子节点清单
         List<RuleTreeNode> children = getChildren(nodeId);
         if (CollectionUtils.isNotEmpty(children)) {
+            // 递归删除
             children.forEach(this::deleteOneNode);
         }
         // 删除本节点
