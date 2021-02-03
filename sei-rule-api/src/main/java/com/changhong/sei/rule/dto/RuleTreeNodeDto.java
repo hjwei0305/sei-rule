@@ -19,11 +19,10 @@ import java.util.List;
 public class RuleTreeNodeDto extends BaseEntityDto {
     private static final long serialVersionUID = -7270581327275285182L;
     /**
-     * 代码
+     * 代码(系统给号)
      */
-    @NotBlank
     @Size(max = 10)
-    @ApiModelProperty(value = "代码", required = true)
+    @ApiModelProperty(value = "代码")
     private String code;
     /**
      * 名称
