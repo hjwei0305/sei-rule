@@ -68,6 +68,7 @@ public class RuleTypeController extends BaseEntityController<RuleType, RuleTypeD
             ruleTypeTree.setId(entityType.getId());
             ruleTypeTree.setCode(entityType.getCode());
             ruleTypeTree.setName(entityType.getName());
+            ruleTypeTree.setRuleEntityTypeId(entityType.getId());
             ruleTypeTrees.add(ruleTypeTree);
             List<RuleType> ruleTypes = service.findByRuleEntityTypeId(entityType.getId());
             List<RuleTypeDto> ruleTypeDtos = convertToDtos(ruleTypes);

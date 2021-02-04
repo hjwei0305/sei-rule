@@ -33,6 +33,11 @@ public class RuleTypeTree extends BaseEntityDto {
     @ApiModelProperty("层级")
     private Integer nodeLevel = 0;
     /**
+     * 规则业务实体类型Id
+     */
+    @ApiModelProperty("规则业务实体类型Id")
+    private String ruleEntityTypeId;
+    /**
      * 子节点
      */
     @ApiModelProperty("子节点")
@@ -41,23 +46,12 @@ public class RuleTypeTree extends BaseEntityDto {
     public RuleTypeTree() {
     }
 
-    public RuleTypeTree(RuleEntityTypeDto entityType) {
-        this.id = entityType.getId();
-        this.code = entityType.getCode();
-        this.name = entityType.getName();
-        this.nodeLevel = 0;
-    }
     public RuleTypeTree(RuleTypeDto ruleType) {
         this.id = ruleType.getId();
         this.code = ruleType.getCode();
         this.name = ruleType.getName();
         this.nodeLevel = 1;
-    }
-    public RuleTypeTree(RuleTreeRoot treeRoot) {
-        this.id = treeRoot.getId();
-        this.code = treeRoot.getCode();
-        this.name = treeRoot.getName();
-        this.nodeLevel = 2;
+        this.ruleEntityTypeId = ruleType.getRuleEntityTypeId();
     }
 
     public String getCode() {
@@ -82,6 +76,14 @@ public class RuleTypeTree extends BaseEntityDto {
 
     public void setNodeLevel(Integer nodeLevel) {
         this.nodeLevel = nodeLevel;
+    }
+
+    public String getRuleEntityTypeId() {
+        return ruleEntityTypeId;
+    }
+
+    public void setRuleEntityTypeId(String ruleEntityTypeId) {
+        this.ruleEntityTypeId = ruleEntityTypeId;
     }
 
     public List<RuleTypeTree> getChildren() {
