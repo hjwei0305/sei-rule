@@ -49,8 +49,13 @@ public class RuleAttribute extends BaseAuditableEntity {
     /**
      * 匹配值使用的字段
      */
-    @Column(name = "match_field")
-    private String matchField;
+    @Column(name = "value_field")
+    private String valueField;
+    /**
+     * 匹配值显示的字段
+     */
+    @Column(name = "display_field")
+    private String displayField;
     /**
      * 获取数据的url
      */
@@ -97,12 +102,20 @@ public class RuleAttribute extends BaseAuditableEntity {
         this.uiComponent = uiComponent;
     }
 
-    public String getMatchField() {
-        return matchField;
+    public String getValueField() {
+        return valueField;
     }
 
-    public void setMatchField(String matchField) {
-        this.matchField = matchField;
+    public void setValueField(String valueField) {
+        this.valueField = valueField;
+    }
+
+    public String getDisplayField() {
+        return displayField;
+    }
+
+    public void setDisplayField(String displayField) {
+        this.displayField = displayField;
     }
 
     public String getFindDataUrl() {

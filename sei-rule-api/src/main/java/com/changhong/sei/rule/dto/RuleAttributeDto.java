@@ -60,7 +60,13 @@ public class RuleAttributeDto extends BaseEntityDto {
      */
     @Size(max = 50)
     @ApiModelProperty(value = "匹配值使用的字段")
-    private String matchField;
+    private String valueField;
+    /**
+     * 匹配值显示的字段
+     */
+    @Size(max = 50)
+    @ApiModelProperty(value = "匹配值显示的字段")
+    private String displayField;
     /**
      * 获取数据的url
      */
@@ -108,12 +114,20 @@ public class RuleAttributeDto extends BaseEntityDto {
         this.uiComponent = uiComponent;
     }
 
-    public String getMatchField() {
-        return matchField;
+    public String getValueField() {
+        return valueField;
     }
 
-    public void setMatchField(String matchField) {
-        this.matchField = matchField;
+    public void setValueField(String valueField) {
+        this.valueField = valueField;
+    }
+
+    public String getDisplayField() {
+        return displayField;
+    }
+
+    public void setDisplayField(String displayField) {
+        this.displayField = displayField;
     }
 
     public String getFindDataUrl() {
