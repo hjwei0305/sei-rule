@@ -16,25 +16,13 @@ import java.io.Serializable;
  */
 @ApiModel("可用运算符")
 public class CanUseOperator implements Serializable {
-    private static final long serialVersionUID = -2499621548595422536L;
+    private static final long serialVersionUID = -8909137160340518680L;
     /**
      * 比较运算符
      */
     @JsonSerialize(using = EnumJsonSerializer.class)
     @ApiModelProperty("比较运算符")
     private ComparisonOperator comparisonOperator = ComparisonOperator.CONTAIN;
-
-    /**
-     * 无需选择规则属性
-     */
-    @ApiModelProperty("无需选择规则属性")
-    private Boolean notRequiredAttribute = Boolean.TRUE;
-
-    /**
-     * 无需输入匹配值
-     */
-    @ApiModelProperty("无需输入匹配值")
-    private Boolean notRequiredValue = Boolean.TRUE;
 
     public CanUseOperator() {
     }
@@ -43,33 +31,11 @@ public class CanUseOperator implements Serializable {
         this.comparisonOperator = comparisonOperator;
     }
 
-    public CanUseOperator(ComparisonOperator comparisonOperator, Boolean notRequiredAttribute, Boolean notRequiredValue) {
-        this.comparisonOperator = comparisonOperator;
-        this.notRequiredAttribute = notRequiredAttribute;
-        this.notRequiredValue = notRequiredValue;
-    }
-
     public ComparisonOperator getComparisonOperator() {
         return comparisonOperator;
     }
 
     public void setComparisonOperator(ComparisonOperator comparisonOperator) {
         this.comparisonOperator = comparisonOperator;
-    }
-
-    public Boolean getNotRequiredAttribute() {
-        return notRequiredAttribute;
-    }
-
-    public void setNotRequiredAttribute(Boolean notRequiredAttribute) {
-        this.notRequiredAttribute = notRequiredAttribute;
-    }
-
-    public Boolean getNotRequiredValue() {
-        return notRequiredValue;
-    }
-
-    public void setNotRequiredValue(Boolean notRequiredValue) {
-        this.notRequiredValue = notRequiredValue;
     }
 }

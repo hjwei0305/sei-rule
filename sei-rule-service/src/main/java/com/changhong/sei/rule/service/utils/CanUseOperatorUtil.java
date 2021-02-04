@@ -51,7 +51,7 @@ public class CanUseOperatorUtil {
                 break;
         }
         // 公共操作符
-        operators.add(new CanUseOperator(ComparisonOperator.COMPARER, Boolean.FALSE, Boolean.FALSE));
+        operators.add(new CanUseOperator(ComparisonOperator.COMPARER));
         return operators;
     }
 }
