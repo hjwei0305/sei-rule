@@ -140,4 +140,12 @@ public class RuleTreeNodeControllerTest extends BaseUnit5Test {
         System.out.println(JsonUtils.toJson(resultData));
         Assertions.assertTrue(resultData.successful());
     }
+
+    @Test
+    void getNodeSynthesisExpressions() {
+        String nodeId = "EA0E0C95-5AE2-11EB-81CA-3C6AA7266A52";
+        ResultData<?> resultData = controller.getNodeSynthesisExpressions(nodeId);
+        System.out.println(JsonUtils.toJson(resultData));
+        Assertions.assertTrue(resultData.successful());
+    }
 }

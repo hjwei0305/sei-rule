@@ -3,6 +3,7 @@ package com.changhong.sei.rule.api;
 import com.changhong.sei.core.api.BaseEntityApi;
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.rule.dto.RuleTreeNodeDto;
+import com.changhong.sei.rule.dto.ruletree.NodeSynthesisExpression;
 import com.changhong.sei.rule.dto.ruletree.RuleTree;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
 import com.changhong.sei.util.EnumUtils;
@@ -95,4 +96,13 @@ public interface RuleTreeNodeApi extends BaseEntityApi<RuleTreeNodeDto> {
     @DeleteMapping(path = "deleteNode/{nodeId}")
     @ApiOperation(notes = "删除业务规则树节点", value = "删除业务规则树的一个节点，并且级联删除所有子节点")
     ResultData<?> deleteNode(@PathVariable("nodeId") String nodeId);
+
+    /**
+     * 获取一个节点的综合表达式清单
+     * @param nodeId 节点Id
+     * @return 综合表达式清单
+     */
+    @GetMapping(path = "getNodeSynthesisExpressions")
+    @ApiOperation(value = "获取一个节点的综合表达式清单", notes = "获取一个节点的综合表达式清单, 包含所有父节点")
+    ResultData<List<NodeSynthesisExpression>> getNodeSynthesisExpressions(@RequestParam("nodeId") String nodeId);
 }

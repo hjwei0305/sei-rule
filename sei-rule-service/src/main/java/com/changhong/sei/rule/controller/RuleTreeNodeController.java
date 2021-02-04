@@ -9,6 +9,7 @@ import com.changhong.sei.rule.dto.LogicalExpressionDto;
 import com.changhong.sei.rule.dto.NodeReturnResultDto;
 import com.changhong.sei.rule.dto.RuleTreeNodeDto;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
+import com.changhong.sei.rule.dto.ruletree.NodeSynthesisExpression;
 import com.changhong.sei.rule.dto.ruletree.RuleTree;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
 import com.changhong.sei.rule.entity.LogicalExpression;
@@ -194,6 +195,17 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
     @Override
     public ResultData<?> deleteNode(String nodeId) {
         return ResultDataUtil.convertFromOperateResult(service.deleteNode(nodeId));
+    }
+
+    /**
+     * 获取一个节点的综合表达式清单
+     *
+     * @param nodeId 节点Id
+     * @return 综合表达式清单
+     */
+    @Override
+    public ResultData<List<NodeSynthesisExpression>> getNodeSynthesisExpressions(String nodeId) {
+        return ResultData.success(service.getNodeSynthesisExpressions(nodeId));
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.changhong.sei.rule.service;
 
 import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.dao.BaseTreeDao;
+import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.service.BaseTreeService;
 import com.changhong.sei.core.service.bo.OperateResult;
 import com.changhong.sei.core.service.bo.OperateResultWithData;
@@ -10,13 +11,14 @@ import com.changhong.sei.rule.dao.LogicalExpressionDao;
 import com.changhong.sei.rule.dao.NodeReturnResultDao;
 import com.changhong.sei.rule.dao.RuleTreeNodeDao;
 import com.changhong.sei.rule.dao.RuleTypeDao;
+import com.changhong.sei.rule.dto.enums.ComparisonOperator;
+import com.changhong.sei.rule.dto.ruletree.NodeSynthesisExpression;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
-import com.changhong.sei.rule.entity.LogicalExpression;
-import com.changhong.sei.rule.entity.NodeReturnResult;
-import com.changhong.sei.rule.entity.RuleTreeNode;
-import com.changhong.sei.rule.entity.RuleType;
+import com.changhong.sei.rule.dto.ruletree.SynthesisExpression;
+import com.changhong.sei.rule.entity.*;
 import com.changhong.sei.rule.service.engine.RuleChainService;
 import com.changhong.sei.serial.sdk.SerialService;
+import com.changhong.sei.util.EnumUtils;
 import com.changhong.sei.utils.AsyncRunUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -473,5 +475,61 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         }
         // 删除本节点
         dao.delete(node);
+    }
+
+    /**
+     * 获取一个节点的综合表达式清单
+     *
+     * @param nodeId 节点Id
+     * @return 综合表达式清单
+     */
+    public List<NodeSynthesisExpression> getNodeSynthesisExpressions(String nodeId) {
+        // 获取所有父节点清单
+        List<RuleTreeNode> parents = getParentNodes(nodeId, Boolean.TRUE);
+        if (CollectionUtils.isEmpty(parents)) {
+            return new LinkedList<>();
+        }
+        List<NodeSynthesisExpression> synthesisExpressions = new LinkedList<>();
+        // 倒序循环生成综合表达式
+        for (int i = parents.size() - 1; i >=0 ; i--) {
+            RuleTreeNode node = parents.get(i);
+            NodeSynthesisExpression nodeSynthesisExpression = generateExpression(node);
+            if (CollectionUtils.isNotEmpty(nodeSynthesisExpression.getExpressions())) {
+                synthesisExpressions.add(generateExpression(node));
+            }
+        }
+        return synthesisExpressions;
+    }
+
+    /**
+     * 生成综合表达式
+     * @param node 规则树节点
+     * @return 综合表达式
+     */
+    private NodeSynthesisExpression generateExpression(RuleTreeNode node) {
+        NodeSynthesisExpression expression = new NodeSynthesisExpression();
+        expression.setId(node.getId());
+        expression.setName(node.getName());
+        expression.setNodeLevel(node.getNodeLevel());
+        List<SynthesisExpression> synthesisExpressions = new LinkedList<>();
+        List<LogicalExpression> logicalExpressions = logicalExpressionDao.findByRuleTreeNodeId(node.getId());
+        if (CollectionUtils.isNotEmpty(logicalExpressions)) {
+            logicalExpressions.forEach( logicalExpression -> {
+                SynthesisExpression synthesisExpression = new SynthesisExpression();
+                RuleAttribute ruleAttribute = logicalExpression.getRuleAttribute();
+                if (Objects.nonNull(ruleAttribute)) {
+                    synthesisExpression.setRuleAttributeName(ruleAttribute.getName());
+                }
+                synthesisExpression.setComparisonName(EnumUtils.getEnumItemRemark(ComparisonOperator.class, logicalExpression.getComparisonOperator()));
+                String value = StringUtils.trim(logicalExpression.getComparisonValue());
+                if (StringUtils.isNotBlank(logicalExpression.getDisplayValue())) {
+                    value = logicalExpression.getDisplayValue();
+                }
+                synthesisExpression.setComparisonValue(value);
+                synthesisExpressions.add(synthesisExpression);
+            });
+        }
+        expression.setExpressions(synthesisExpressions);
+        return expression;
     }
 }
