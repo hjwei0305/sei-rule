@@ -201,11 +201,11 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
                 return OperateResultWithData.operationFailure("00020", entity.getName());
             }
         }
-        //检查结果
-        if (entity.getFinished()) {
-            List<NodeReturnResult> nodeReturnResults = entity.getNodeReturnResults();
-            if (Objects.isNull(nodeReturnResults) || nodeReturnResults.isEmpty()) {
-                //规则树节点[{0}]已勾结束节点,返回结果不能为空！
+        // 检查如果是规则结束，不能存在子节点
+        if (entity.getFinished() && !entity.isNew()) {
+            List<RuleTreeNode> children = getChildren(entity.getId());
+            if (CollectionUtils.isNotEmpty(children)) {
+                // [{0}]存在子节点，不能作为规则结束节点！
                 return OperateResultWithData.operationFailure("00021", entity.getName());
             }
         }
@@ -517,7 +517,9 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
             logicalExpressions.forEach( logicalExpression -> {
                 SynthesisExpression synthesisExpression = new SynthesisExpression();
                 RuleAttribute ruleAttribute = logicalExpression.getRuleAttribute();
-                if (Objects.nonNull(ruleAttribute)) {
+                // 比较器没有属性名
+                if (Objects.nonNull(ruleAttribute)
+                        && logicalExpression.getComparisonOperator() != ComparisonOperator.COMPARER) {
                     synthesisExpression.setRuleAttributeName(ruleAttribute.getName());
                 }
                 synthesisExpression.setComparisonName(EnumUtils.getEnumItemRemark(ComparisonOperator.class, logicalExpression.getComparisonOperator()));
