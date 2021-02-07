@@ -115,7 +115,7 @@ public class RuleTreeNodeControllerTest extends BaseUnit5Test {
 
     @Test
     void getRuleTree() {
-        String rootId = "D63735C5-56F9-11EB-8B50-3C6AA7266A51";
+        String rootId = "8663D1BF-6699-11EB-A0BD-0242C0A8462D";
         ResultData<?> resultData = controller.getRuleTree(rootId);
         System.out.println(JsonUtils.toJson(resultData));
         Assertions.assertTrue(resultData.successful());

@@ -72,6 +72,11 @@ public class NodeReturnResultDto extends BaseEntityDto {
      */
     @ApiModelProperty("返回结果类型UI组件")
     private String ruleReturnTypeUiComponent;
+    /**
+     * 获取数据的url
+     */
+    @ApiModelProperty("获取数据的url")
+    private String ruleReturnTypeFindDataUrl;
 
     public String getRuleTreeNodeId() {
         return ruleTreeNodeId;
@@ -143,5 +148,13 @@ public class NodeReturnResultDto extends BaseEntityDto {
 
     public void setRuleReturnTypeUiComponent(String ruleReturnTypeUiComponent) {
         this.ruleReturnTypeUiComponent = ruleReturnTypeUiComponent;
+    }
+
+    public String getRuleReturnTypeFindDataUrl() {
+        return ruleReturnTypeFindDataUrl;
+    }
+
+    public void setRuleReturnTypeFindDataUrl(String ruleReturnTypeFindDataUrl) {
+        this.ruleReturnTypeFindDataUrl = ruleReturnTypeFindDataUrl;
     }
 }
