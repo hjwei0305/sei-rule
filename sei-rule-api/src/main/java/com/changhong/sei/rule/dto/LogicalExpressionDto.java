@@ -91,7 +91,12 @@ public class LogicalExpressionDto extends BaseEntityDto {
      * 匹配值使用的字段
      */
     @ApiModelProperty("匹配值使用的字段")
-    private String ruleAttributeMatchField;
+    private String ruleAttributeValueField;
+    /**
+     * 匹配值显示的字段
+     */
+    @ApiModelProperty("匹配值显示的字段")
+    private String ruleAttributeDisplayField;
     /**
      * 获取数据的url
      */
@@ -186,12 +191,20 @@ public class LogicalExpressionDto extends BaseEntityDto {
         this.ruleAttributeUiComponent = ruleAttributeUiComponent;
     }
 
-    public String getRuleAttributeMatchField() {
-        return ruleAttributeMatchField;
+    public String getRuleAttributeValueField() {
+        return ruleAttributeValueField;
     }
 
-    public void setRuleAttributeMatchField(String ruleAttributeMatchField) {
-        this.ruleAttributeMatchField = ruleAttributeMatchField;
+    public void setRuleAttributeValueField(String ruleAttributeValueField) {
+        this.ruleAttributeValueField = ruleAttributeValueField;
+    }
+
+    public String getRuleAttributeDisplayField() {
+        return ruleAttributeDisplayField;
+    }
+
+    public void setRuleAttributeDisplayField(String ruleAttributeDisplayField) {
+        this.ruleAttributeDisplayField = ruleAttributeDisplayField;
     }
 
     public String getRuleAttributeFindDataUrl() {
