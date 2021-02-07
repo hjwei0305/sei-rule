@@ -72,6 +72,7 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
             protected void configure() {
                 // 使用自定义转换规则
                 map().setRuleTypeId(source.getRuleTypeId());
+                map().setRuleServiceMethodId(source.getRuleServiceMethodId());
             }
         };
         PropertyMap<LogicalExpression, LogicalExpressionDto> logicalExpressionPropertyMap = new PropertyMap<LogicalExpression, LogicalExpressionDto>() {

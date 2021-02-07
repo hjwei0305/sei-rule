@@ -92,6 +92,12 @@ public class RuleTreeNodeDto extends BaseEntityDto {
     @ApiModelProperty(value = "服务方法Id")
     private String ruleServiceMethodId;
     /**
+     * 服务方法名称
+     */
+    @Size(max = 50)
+    @ApiModelProperty(value = "服务方法名称")
+    private String ruleServiceMethodName;
+    /**
      * 是异步执行
      */
     @NotNull
@@ -218,6 +224,14 @@ public class RuleTreeNodeDto extends BaseEntityDto {
 
     public void setRuleServiceMethodId(String ruleServiceMethodId) {
         this.ruleServiceMethodId = ruleServiceMethodId;
+    }
+
+    public String getRuleServiceMethodName() {
+        return ruleServiceMethodName;
+    }
+
+    public void setRuleServiceMethodName(String ruleServiceMethodName) {
+        this.ruleServiceMethodName = ruleServiceMethodName;
     }
 
     public Boolean getAsyncExecute() {

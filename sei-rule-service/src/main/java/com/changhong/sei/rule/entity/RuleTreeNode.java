@@ -88,6 +88,12 @@ public class RuleTreeNode extends BaseAuditableEntity implements TreeEntity<Rule
     @Column(name = "rule_service_method_id")
     private String ruleServiceMethodId;
     /**
+     * 服务方法
+     */
+    @ManyToOne
+    @JoinColumn(name = "rule_service_method_id", insertable = false, updatable = false)
+    private RuleServiceMethod ruleServiceMethod;
+    /**
      * 是异步执行
      */
     @Column(name = "async_execute")
@@ -233,6 +239,14 @@ public class RuleTreeNode extends BaseAuditableEntity implements TreeEntity<Rule
 
     public void setRuleServiceMethodId(String ruleServiceMethodId) {
         this.ruleServiceMethodId = ruleServiceMethodId;
+    }
+
+    public RuleServiceMethod getRuleServiceMethod() {
+        return ruleServiceMethod;
+    }
+
+    public void setRuleServiceMethod(RuleServiceMethod ruleServiceMethod) {
+        this.ruleServiceMethod = ruleServiceMethod;
     }
 
     public Boolean getAsyncExecute() {
