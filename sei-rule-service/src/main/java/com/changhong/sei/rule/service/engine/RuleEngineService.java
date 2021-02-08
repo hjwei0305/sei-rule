@@ -164,17 +164,19 @@ public class RuleEngineService {
         response.setReturnConstant(ruleChain.getReturnConstant());
         List<RuleReturnEntity> returnEntities = ruleChain.getReturnEntities();
         if (!Objects.isNull(returnEntities) && !returnEntities.isEmpty()) {
-            //组装Map key：类名 enties:实体对象
+            //组装Map key：类名 entries:实体对象
             Map<String, RuleReturnEntity> returnEntityMap = new HashMap<>();
             returnEntities.forEach(e -> {
                 returnEntityMap.put(e.getClassName(), e);
             });
             response.setReturnEntityMap(returnEntityMap);
         }
-        //执行方法
-        RuleServiceMethod method = ruleChain.getRuleServiceMethod();
-        if (Objects.nonNull(method)) {
-            serviceMethodExecute(request, response, ruleChain, method);
+        if (request.getExecuteMethod()) {
+            //执行方法
+            RuleServiceMethod method = ruleChain.getRuleServiceMethod();
+            if (Objects.nonNull(method)) {
+                serviceMethodExecute(request, response, ruleChain, method);
+            }
         }
     }
 
