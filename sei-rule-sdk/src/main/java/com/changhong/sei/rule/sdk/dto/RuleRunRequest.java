@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
@@ -33,11 +32,10 @@ public class RuleRunRequest implements Serializable {
     private String ruleEntityJson;
 
     /**
-     * 不执行服务方法
+     * 是否执行服务方法(默认为true)
      */
-    @NotNull
-    @ApiModelProperty(value = "不执行服务方法", required = true)
-    private Boolean notRunServiceMethod = Boolean.FALSE;
+    @ApiModelProperty(value = "是否执行服务方法(默认为true)")
+    private Boolean executeMethod = Boolean.TRUE;
 
     public String getRuleTypeCode() {
         return ruleTypeCode;
@@ -55,11 +53,11 @@ public class RuleRunRequest implements Serializable {
         this.ruleEntityJson = ruleEntityJson;
     }
 
-    public Boolean getNotRunServiceMethod() {
-        return notRunServiceMethod;
+    public Boolean getExecuteMethod() {
+        return executeMethod;
     }
 
-    public void setNotRunServiceMethod(Boolean notRunServiceMethod) {
-        this.notRunServiceMethod = notRunServiceMethod;
+    public void setExecuteMethod(Boolean executeMethod) {
+        this.executeMethod = executeMethod;
     }
 }
