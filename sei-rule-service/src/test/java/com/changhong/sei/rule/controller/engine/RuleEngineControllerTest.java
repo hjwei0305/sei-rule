@@ -3,6 +3,8 @@ package com.changhong.sei.rule.controller.engine;
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.util.JsonUtils;
 import com.changhong.sei.rule.BaseUnit5Test;
+import com.changhong.sei.rule.dto.engine.TestRunRequest;
+import com.changhong.sei.rule.dto.engine.TestRunResponse;
 import com.changhong.sei.rule.sdk.dto.RuleRunRequest;
 import com.changhong.sei.rule.sdk.dto.RuleRunResponse;
 import org.junit.jupiter.api.Assertions;
@@ -26,6 +28,18 @@ class RuleEngineControllerTest extends BaseUnit5Test {
         String json = "{\"postscript\":\"保证金\",\"amount\":200,\"tradeDate\":\"2021-01-20 14:18:05\",\"enable\":true,\"idCard\":\"511621199301012355\"}";
         request.setRuleEntityJson(json);
         ResultData<RuleRunResponse> resultData = controller.run(request);
+        System.out.println(JsonUtils.toJson(resultData));
+        Assertions.assertTrue(resultData.successful());
+    }
+
+    @Test
+    void testRun() {
+        TestRunRequest request = new TestRunRequest();
+        request.setRuleTypeCode("beis-recongnize");
+        String json = "{\"postscript\":\"保证金\",\"amount\":200,\"tradeDate\":\"2021-01-20 14:18:05\",\"enable\":true,\"idCard\":\"511621199301012355\"}";
+        request.setRuleEntityJson(json);
+        request.setExecuteMethod(Boolean.FALSE);
+        ResultData<TestRunResponse> resultData = controller.testRun(request);
         System.out.println(JsonUtils.toJson(resultData));
         Assertions.assertTrue(resultData.successful());
     }

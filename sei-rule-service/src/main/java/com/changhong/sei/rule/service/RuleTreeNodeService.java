@@ -103,6 +103,25 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     }
 
     /**
+     * 通过一个子节点Id获取根节点信息
+     * @param nodeId 节点Id
+     * @return 根节点信息
+     */
+    public RuleTreeRoot findByNodeId(String nodeId) {
+        RuleTreeNode node = dao.findOne(nodeId);
+        if (Objects.isNull(node)) {
+            return null;
+        }
+        List<RuleTreeNode> parents = getParentNodes(node, true);
+        for (RuleTreeNode ruleTreeNode: parents) {
+            if (StringUtils.isBlank(ruleTreeNode.getParentId())) {
+                return strictModelMapper.map(ruleTreeNode, RuleTreeRoot.class);
+            }
+        }
+        return null;
+    }
+
+    /**
      * 创建规则树根节点信息
      *
      * @param ruleTreeRoot 规则树根节点

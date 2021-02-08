@@ -42,7 +42,6 @@ import static com.changhong.sei.rule.service.aviator.AviatorExpressionService.RU
  */
 @Service
 public class RuleEngineService {
-
     @Autowired
     private RuleTypeDao ruleTypeDao;
     @Autowired
@@ -59,9 +58,10 @@ public class RuleEngineService {
      * 执行规则
      *
      * @param request 规则执行请求
+     * @param executeMethod 是否执行服务方法
      * @return 结果返回对象
      */
-    public RuleRunResponse run(RuleRunRequest request) throws RuleEngineException {
+    public RuleRunResponse run(RuleRunRequest request, boolean executeMethod) throws RuleEngineException {
         RuleRunResponse response = new RuleRunResponse();
         String ruleTypeCode = request.getRuleTypeCode();
         if (StringUtils.isBlank(ruleTypeCode)) {
@@ -111,7 +111,7 @@ public class RuleEngineService {
                     //是否匹配成功
                     if (ruleChainMatch(env, ruleChain)) {
                         //匹配成功后执行操作
-                        matchSuccess(request, response, ruleChain);
+                        matchSuccess(request, response, ruleChain, executeMethod);
                         //匹配上一个直接返回
                         return response;
                     }
@@ -152,8 +152,9 @@ public class RuleEngineService {
      * @param request   匹配请求
      * @param response  匹配结果
      * @param ruleChain 规则链
+     * @param executeMethod 是否执行服务方法
      */
-    private void matchSuccess(RuleRunRequest request, RuleRunResponse response, RuleChain ruleChain) {
+    private void matchSuccess(RuleRunRequest request, RuleRunResponse response, RuleChain ruleChain, boolean executeMethod) {
         //记录日志
         //规则类型[{0}]已匹配上规则节点[{1}]，输入参数:{2}，匹配表达式:[{3}]
         LogUtil.bizLog(ContextUtil.getMessage("00031", request.getRuleTypeCode(), ruleChain.getRuleTreeNodeId(), request.getRuleEntityJson(), ruleChain.getExpression()));
@@ -171,7 +172,7 @@ public class RuleEngineService {
             });
             response.setReturnEntityMap(returnEntityMap);
         }
-        if (request.getExecuteMethod()) {
+        if (executeMethod) {
             //执行方法
             RuleServiceMethod method = ruleChain.getRuleServiceMethod();
             if (Objects.nonNull(method)) {
