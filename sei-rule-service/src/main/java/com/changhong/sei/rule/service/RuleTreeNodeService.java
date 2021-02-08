@@ -530,6 +530,13 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
                 synthesisExpression.setComparisonValue(value);
                 synthesisExpressions.add(synthesisExpression);
             });
+        } else if (node.getTrueNode()) {
+            // 处理真节点
+            SynthesisExpression synthesisExpression = new SynthesisExpression();
+            synthesisExpression.setRuleAttributeName("始终");
+            synthesisExpression.setComparisonName(EnumUtils.getEnumItemRemark(ComparisonOperator.class, ComparisonOperator.EQUAL));
+            synthesisExpression.setComparisonValue("真");
+            synthesisExpressions.add(synthesisExpression);
         }
         expression.setExpressions(synthesisExpressions);
         return expression;
