@@ -22,13 +22,6 @@ import javax.validation.constraints.Size;
 public class LogicalExpressionDto extends BaseEntityDto {
     private static final long serialVersionUID = 4068060971518565005L;
     /**
-     * 规则树根节点Id
-     */
-    @NotBlank
-    @Size(max = 36)
-    @ApiModelProperty(value = "规则树根节点Id", required = true)
-    private String ruleTreeRootNodeId;
-    /**
      * 规则树节点Id
      */
     @NotBlank
@@ -102,14 +95,6 @@ public class LogicalExpressionDto extends BaseEntityDto {
      */
     @ApiModelProperty("获取数据的url")
     private String ruleAttributeFindDataUrl;
-
-    public String getRuleTreeRootNodeId() {
-        return ruleTreeRootNodeId;
-    }
-
-    public void setRuleTreeRootNodeId(String ruleTreeRootNodeId) {
-        this.ruleTreeRootNodeId = ruleTreeRootNodeId;
-    }
 
     public String getRuleTreeNodeId() {
         return ruleTreeNodeId;

@@ -10,7 +10,6 @@ import com.changhong.sei.rule.dto.NodeReturnResultDto;
 import com.changhong.sei.rule.dto.RuleTreeNodeDto;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
 import com.changhong.sei.rule.dto.ruletree.NodeSynthesisExpression;
-import com.changhong.sei.rule.dto.ruletree.RuleTree;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
 import com.changhong.sei.rule.entity.LogicalExpression;
 import com.changhong.sei.rule.entity.NodeReturnResult;
@@ -18,7 +17,6 @@ import com.changhong.sei.rule.entity.RuleTreeNode;
 import com.changhong.sei.rule.service.RuleTreeNodeService;
 import com.changhong.sei.util.EnumUtils;
 import io.swagger.annotations.Api;
-import org.apache.commons.collections.CollectionUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.convention.MatchingStrategies;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -155,26 +152,6 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
     }
 
     /**
-     * 保存业务规则树
-     *
-     * @param ruleTree 业务规则树
-     * @return 处理结果
-     */
-    @Override
-    public ResultData<?> saveRuleTree(RuleTree ruleTree) {
-        // 为根节点赋值
-        RuleTreeNodeDto treeNode = ruleTree.getTreeNode();
-        treeNode.setCode(ruleTree.getCode());
-        treeNode.setName(ruleTree.getName());
-        treeNode.setTrueNode(ruleTree.getTrueNode());
-        treeNode.setRuleTypeId(ruleTree.getRuleTypeId());
-        treeNode.setEnabled(ruleTree.getEnabled());
-        treeNode.setRank(ruleTree.getRank());
-        RuleTreeNode ruleNode = convertToEntity(treeNode);
-        return ResultDataUtil.convertFromOperateResult(service.saveRuleTree(ruleNode));
-    }
-
-    /**
      * 删除业务规则树
      *
      * @param rootId 根节点Id
@@ -182,7 +159,7 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
      */
     @Override
     public ResultData<?> deleteRuleTree(String rootId) {
-        service.deleteRuleTree(rootId);
+        service.deleteNode(rootId);
         // 业务规则树删除成功！
         return ResultDataUtil.success("00018");
     }

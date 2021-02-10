@@ -2,7 +2,6 @@ package com.changhong.sei.rule.service;
 
 import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.dao.BaseTreeDao;
-import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.service.BaseTreeService;
 import com.changhong.sei.core.service.bo.OperateResult;
 import com.changhong.sei.core.service.bo.OperateResultWithData;
@@ -107,18 +106,12 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      * @param nodeId 节点Id
      * @return 根节点信息
      */
-    public RuleTreeRoot findByNodeId(String nodeId) {
+    public RuleTreeRoot findRootByNodeId(String nodeId) {
         RuleTreeNode node = dao.findOne(nodeId);
         if (Objects.isNull(node)) {
             return null;
         }
-        List<RuleTreeNode> parents = getParentNodes(node, true);
-        for (RuleTreeNode ruleTreeNode: parents) {
-            if (StringUtils.isBlank(ruleTreeNode.getParentId())) {
-                return strictModelMapper.map(ruleTreeNode, RuleTreeRoot.class);
-            }
-        }
-        return null;
+        return strictModelMapper.map(getRootNode(node), RuleTreeRoot.class);
     }
 
     /**
@@ -232,21 +225,19 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         if (result.notSuccessful()) {
             return result;
         }
-        //放在后面是因为需要获取保存后的id
-        String rootNodeId = entity.getId();
-        if (StringUtils.isNotBlank(entity.getRootId())) {
-            rootNodeId = entity.getRootId();
-        }
         //保存逻辑表达式
+        RuleTreeNode treeNode = result.getData();
         if (!entity.getTrueNode()) {
-            saveLogicalExpression(entity);
+            saveLogicalExpression(treeNode);
         }
         //保存规则结果
         if (entity.getFinished()) {
-            saveNodeResult(entity);
+            saveNodeResult(treeNode);
         }
+        // 获取根节点
+        RuleTreeNode rootNode = getRootNode(treeNode);
         // 删除规则链缓存
-        ruleChainService.deleteRuleChainCache(rootNodeId);
+        ruleChainService.deleteRuleChainCache(rootNode.getId());
         return result;
     }
 
@@ -332,108 +323,16 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     }
 
     /**
-     * 删除一个规则树
-     *
-     * @param rootNodeId 根节点Id
-     * @return 处理结果
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteRuleTree(String rootNodeId) {
-        // 获取树
-        RuleTreeNode tree = getTree(rootNodeId);
-        if (Objects.isNull(tree)) {
-            return;
-        }
-        //删除规则链缓存
-        ruleChainService.deleteRuleChainCache(rootNodeId);
-        //删除逻辑表达式
-        logicalExpressionDao.deleteByRuleTreeRootNodeId(rootNodeId);
-        //删除结果
-        nodeReturnResultDao.deleteByRuleTreeRootNodeId(rootNodeId);
-        // 获取所有树节点清单
-        List<RuleTreeNode> rules = unBuildTree(Collections.singletonList(tree));
-        // 按层级倒序排列
-        Comparator<RuleTreeNode> comparator = Comparator.comparing(RuleTreeNode::getNodeLevel);
-        rules = rules.stream().sorted(comparator.reversed()).collect(Collectors.toList());
-        rules.forEach(node -> dao.delete(node));
-    }
-
-    /**
-     * 保存业务规则树
-     *
-     * @param ruleNode 业务规则树节点(包含子节点)
-     * @return 处理结果
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public OperateResult saveRuleTree(RuleTreeNode ruleNode) {
-        // 如果根节点已经存在，则删除整棵树的所有节点
-        if (StringUtils.isNotBlank(ruleNode.getId())) {
-            deleteRuleTree(ruleNode.getId());
-            // 全部新建
-            ruleNode.setId(null);
-            ruleNode.setCode(null);
-        }
-        //查询规则分类是否存在
-        RuleType ruleType = ruleTypeDao.findOne(ruleNode.getRuleTypeId());
-        if (Objects.isNull(ruleType)) {
-            //指定规则类型[{0}]不存在！
-            return OperateResult.operationFailure("00023", ruleNode.getRuleTypeId());
-        }
-        OperateResultWithData<RuleTreeNode> saveResult = save(ruleNode);
-        if (saveResult.notSuccessful()) {
-            return OperateResultWithData.converterNoneData(saveResult);
-        }
-        //保存子节点
-        saveChildren(saveResult.getData(), ruleNode.getChildren());
-        //异步构建缓存
-        asyncRunUtil.runAsync(() -> ruleChainService.buildCache(ruleNode));
-        // 业务规则【{0}】保存成功！
-        return OperateResult.operationSuccess("00017", ruleNode.getName());
-    }
-
-    /**
-     * 递归保存业务规则树子节点
-     *
-     * @param ruleNode 树节点
-     * @param children 子节点清单
-     */
-    private void saveChildren(RuleTreeNode ruleNode, List<RuleTreeNode> children) {
-        if (CollectionUtils.isEmpty(children)) {
-            return;
-        }
-        children.forEach(node -> {
-            // 重新创建节点
-            node.setId(null);
-            node.setCode(null);
-            node.setRootId(ruleNode.getRootId());
-            node.setParentId(ruleNode.getId());
-            //循环传递规则分类的id
-            node.setRuleTypeId(ruleNode.getRuleTypeId());
-            // 设置公共属性
-            OperateResultWithData<RuleTreeNode> saveResult = save(node);
-            if (saveResult.notSuccessful()) {
-                throw new ServiceException("递归保存规则树节点失败！" + saveResult.getMessage());
-            }
-            saveChildren(saveResult.getData(), node.getChildren());
-        });
-    }
-
-    /**
      * 保存业务逻辑表达式
      *
      * @param ruleNode 规则树节点
      */
     private void saveLogicalExpression(RuleTreeNode ruleNode) {
         //赋值根节点值
-        for (LogicalExpression expression : ruleNode.getLogicalExpressions()) {
-            if (StringUtils.isBlank(ruleNode.getRootId())) {
-                expression.setRuleTreeRootNodeId(ruleNode.getId());
-            } else {
-                expression.setRuleTreeRootNodeId(ruleNode.getRootId());
-            }
+        ruleNode.getLogicalExpressions().forEach(expression -> {
             expression.setRuleTreeNodeId(ruleNode.getId());
             logicalExpressionDao.save(expression);
-        }
+        });
     }
 
 
@@ -444,16 +343,10 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      */
     private void saveNodeResult(RuleTreeNode ruleNode) {
         //保存结果
-        //赋值根节点值
-        for (NodeReturnResult nodeReturnResult : ruleNode.getNodeReturnResults()) {
-            if (StringUtils.isBlank(ruleNode.getRootId())) {
-                nodeReturnResult.setRuleTreeRootNodeId(ruleNode.getId());
-            } else {
-                nodeReturnResult.setRuleTreeRootNodeId(ruleNode.getRootId());
-            }
+        ruleNode.getNodeReturnResults().forEach(nodeReturnResult -> {
             nodeReturnResult.setRuleTreeNodeId(ruleNode.getId());
             nodeReturnResultDao.save(nodeReturnResult);
-        }
+        });
     }
 
     /**
@@ -500,6 +393,25 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         }
         // 删除本节点
         dao.delete(node);
+    }
+
+    /**
+     * 通过一个节点获取其根节点
+     * @param node 规则节点
+     * @return 根节点
+     */
+    public RuleTreeNode getRootNode(RuleTreeNode node) {
+        if (Objects.isNull(node) || StringUtils.isBlank(node.getParentId())) {
+            return node;
+        }
+        // 获取父节点清单
+        List<RuleTreeNode> parents = getParentNodes(node, false);
+        for (RuleTreeNode ruleTreeNode: parents) {
+            if (StringUtils.isBlank(ruleTreeNode.getParentId())) {
+                return ruleTreeNode;
+            }
+        }
+        throw new ServiceException("通过一个节点获取其根节点异常，未找到根节点！");
     }
 
     /**

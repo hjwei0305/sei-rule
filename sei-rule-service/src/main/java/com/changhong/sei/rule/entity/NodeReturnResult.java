@@ -20,11 +20,6 @@ import javax.persistence.*;
 public class NodeReturnResult extends BaseAuditableEntity implements ITenant {
     private static final long serialVersionUID = -221320875576807774L;
     /**
-     * 规则树根节点Id
-     */
-    @Column(name = "rule_tree_root_node_id")
-    private String ruleTreeRootNodeId;
-    /**
      * 规则树节点Id
      */
     @Column(name = "rule_tree_node_id")
@@ -55,14 +50,6 @@ public class NodeReturnResult extends BaseAuditableEntity implements ITenant {
      */
     @Column(name = "tenant_code")
     private String tenantCode;
-
-    public String getRuleTreeRootNodeId() {
-        return ruleTreeRootNodeId;
-    }
-
-    public void setRuleTreeRootNodeId(String ruleTreeRootNodeId) {
-        this.ruleTreeRootNodeId = ruleTreeRootNodeId;
-    }
 
     public String getRuleTreeNodeId() {
         return ruleTreeNodeId;

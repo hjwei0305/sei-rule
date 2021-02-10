@@ -90,7 +90,9 @@ public class RuleTreeNodeControllerTest extends BaseUnit5Test {
 
     @Test
     public void deleteRuleTreeTest() {
-        controller.deleteRuleTree("E572FF56-5A29-11EB-82F6-3C6AA7266A51");
+        ResultData<?> resultData = controller.deleteRuleTree("8663D1BF-6699-11EB-A0BD-0242C0A8462D");
+        System.out.println(JsonUtils.toJson(resultData));
+        Assertions.assertTrue(resultData.successful());
     }
 
     @Test

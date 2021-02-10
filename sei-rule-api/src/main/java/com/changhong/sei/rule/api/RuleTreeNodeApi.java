@@ -71,15 +71,6 @@ public interface RuleTreeNodeApi extends BaseEntityApi<RuleTreeNodeDto> {
     ResultData<RuleTreeNodeDto> getRuleTree(@RequestParam("rootNodeId") String rootNodeId);
 
     /**
-     * 保存业务规则树
-     * @param ruleTree 业务规则树
-     * @return 处理结果
-     */
-    @PostMapping(path = "saveRuleTree", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(notes = "保存业务规则树", value = "保存一个完整的业务规则树")
-    ResultData<?> saveRuleTree(@RequestBody RuleTree ruleTree);
-
-    /**
      * 删除业务规则树
      * @param rootId 根节点Id
      * @return 处理结果

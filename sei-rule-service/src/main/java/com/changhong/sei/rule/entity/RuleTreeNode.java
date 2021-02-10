@@ -110,12 +110,6 @@ public class RuleTreeNode extends BaseAuditableEntity implements TreeEntity<Rule
     private String tenantCode;
 
     /**
-     * 根节点ID
-     */
-    @Transient
-    private String rootId;
-
-    /**
      * 该节点表达式
      */
     @Transient
@@ -295,14 +289,6 @@ public class RuleTreeNode extends BaseAuditableEntity implements TreeEntity<Rule
 
     public void setNodeReturnResults(List<NodeReturnResult> nodeReturnResults) {
         this.nodeReturnResults = nodeReturnResults;
-    }
-
-    public String getRootId() {
-        return rootId;
-    }
-
-    public void setRootId(String rootId) {
-        this.rootId = rootId;
     }
 
     @Override

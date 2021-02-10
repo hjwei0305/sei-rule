@@ -86,7 +86,7 @@ public class RuleEngineController implements RuleEngineApi, RuleEngineTestApi {
         TestRunResponse testRunResponse = strictModelMapper.map(response, TestRunResponse.class);
         // 获取根节点信息
         if (StringUtils.isNotBlank(testRunResponse.getMatchedNodeId())) {
-            testRunResponse.setRuleTreeRoot(ruleTreeNodeService.findByNodeId(testRunResponse.getMatchedNodeId()));
+            testRunResponse.setRuleTreeRoot(ruleTreeNodeService.findRootByNodeId(testRunResponse.getMatchedNodeId()));
         }
         return ResultData.success(testRunResponse);
     }

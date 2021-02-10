@@ -45,12 +45,20 @@ public class RuleChainService {
     public static final String RULE_CHAIN_CACHE_KEY_PREFIX = "sei:sei-rule:rule-chains:";
 
     /**
+     * 规则链缓存KEY
+     * @param rootNodeId 规则树根节点Id
+     */
+    public static String getCacheKey(String rootNodeId) {
+        return RULE_CHAIN_CACHE_KEY_PREFIX + rootNodeId;
+    }
+
+    /**
      * 清除规则链缓存
      *
      * @param rootNodeId 规则树根节点Id
      */
     public void deleteRuleChainCache(String rootNodeId) {
-        redisTemplate.delete(RULE_CHAIN_CACHE_KEY_PREFIX + rootNodeId);
+        redisTemplate.delete(getCacheKey(rootNodeId));
     }
 
     /**
@@ -60,7 +68,7 @@ public class RuleChainService {
      * @return 规则链清单
      */
     public List<RuleChain> getRuleChainsFromCache(String rootNodeId) {
-        BoundListOperations<String, RuleChain> operations = redisTemplate.boundListOps(RULE_CHAIN_CACHE_KEY_PREFIX + rootNodeId);
+        BoundListOperations<String, RuleChain> operations = redisTemplate.boundListOps(getCacheKey(rootNodeId));
         Long size = operations.size();
         if (Objects.isNull(size)) {
             return null;
@@ -82,21 +90,29 @@ public class RuleChainService {
             return ruleChains;
         }
         //重新建立缓存
-        buildCache(tree);
+        buildRuleChainCache(tree);
         // 再次从缓存获取
         return getRuleChainsFromCache(rootNodeId);
+    }
+
+    /**
+     * 通过根节点构建规则链缓存
+     * @param tree 一个完整的规则树
+     */
+    public void buildRuleChainCache(RuleTreeNode tree) {
+        String rootNodeId = tree.getId();
+        buildCache(tree, rootNodeId);
     }
 
     /**
      * 重新建立缓存(递归)
      *
      * @param ruleNode 树节点
+     * @param rootNodeId 根节点Id
      */
-    public void buildCache(RuleTreeNode ruleNode) {
-        //循环传递根节点的id
-        if (StringUtils.isBlank(ruleNode.getParentId())) {
-            ruleNode.setRootId(ruleNode.getId());
-        }
+    private void buildCache(RuleTreeNode ruleNode, String rootNodeId) {
+        // 获取根节点Id
+
         //获得当前节点表达式
         String expression = aviatorExpressionService.convertToExpression(ruleNode);
         //循环拼接表达式
@@ -114,7 +130,7 @@ public class RuleChainService {
             //00004 = 规则[{0}]:规则叶子节点[{1}]生成表达式{2}！
             LogUtil.bizLog(ContextUtil.getMessage("00004", ruleNode.getCode(), ruleNode.getCode(), ruleNode.getExpression()));
             RuleChain ruleChain = constructRuleChain(ruleNode);
-            BoundListOperations<String, RuleChain> operations = redisTemplate.boundListOps(RULE_CHAIN_CACHE_KEY_PREFIX + ruleNode.getRootId());
+            BoundListOperations<String, RuleChain> operations = redisTemplate.boundListOps(getCacheKey(rootNodeId));
             operations.rightPush(ruleChain);
             return;
         }
@@ -122,9 +138,8 @@ public class RuleChainService {
         //对字节的按照rank顺序排序 数据库查询已rank顺序排序 这里不再排序
         // List<RuleTreeNode> rankedChildren = children.stream().sorted(Comparator.comparing(RuleTreeNode::getRank)).collect(Collectors.toList());
         children.forEach(node -> {
-            node.setRootId(ruleNode.getRootId());
             node.setExpression(ruleNode.getExpression());
-            buildCache(node);
+            buildCache(node, rootNodeId);
         });
     }
 
