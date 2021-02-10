@@ -143,7 +143,6 @@ public class RuleEngineService {
             //00032 = 必要的规则匹配参数未传入,请检查！
             throw new RuleEngineException("00032");
         }
-
     }
 
     /**

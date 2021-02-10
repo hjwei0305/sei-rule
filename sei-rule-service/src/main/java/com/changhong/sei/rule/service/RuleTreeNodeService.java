@@ -233,6 +233,10 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
             return result;
         }
         //放在后面是因为需要获取保存后的id
+        String rootNodeId = entity.getId();
+        if (StringUtils.isNotBlank(entity.getRootId())) {
+            rootNodeId = entity.getRootId();
+        }
         //保存逻辑表达式
         if (!entity.getTrueNode()) {
             saveLogicalExpression(entity);
@@ -241,6 +245,8 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         if (entity.getFinished()) {
             saveNodeResult(entity);
         }
+        // 删除规则链缓存
+        ruleChainService.deleteRuleChainCache(rootNodeId);
         return result;
     }
 
