@@ -9,6 +9,7 @@ import com.changhong.sei.rule.entity.RuleAttribute;
 import com.changhong.sei.rule.entity.RuleComparator;
 import com.changhong.sei.rule.entity.RuleTreeNode;
 import com.changhong.sei.rule.service.exception.MatchingRuleComparatorException;
+import com.changhong.sei.rule.service.utils.DateParseUtil;
 import com.changhong.sei.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,8 +100,8 @@ public class AviatorExpressionService {
                     break;
                 case DATETIME:
                     //日期类型需要转化为yyyy-MM-dd HH:mm:ss:SS 格式 在两侧加单引号
-                    Date date = DateUtils.parseDate(comparisonValue, DEFAULT_TIME_FORMAT);
-                    comparisonValue = "'" + DateUtils.formatDate(date, "yyyy-MM-dd HH:mm:ss:SS") + "'";
+                    Date date = DateParseUtil.parseToDate(comparisonValue);
+                    comparisonValue = "'" + DateUtils.formatTime(date) + "'";
                     break;
                 default:
                     break;
@@ -157,5 +158,4 @@ public class AviatorExpressionService {
         }
         return builder.toString();
     }
-
 }
