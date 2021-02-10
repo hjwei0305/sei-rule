@@ -365,6 +365,10 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         }
         // 删除一个节点（递归）
         deleteOneNode(node);
+        // 获取根节点
+        RuleTreeNode rootNode = getRootNode(node);
+        // 删除规则链缓存
+        ruleChainService.deleteRuleChainCache(rootNode.getId());
         // 规则树节点【{0}】删除成功！
         return OperateResult.operationSuccess("00038", node.getName());
     }
