@@ -16,6 +16,7 @@ import com.changhong.sei.rule.sdk.dto.RuleRunRequest;
 import com.changhong.sei.rule.sdk.dto.RuleRunResponse;
 import com.changhong.sei.rule.sdk.dto.RuleServiceMethodParam;
 import com.changhong.sei.rule.service.RuleTreeNodeService;
+import com.changhong.sei.rule.service.aviator.AviatorExpressionService;
 import com.changhong.sei.rule.service.aviator.function.MatchRuleComparatorFunction;
 import com.changhong.sei.rule.service.bo.RuleChain;
 import com.changhong.sei.rule.service.client.RuleServiceMethodClient;
@@ -31,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.changhong.sei.rule.service.aviator.AviatorExpressionService.RULE_CHAIN_PARAM_PREFIX;
 import static com.changhong.sei.rule.service.aviator.AviatorExpressionService.RULE_TYPE_CODE;
@@ -52,6 +54,8 @@ public class RuleEngineService {
     private RuleServiceMethodClient ruleServiceMethodClient;
     @Autowired
     private RuleChainService ruleChainService;
+    @Autowired
+    private AviatorExpressionService aviatorExpressionService;
 
 
     /**
@@ -73,9 +77,11 @@ public class RuleEngineService {
             // 指定规则类型不存在！【{0}】
             throw new RuleEngineException("00027", ruleTypeCode);
         }
-        List<RuleTreeRoot> roots = ruleTreeNodeService.findRootNodes(ruleType.getId());
+        List<RuleTreeRoot> rootNodes = ruleTreeNodeService.findRootNodes(ruleType.getId());
+        // 获取启用的规则
+        List<RuleTreeRoot> roots = rootNodes.stream().filter(RuleTreeRoot::getEnabled).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(roots)) {
-            //指定规则类型规则列表为空！
+            // 指定规则类型没有定义可用的规则！
             throw new RuleEngineException("00028");
         }
         Map<String, Object> env = new HashMap<>();
@@ -92,8 +98,8 @@ public class RuleEngineService {
         try {
             //根据优先级依次匹配多个规则
             for (RuleTreeRoot root : roots) {
-                // 检查是否启用
-                if (!root.getEnabled()) {
+                // 先判断根节点是否通过规则检查
+                if (!runNodeExpression(env, root.getId())) {
                     continue;
                 }
                 // 从缓存获取规则链
@@ -128,6 +134,44 @@ public class RuleEngineService {
     }
 
     /**
+     * 运行一个节点的逻辑表达式
+     * @param env 规则运行参数
+     * @param nodeId 规则节点Id
+     * @return 逻辑表达式结果
+     */
+    public boolean runNodeExpression(Map<String, Object> env, String nodeId) {
+        RuleTreeNode node = ruleTreeNodeService.findOne(nodeId);
+        if (Objects.isNull(node)) {
+            return Boolean.FALSE;
+        }
+        // 如果是真节点，直接返回true
+        if (node.getTrueNode()) {
+            return Boolean.TRUE;
+        }
+        // 装配节点信息
+        ruleTreeNodeService.assembleNodeInfo(node);
+        String exception = aviatorExpressionService.convertToExpression(node);
+        return ruleChainMatch(env, exception);
+    }
+
+    /**
+     * 规则链匹配
+     *
+     * @param env       匹配参数
+     * @param expression 逻辑表达式
+     * @return 匹配结果
+     */
+    private boolean ruleChainMatch(Map<String, Object> env, String expression) {
+        // 编译表达式
+        Expression compiledExp = AviatorEvaluator.compile(expression, true);
+        try {
+            return (Boolean) compiledExp.execute(env);
+        } catch (NullPointerException e) {
+            //00032 = 必要的规则匹配参数未传入,请检查！
+            throw new RuleEngineException("00032");
+        }
+    }
+    /**
      * 规则链匹配
      *
      * @param env       匹配参数
@@ -135,14 +179,7 @@ public class RuleEngineService {
      * @return 匹配结果
      */
     private boolean ruleChainMatch(Map<String, Object> env, RuleChain ruleChain) {
-        // 编译表达式
-        Expression compiledExp = AviatorEvaluator.compile(ruleChain.getExpression(), true);
-        try {
-            return (Boolean) compiledExp.execute(env);
-        } catch (NullPointerException e) {
-            //00032 = 必要的规则匹配参数未传入,请检查！
-            throw new RuleEngineException("00032");
-        }
+        return ruleChainMatch(env, ruleChain.getExpression());
     }
 
     /**

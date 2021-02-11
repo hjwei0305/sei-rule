@@ -274,7 +274,7 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      *
      * @param node 节点
      */
-    private void assembleNodeInfo(RuleTreeNode node) {
+    public void assembleNodeInfo(RuleTreeNode node) {
         String nodeId = node.getId();
         node.setLogicalExpressions(logicalExpressionDao.findByRuleTreeNodeId(nodeId));
         node.setNodeReturnResults(nodeReturnResultDao.findByRuleTreeNodeId(nodeId));
