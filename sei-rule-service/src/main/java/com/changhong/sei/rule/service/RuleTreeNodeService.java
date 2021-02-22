@@ -2,9 +2,11 @@ package com.changhong.sei.rule.service;
 
 import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.dao.BaseTreeDao;
+import com.changhong.sei.core.entity.BaseAuditableEntity;
 import com.changhong.sei.core.service.BaseTreeService;
 import com.changhong.sei.core.service.bo.OperateResult;
 import com.changhong.sei.core.service.bo.OperateResultWithData;
+import com.changhong.sei.core.util.JsonUtils;
 import com.changhong.sei.exception.ServiceException;
 import com.changhong.sei.rule.dao.LogicalExpressionDao;
 import com.changhong.sei.rule.dao.NodeReturnResultDao;
@@ -12,6 +14,7 @@ import com.changhong.sei.rule.dao.RuleTreeNodeDao;
 import com.changhong.sei.rule.dao.RuleTypeDao;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
 import com.changhong.sei.rule.dto.ruletree.NodeSynthesisExpression;
+import com.changhong.sei.rule.dto.ruletree.ReferenceRoot;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
 import com.changhong.sei.rule.dto.ruletree.SynthesisExpression;
 import com.changhong.sei.rule.entity.*;
@@ -27,8 +30,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -481,5 +485,112 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         }
         expression.setExpressions(synthesisExpressions);
         return expression;
+    }
+
+    /**
+     * 参考创建一个规则树
+     *
+     * @param referenceRoot 参考创建根节点信息
+     * @return 处理结果
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public OperateResult referenceCreate(ReferenceRoot referenceRoot) {
+        // 获取根节点
+        RuleTreeNode referenceNode = dao.findOne(referenceRoot.getReferenceRootId());
+        if (Objects.isNull(referenceNode)) {
+            // 参考的规则树根节点不存在【{0}】！
+            return OperateResult.operationFailure("00039", referenceRoot.getReferenceRootId());
+        }
+        RuleTreeNode rootNode = cloneNode(referenceNode, null);
+        rootNode.setName(referenceRoot.getName());
+        rootNode.setRank(referenceRoot.getRank());
+        rootNode.setEnabled(Boolean.FALSE);
+        OperateResultWithData<RuleTreeNode> rootSaveResult = save(rootNode);
+        if (rootSaveResult.notSuccessful()) {
+            return OperateResultWithData.converterNoneData(rootSaveResult);
+        }
+        // 循环递归复制
+        referenceCreateChildren(rootSaveResult.getData(), referenceNode.getId());
+        // 规则树【{0}】参考创建成功！
+        return OperateResult.operationSuccess("00040", referenceRoot.getName());
+    }
+
+    /**
+     * 循环递归复制所有子节点
+     * @param parent 已经创建成功的父节点
+     * @param referenceParentId 参考的父节点
+     */
+    private void referenceCreateChildren(RuleTreeNode parent, String referenceParentId) {
+        List<RuleTreeNode> referenceChildren = getChildren(referenceParentId);
+        if (CollectionUtils.isEmpty(referenceChildren)) {
+            return;
+        }
+        referenceChildren.forEach(referenceNode -> {
+            RuleTreeNode rootNode = cloneNode(referenceNode, parent.getId());
+            OperateResultWithData<RuleTreeNode> nodeSaveResult = save(rootNode);
+            if (nodeSaveResult.notSuccessful()) {
+                throw new ServiceException(nodeSaveResult.getMessage());
+            }
+            // 递归
+            referenceCreateChildren(nodeSaveResult.getData(), referenceNode.getId());
+        });
+    }
+
+    /**
+     * 克隆一个树节点
+     * @param referenceNode 参考的节点
+     * @param parentId 父节点Id
+     * @return 克隆的新节点
+     */
+    private RuleTreeNode cloneNode(RuleTreeNode referenceNode, String parentId) {
+        RuleTreeNode node = JsonUtils.cloneByJson(referenceNode);
+        // 初始化审计信息
+        initAuditableEntity(node);
+        node.setCode(serialService.getNumber(RuleTreeNode.class));
+        node.setCodePath(null);
+        node.setNamePath(null);
+        node.setNodeLevel(null);
+        node.setParentId(parentId);
+        // 复制规则表达式
+        List<LogicalExpression> referenceExpressions = logicalExpressionDao.findByRuleTreeNodeId(referenceNode.getId());
+        List<LogicalExpression> logicalExpressions = new LinkedList<>();
+        if (CollectionUtils.isNotEmpty(referenceExpressions)) {
+            referenceExpressions.forEach(reference -> {
+                LogicalExpression expression = JsonUtils.cloneByJson(reference);
+                initAuditableEntity(expression);
+                expression.setRuleTreeNodeId(null);
+                logicalExpressions.add(expression);
+            });
+        }
+        node.setLogicalExpressions(logicalExpressions);
+        // 复制规则返回结果
+        List<NodeReturnResult> referenceResults = nodeReturnResultDao.findByRuleTreeNodeId(referenceNode.getId());
+        List<NodeReturnResult> nodeReturnResults = new LinkedList<>();
+        if (CollectionUtils.isNotEmpty(referenceResults)) {
+            referenceResults.forEach(reference -> {
+                NodeReturnResult returnResult = JsonUtils.cloneByJson(reference);
+                initAuditableEntity(returnResult);
+                returnResult.setRuleTreeNodeId(null);
+                nodeReturnResults.add(returnResult);
+            });
+        }
+        node.setNodeReturnResults(nodeReturnResults);
+        return node;
+    }
+
+    /**
+     * 初始化审计信息
+     * @param entity 业务实体
+     */
+    private void initAuditableEntity(BaseAuditableEntity entity) {
+        entity.setId(null);
+        entity.setCreatedDate(null);
+        entity.setCreatorId(null);
+        entity.setCreatorAccount(null);
+        entity.setCreatorName(null);
+        entity.setLastEditedDate(null);
+        entity.setLastEditorId(null);
+        entity.setLastEditorAccount(null);
+        entity.setLastEditorName(null);
     }
 }

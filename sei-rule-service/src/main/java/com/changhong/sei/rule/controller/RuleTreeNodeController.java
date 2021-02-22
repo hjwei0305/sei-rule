@@ -10,6 +10,7 @@ import com.changhong.sei.rule.dto.NodeReturnResultDto;
 import com.changhong.sei.rule.dto.RuleTreeNodeDto;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
 import com.changhong.sei.rule.dto.ruletree.NodeSynthesisExpression;
+import com.changhong.sei.rule.dto.ruletree.ReferenceRoot;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
 import com.changhong.sei.rule.entity.LogicalExpression;
 import com.changhong.sei.rule.entity.NodeReturnResult;
@@ -184,6 +185,17 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
     @Override
     public ResultData<List<NodeSynthesisExpression>> getNodeSynthesisExpressions(String nodeId) {
         return ResultData.success(service.getNodeSynthesisExpressions(nodeId));
+    }
+
+    /**
+     * 参考创建一个规则树
+     *
+     * @param referenceRoot 参考创建根节点信息
+     * @return 处理结果
+     */
+    @Override
+    public ResultData<?> referenceCreate(ReferenceRoot referenceRoot) {
+        return ResultDataUtil.convertFromOperateResult(service.referenceCreate(referenceRoot));
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.changhong.sei.rule.dto.LogicalExpressionDto;
 import com.changhong.sei.rule.dto.NodeReturnResultDto;
 import com.changhong.sei.rule.dto.RuleTreeNodeDto;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
+import com.changhong.sei.rule.dto.ruletree.ReferenceRoot;
 import com.changhong.sei.rule.dto.ruletree.RuleTree;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
 import org.junit.jupiter.api.Assertions;
@@ -147,6 +148,17 @@ public class RuleTreeNodeControllerTest extends BaseUnit5Test {
     void getNodeSynthesisExpressions() {
         String nodeId = "EA0E0C95-5AE2-11EB-81CA-3C6AA7266A52";
         ResultData<?> resultData = controller.getNodeSynthesisExpressions(nodeId);
+        System.out.println(JsonUtils.toJson(resultData));
+        Assertions.assertTrue(resultData.successful());
+    }
+
+    @Test
+    void referenceCreate() {
+        ReferenceRoot referenceRoot = new ReferenceRoot();
+        referenceRoot.setReferenceRootId("AFA748B1-6AB6-11EB-BD34-0242C0A8462D");
+        referenceRoot.setRank(2);
+        referenceRoot.setName("测试参考创建规则");
+        ResultData<?> resultData = controller.referenceCreate(referenceRoot);
         System.out.println(JsonUtils.toJson(resultData));
         Assertions.assertTrue(resultData.successful());
     }
