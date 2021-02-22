@@ -98,6 +98,10 @@ public class RuleEngineService {
         try {
             //根据优先级依次匹配多个规则
             for (RuleTreeRoot root : roots) {
+                // 先判断根节点是否通过规则检查
+                if (!runNodeExpression(env, root.getId())) {
+                    continue;
+                }
                 // 从缓存获取规则链
                 List<RuleChain> ruleChains = ruleChainService.getRuleChainsFromCache(root.getId());
                 if (CollectionUtils.isEmpty(ruleChains)) {
@@ -146,8 +150,8 @@ public class RuleEngineService {
         }
         // 装配节点信息
         ruleTreeNodeService.assembleNodeInfo(node);
-        String expression = aviatorExpressionService.convertToExpression(node);
-        return ruleChainMatch(env, expression);
+        String exception = aviatorExpressionService.convertToExpression(node);
+        return ruleChainMatch(env, exception);
     }
 
     /**
