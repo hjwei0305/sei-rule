@@ -6,6 +6,7 @@ import com.changhong.sei.rule.dto.RuleTypeDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
@@ -38,6 +39,12 @@ public class RuleTypeTree extends BaseEntityDto {
     @ApiModelProperty("规则业务实体类型Id")
     private String ruleEntityTypeId;
     /**
+     * 业务描述
+     */
+    @Size(max = 200)
+    @ApiModelProperty(value = "业务描述")
+    private String remark;
+    /**
      * 子节点
      */
     @ApiModelProperty("子节点")
@@ -52,6 +59,7 @@ public class RuleTypeTree extends BaseEntityDto {
         this.name = ruleType.getName();
         this.nodeLevel = 1;
         this.ruleEntityTypeId = ruleType.getRuleEntityTypeId();
+        this.remark = ruleType.getRemark();
     }
 
     public String getCode() {
@@ -84,6 +92,14 @@ public class RuleTypeTree extends BaseEntityDto {
 
     public void setRuleEntityTypeId(String ruleEntityTypeId) {
         this.ruleEntityTypeId = ruleEntityTypeId;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public List<RuleTypeTree> getChildren() {
