@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 
 /**
@@ -53,8 +54,6 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     private RuleTypeDao ruleTypeDao;
     @Autowired(required = false)
     private SerialService serialService;
-    @Autowired
-    private AsyncRunUtil asyncRunUtil;
     @Autowired
     private RuleChainService ruleChainService;
 
@@ -234,9 +233,12 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         if (!entity.getTrueNode()) {
             saveLogicalExpression(treeNode);
         }
-        //保存规则结果
+        // 保存规则返回结果集
         if (entity.getFinished()) {
             saveNodeResult(treeNode);
+        } else {
+            // 清除返回结果集
+            nodeReturnResultDao.deleteByRuleTreeNodeId(treeNode.getId());
         }
         // 获取根节点
         RuleTreeNode rootNode = getRootNode(treeNode);
@@ -346,11 +348,29 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      * @param ruleNode 规则树节点
      */
     private void saveNodeResult(RuleTreeNode ruleNode) {
-        //保存结果
-        ruleNode.getNodeReturnResults().forEach(nodeReturnResult -> {
-            nodeReturnResult.setRuleTreeNodeId(ruleNode.getId());
-            nodeReturnResultDao.save(nodeReturnResult);
-        });
+        // 获取已经存在的返回结果Id清单
+        List<String> existIds = nodeReturnResultDao.findIdsByRuleTreeNodeId(ruleNode.getId());
+        List<NodeReturnResult> nodeReturnResults = ruleNode.getNodeReturnResults();
+        // 删除已经存在的返回结果
+        if (CollectionUtils.isNotEmpty(existIds)) {
+            existIds.forEach(id -> {
+                if (CollectionUtils.isNotEmpty(nodeReturnResults)) {
+                    Optional<NodeReturnResult> findResult = nodeReturnResults.stream().filter(r -> StringUtils.equals(r.getId(), id)).findAny();
+                    if (!findResult.isPresent()) {
+                        nodeReturnResultDao.delete(id);
+                    }
+                } else {
+                    nodeReturnResultDao.delete(id);
+                }
+            });
+        }
+        // 保存输入的结果
+        if (CollectionUtils.isNotEmpty(nodeReturnResults)) {
+            nodeReturnResults.forEach(nodeReturnResult -> {
+                nodeReturnResult.setRuleTreeNodeId(ruleNode.getId());
+                nodeReturnResultDao.save(nodeReturnResult);
+            });
+        }
     }
 
     /**
