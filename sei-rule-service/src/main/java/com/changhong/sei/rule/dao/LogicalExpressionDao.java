@@ -26,6 +26,14 @@ public interface LogicalExpressionDao extends BaseEntityDao<LogicalExpression> {
     List<LogicalExpression> findByRuleTreeNodeId(String ruleTreeNodeId);
 
     /**
+     * 获取规则树节点配置的逻辑表达式Id清单
+     * @param ruleTreeNodeId 规则树节点Id
+     * @return 返回结果清单
+     */
+    @Query("select l.id from LogicalExpression l where l.ruleTreeNodeId=?1 ")
+    List<String> findIdsByRuleTreeNodeId(String ruleTreeNodeId);
+
+    /**
      * 根据规则树节点id删除所有表达式
      *
      * @param ruleTreeNodeId 规则树节点Id

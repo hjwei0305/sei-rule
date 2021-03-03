@@ -21,7 +21,6 @@ import com.changhong.sei.rule.entity.*;
 import com.changhong.sei.rule.service.engine.RuleChainService;
 import com.changhong.sei.serial.sdk.SerialService;
 import com.changhong.sei.util.EnumUtils;
-import com.changhong.sei.utils.AsyncRunUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -228,9 +227,11 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
         if (result.notSuccessful()) {
             return result;
         }
-        //保存逻辑表达式
+        // 保存逻辑表达式组
         RuleTreeNode treeNode = result.getData();
-        if (!entity.getTrueNode()) {
+        if (entity.getTrueNode()) {
+            logicalExpressionDao.deleteByRuleTreeNodeId(treeNode.getId());
+        } else {
             saveLogicalExpression(treeNode);
         }
         // 保存规则返回结果集
@@ -334,11 +335,29 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
      * @param ruleNode 规则树节点
      */
     private void saveLogicalExpression(RuleTreeNode ruleNode) {
-        //赋值根节点值
-        ruleNode.getLogicalExpressions().forEach(expression -> {
-            expression.setRuleTreeNodeId(ruleNode.getId());
-            logicalExpressionDao.save(expression);
-        });
+        // 获取已经存在的逻辑表达式Id清单
+        List<String> existIds = logicalExpressionDao.findIdsByRuleTreeNodeId(ruleNode.getId());
+        List<LogicalExpression> logicalExpressions = ruleNode.getLogicalExpressions();
+        // 删除已经存在的逻辑表达式
+        if (CollectionUtils.isNotEmpty(existIds)) {
+            existIds.forEach(id -> {
+                if (CollectionUtils.isNotEmpty(logicalExpressions)) {
+                    Optional<LogicalExpression> findResult = logicalExpressions.stream().filter(r -> StringUtils.equals(r.getId(), id)).findAny();
+                    if (!findResult.isPresent()) {
+                        logicalExpressionDao.delete(id);
+                    }
+                } else {
+                    logicalExpressionDao.delete(id);
+                }
+            });
+        }
+        // 保存输入的逻辑表达式
+        if (CollectionUtils.isNotEmpty(logicalExpressions)) {
+            logicalExpressions.forEach(logicalExpression -> {
+                logicalExpression.setRuleTreeNodeId(ruleNode.getId());
+                logicalExpressionDao.save(logicalExpression);
+            });
+        }
     }
 
 
