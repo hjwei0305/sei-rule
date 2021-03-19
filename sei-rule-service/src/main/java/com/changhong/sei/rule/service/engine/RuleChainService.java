@@ -111,8 +111,6 @@ public class RuleChainService {
      * @param rootNodeId 根节点Id
      */
     private void buildCache(RuleTreeNode ruleNode, String rootNodeId) {
-        // 获取根节点Id
-
         //获得当前节点表达式
         String expression = aviatorExpressionService.convertToExpression(ruleNode);
         //循环拼接表达式

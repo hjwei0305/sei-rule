@@ -136,10 +136,12 @@ public class AviatorServiceTest extends BaseUnit5Test {
     @Test
     public void testExpressionMatch() {
         String expression = "idCard=~/^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}([\\d|x|X]{1})$/";
+        expression += "&& string.contains(idCard,card)";
         // 编译表达式
         Expression compiledExp = AviatorEvaluator.compile(expression, true);
         Map<String, Object> env = new HashMap<>();
-        env.put("idCard", "5116211994030523555");
+        env.put("idCard", "510702197103230523");
+        env.put("card", "323");
         // 执行表达式
         Boolean result = (Boolean) compiledExp.execute(env);
         System.out.println(result);

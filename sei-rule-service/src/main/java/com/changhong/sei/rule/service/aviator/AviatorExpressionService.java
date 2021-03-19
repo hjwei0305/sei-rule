@@ -3,6 +3,7 @@ package com.changhong.sei.rule.service.aviator;
 import com.changhong.sei.rule.dao.RuleAttributeDao;
 import com.changhong.sei.rule.dao.RuleComparatorDao;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
+import com.changhong.sei.rule.dto.enums.ComparisonValueType;
 import com.changhong.sei.rule.dto.enums.RuleAttributeType;
 import com.changhong.sei.rule.entity.LogicalExpression;
 import com.changhong.sei.rule.entity.RuleAttribute;
@@ -21,7 +22,6 @@ import java.util.Objects;
 
 import static com.changhong.sei.rule.dto.enums.ComparisonOperator.COMPARER;
 import static com.changhong.sei.rule.dto.enums.ComparisonOperator.MATCH;
-import static com.changhong.sei.util.DateUtils.DEFAULT_TIME_FORMAT;
 
 /**
  * @author <a href="mailto:xiaogang.su@changhong.com">粟小刚</a>
@@ -88,22 +88,33 @@ public class AviatorExpressionService {
             RuleAttribute ruleAttribute = ruleAttributeDao.findOne(expression.getRuleAttributeId());
             propertyCode = ruleAttribute.getAttribute();
             RuleAttributeType ruleAttributeType = ruleAttribute.getRuleAttributeType();
-            switch (ruleAttributeType) {
-                case STRING:
-                    //如果是正则表达式匹配则 两边加/ 否则加' 单引号
-                    if (MATCH.equals(operator)) {
-                        comparisonValue = "/" + comparisonValue + "/";
-                    } else {
-                        //字符串类型需要在两侧加单引号
-                        comparisonValue = "'" + comparisonValue + "'";
+            ComparisonValueType comparisonValueType = expression.getComparisonValueType();
+            switch (comparisonValueType) {
+                case NORMAL: // 一般属性值比较
+                    switch (ruleAttributeType) {
+                        case STRING:
+                            //如果是正则表达式匹配则 两边加/ 否则加' 单引号
+                            if (MATCH.equals(operator)) {
+                                comparisonValue = "/" + comparisonValue + "/";
+                            } else {
+                                //字符串类型需要在两侧加单引号
+                                comparisonValue = "'" + comparisonValue + "'";
+                            }
+                            break;
+                        case DATETIME:
+                            //日期类型需要转化为yyyy-MM-dd HH:mm:ss:SS 格式 在两侧加单引号
+                            Date date = DateParseUtil.parseToDate(comparisonValue);
+                            comparisonValue = "'" + DateUtils.formatTime(date) + "'";
+                            break;
+                        default:
+                            break;
                     }
                     break;
-                case DATETIME:
-                    //日期类型需要转化为yyyy-MM-dd HH:mm:ss:SS 格式 在两侧加单引号
-                    Date date = DateParseUtil.parseToDate(comparisonValue);
-                    comparisonValue = "'" + DateUtils.formatTime(date) + "'";
-                    break;
-                default:
+                case OTHER: // 于其他属性比较
+                    RuleAttribute otherAttribute = ruleAttributeDao.findOne(expression.getComparisonValue());
+                    if (Objects.nonNull(otherAttribute)) {
+                        comparisonValue = RULE_CHAIN_PARAM_PREFIX + "." + otherAttribute.getAttribute();
+                    }
                     break;
             }
             //需要在参数上加上前缀
