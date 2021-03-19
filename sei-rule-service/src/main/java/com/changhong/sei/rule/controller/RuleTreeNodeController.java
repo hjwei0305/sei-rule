@@ -9,6 +9,7 @@ import com.changhong.sei.rule.dto.LogicalExpressionDto;
 import com.changhong.sei.rule.dto.NodeReturnResultDto;
 import com.changhong.sei.rule.dto.RuleTreeNodeDto;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
+import com.changhong.sei.rule.dto.enums.ComparisonValueType;
 import com.changhong.sei.rule.dto.ruletree.NodeSynthesisExpression;
 import com.changhong.sei.rule.dto.ruletree.ReferenceRoot;
 import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
@@ -139,6 +140,16 @@ public class RuleTreeNodeController extends BaseTreeController<RuleTreeNode, Rul
     @Override
     public ResultData<List<EnumUtils.EnumEntity>> getComparisonOperatorEnum() {
         return ResultDataUtil.getEnumEntities(ComparisonOperator.class);
+    }
+
+    /**
+     * 获取匹配值类型枚举值
+     *
+     * @return 枚举值清单
+     */
+    @Override
+    public ResultData<List<EnumUtils.EnumEntity>> getComparisonValueTypeEnum() {
+        return ResultDataUtil.getEnumEntities(ComparisonValueType.class);
     }
 
     /**

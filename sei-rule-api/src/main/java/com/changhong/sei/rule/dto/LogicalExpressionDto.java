@@ -3,6 +3,7 @@ package com.changhong.sei.rule.dto;
 import com.changhong.sei.core.dto.BaseEntityDto;
 import com.changhong.sei.core.dto.serializer.EnumJsonSerializer;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
+import com.changhong.sei.rule.dto.enums.ComparisonValueType;
 import com.changhong.sei.rule.dto.enums.RuleAttributeType;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModel;
@@ -42,6 +43,14 @@ public class LogicalExpressionDto extends BaseEntityDto {
     @ApiModelProperty(value = "运算符", required = true,
             notes = "包含：CONTAIN,等于：EQUAL,小于：LESS,小于等于：LESS_EQUAL,大于：GREATER,大于等于：GREATER_EQUAL,不等于：NOTEQUAL,正则匹配：MATCH,比较器：COMPARER")
     private ComparisonOperator comparisonOperator = ComparisonOperator.CONTAIN;
+    /**
+     * 匹配值类型
+     */
+    @NotNull
+    @JsonSerialize(using = EnumJsonSerializer.class)
+    @ApiModelProperty(value = "匹配值类型", required = true,
+            notes = "属性值：NORMAL,其他属性：OTHER；默认=NORMAL")
+    private ComparisonValueType comparisonValueType = ComparisonValueType.NORMAL;
     /**
      * 匹配值
      */
@@ -118,6 +127,14 @@ public class LogicalExpressionDto extends BaseEntityDto {
 
     public void setComparisonOperator(ComparisonOperator comparisonOperator) {
         this.comparisonOperator = comparisonOperator;
+    }
+
+    public ComparisonValueType getComparisonValueType() {
+        return comparisonValueType;
+    }
+
+    public void setComparisonValueType(ComparisonValueType comparisonValueType) {
+        this.comparisonValueType = comparisonValueType;
     }
 
     public String getComparisonValue() {

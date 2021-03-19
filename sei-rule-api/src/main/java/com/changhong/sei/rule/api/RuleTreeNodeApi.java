@@ -62,6 +62,14 @@ public interface RuleTreeNodeApi extends BaseEntityApi<RuleTreeNodeDto> {
     ResultData<List<EnumUtils.EnumEntity>> getComparisonOperatorEnum();
 
     /**
+     * 获取匹配值类型枚举值
+     * @return 枚举值清单
+     */
+    @GetMapping(path = "getComparisonValueTypeEnum")
+    @ApiOperation(value = "获取匹配值类型枚举值", notes = "获取匹配值类型枚举值数据清单")
+    ResultData<List<EnumUtils.EnumEntity>> getComparisonValueTypeEnum();
+
+    /**
      * 通过规则树根节点Id获取规则树
      * @param rootNodeId 根节点Id
      * @return 规则树

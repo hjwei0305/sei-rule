@@ -3,6 +3,7 @@ package com.changhong.sei.rule.entity;
 import com.changhong.sei.core.entity.BaseAuditableEntity;
 import com.changhong.sei.core.entity.ITenant;
 import com.changhong.sei.rule.dto.enums.ComparisonOperator;
+import com.changhong.sei.rule.dto.enums.ComparisonValueType;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -44,6 +45,12 @@ public class LogicalExpression extends BaseAuditableEntity implements ITenant {
     @Enumerated(EnumType.STRING)
     @Column(name = "comparison_operator")
     private ComparisonOperator comparisonOperator = ComparisonOperator.CONTAIN;
+    /**
+     * 匹配值类型:【属性值：NORMAL】【其他属性：OTHER】；默认=NORMAL
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "comparison_value_type")
+    private ComparisonValueType comparisonValueType = ComparisonValueType.NORMAL;
     /**
      * 匹配值
      */
@@ -91,6 +98,14 @@ public class LogicalExpression extends BaseAuditableEntity implements ITenant {
 
     public void setComparisonOperator(ComparisonOperator comparisonOperator) {
         this.comparisonOperator = comparisonOperator;
+    }
+
+    public ComparisonValueType getComparisonValueType() {
+        return comparisonValueType;
+    }
+
+    public void setComparisonValueType(ComparisonValueType comparisonValueType) {
+        this.comparisonValueType = comparisonValueType;
     }
 
     public String getComparisonValue() {
