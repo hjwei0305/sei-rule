@@ -34,4 +34,12 @@ class RuleAttributeControllerTest extends BaseUnit5Test {
         System.out.println(JsonUtils.toJson(resultData));
         Assertions.assertTrue(resultData.successful());
     }
+
+    @Test
+    void findByRuleAttributeId() {
+        String ruleAttributeId = "4655D862-69B5-11EB-850A-0242C0A8462D";
+        ResultData<?> resultData = controller.findByRuleAttributeId(ruleAttributeId);
+        System.out.println(JsonUtils.toJson(resultData));
+        Assertions.assertTrue(resultData.successful());
+    }
 }

@@ -84,6 +84,17 @@ public class RuleAttributeController extends BaseEntityController<RuleAttribute,
     }
 
     /**
+     * 获取指定属性可以进行比较的其他属性
+     *
+     * @param ruleAttributeId 规则属性Id
+     * @return 属性清单
+     */
+    @Override
+    public ResultData<List<RuleAttributeDto>> findByRuleAttributeId(String ruleAttributeId) {
+        return ResultData.success(convertToDtos(service.findByRuleAttributeId(ruleAttributeId)));
+    }
+
+    /**
      * 通过规则属性获取可使用的运算符
      *
      * @param ruleAttributeId 规则属性Id

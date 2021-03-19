@@ -7,6 +7,7 @@ import com.changhong.sei.core.service.bo.OperateResult;
 import com.changhong.sei.core.service.bo.OperateResultWithData;
 import com.changhong.sei.rule.dao.LogicalExpressionDao;
 import com.changhong.sei.rule.dao.RuleAttributeDao;
+import com.changhong.sei.rule.dto.RuleAttributeDto;
 import com.changhong.sei.rule.dto.engine.CanUseOperator;
 import com.changhong.sei.rule.entity.RuleAttribute;
 import com.changhong.sei.rule.service.utils.CanUseOperatorUtil;
@@ -44,6 +45,29 @@ public class RuleAttributeService extends BaseEntityService<RuleAttribute> {
      */
     public List<RuleAttribute> findByRuleEntityTypeId(String ruleEntityTypeId) {
         return dao.findByRuleEntityTypeId(ruleEntityTypeId);
+    }
+
+    /**
+     * 获取指定属性可以进行比较的其他属性
+     *
+     * @param ruleAttributeId 规则属性Id
+     * @return 属性清单
+     */
+    public List<RuleAttribute> findByRuleAttributeId(String ruleAttributeId) {
+        // 获取规则属性
+        RuleAttribute ruleAttribute = dao.findOne(ruleAttributeId);
+        if (Objects.isNull(ruleAttribute)) {
+            return new LinkedList<>();
+        }
+        List<RuleAttribute> attributes = findByRuleEntityTypeId(ruleAttribute.getRuleEntityTypeId());
+        List<RuleAttribute> resultAttributes = new LinkedList<>();
+        attributes.forEach(attribute -> {
+            if (!StringUtils.equals(attribute.getId(), ruleAttributeId)
+                    && attribute.getRuleAttributeType() == ruleAttribute.getRuleAttributeType()) {
+                resultAttributes.add(attribute);
+            }
+        });
+        return resultAttributes;
     }
 
     /**
