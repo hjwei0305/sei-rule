@@ -162,6 +162,10 @@ public class RuleEngineService {
      * @return 匹配结果
      */
     private boolean ruleChainMatch(Map<String, Object> env, String expression) {
+        // 规则链匹配,空表达式返回TRUE
+        if (StringUtils.isBlank(expression)) {
+            return Boolean.TRUE;
+        }
         // 编译表达式
         Expression compiledExp = AviatorEvaluator.compile(expression, true);
         try {

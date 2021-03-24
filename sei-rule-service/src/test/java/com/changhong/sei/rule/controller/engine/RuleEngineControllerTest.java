@@ -35,8 +35,13 @@ class RuleEngineControllerTest extends BaseUnit5Test {
     @Test
     void testRun() {
         TestRunRequest request = new TestRunRequest();
-        request.setRuleTypeCode("beis-recongnize");
-        String json = "{\"postscript\":\"保证金\",\"amount\":200,\"tradeDate\":\"2021-01-20 14:18:05\",\"enable\":true,\"idCard\":\"511621199301012355\"}";
+        request.setRuleTypeCode("beis-reiminvoicecheckinfo-fpjcgz");
+        String json = "{\n" +
+                "\t\"buyer\": \"虹信智远软件有限公司\",\n" +
+                "\t\"seller\": \"滴滴出行科技有限公司\",\n" +
+                "\t\"ocrText\": \"*运输服务*客运服务费\",\n" +
+                "\t\"corporation\": \"四川虹信软件股份有限公司\"\n" +
+                "}";
         request.setRuleEntityJson(json);
         request.setExecuteMethod(Boolean.FALSE);
         ResultData<TestRunResponse> resultData = controller.testRun(request);
