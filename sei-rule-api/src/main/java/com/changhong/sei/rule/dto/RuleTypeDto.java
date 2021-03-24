@@ -26,9 +26,8 @@ public class RuleTypeDto extends BaseEntityDto {
     /**
      * 代码
      */
-    @NotBlank
     @Size(max = 100)
-    @ApiModelProperty(value = "代码", required = true)
+    @ApiModelProperty(value = "代码")
     private String code;
     /**
      * 名称

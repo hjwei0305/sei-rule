@@ -40,8 +40,6 @@ public class RuleTypeController extends BaseEntityController<RuleType, RuleTypeD
     private RuleTypeService service;
     @Autowired
     private RuleEntityTypeService ruleEntityTypeService;
-    @Autowired
-    private RuleTreeNodeService ruleTreeNodeService;
 
     @Override
     public BaseEntityService<RuleType> getService() {
