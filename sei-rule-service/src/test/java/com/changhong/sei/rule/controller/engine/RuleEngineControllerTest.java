@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 /**
  * 实现功能: 规则引擎单元测试
  *
@@ -39,12 +41,13 @@ class RuleEngineControllerTest extends BaseUnit5Test {
         String json = "{\n" +
                 "\t\"buyer\": \"四川虹信软件股份有限公司\",\n" +
                 "\t\"seller\": \"高端白酒销售公司\",\n" +
-                "\t\"ocrText\": \"*运输服务*客运服务费\",\n" +
+                "\t\"ocrText\": \"*茅台*客运服务费\",\n" +
                 "\t\"corporation\": \"四川虹信软件股份有限公司\"\n" +
                 "}";
         request.setRuleEntityJson(json);
         request.setExecuteMethod(Boolean.FALSE);
-        ResultData<TestRunResponse> resultData = controller.testRun(request);
+        request.setAllChains(Boolean.TRUE);
+        ResultData<List<TestRunResponse>> resultData = controller.testRun(request);
         System.out.println(JsonUtils.toJson(resultData));
         Assertions.assertTrue(resultData.successful());
     }

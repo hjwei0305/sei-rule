@@ -12,6 +12,7 @@ import com.changhong.sei.rule.sdk.dto.RuleRunResponse;
 import com.changhong.sei.rule.service.RuleTreeNodeService;
 import com.changhong.sei.rule.service.engine.RuleEngineService;
 import io.swagger.annotations.Api;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 实现功能: 规则引擎OpenAPI服务实现
@@ -57,14 +60,29 @@ public class RuleEngineController implements RuleEngineApi, RuleEngineTestApi {
      */
     @Override
     public ResultData<RuleRunResponse> run(@Valid RuleRunRequest request) {
-        RuleRunResponse response;
+        List<RuleRunResponse> responses;
         try {
-            response = service.run(request, Boolean.TRUE);
+            responses = service.run(request, Boolean.TRUE, Boolean.FALSE);
+            if (CollectionUtils.isNotEmpty(responses)) {
+                // 规则执行成功！
+                return ResultDataUtil.success("00041", responses.get(0));
+            }
         } catch (Exception e) {
             LogUtil.error("规则引擎执行异常:" + e.getMessage(), e);
             return ResultDataUtil.fail("规则引擎执行异常:" + e.getMessage());
         }
-        return ResultData.success(response);
+        return ResultDataUtil.success("00041", new RuleRunResponse());
+    }
+
+    /**
+     * 执行所有规则链
+     *
+     * @param request 规则执行请求
+     * @return 规则执行结果
+     */
+    @Override
+    public ResultData<List<RuleRunResponse>> runChains(@Valid RuleRunRequest request) {
+        return null;
     }
 
     /**
@@ -74,20 +92,24 @@ public class RuleEngineController implements RuleEngineApi, RuleEngineTestApi {
      * @return 规则执行结果
      */
     @Override
-    public ResultData<TestRunResponse> testRun(@Valid TestRunRequest request) {
-        RuleRunResponse response;
+    public ResultData<List<TestRunResponse>> testRun(@Valid TestRunRequest request) {
+        List<RuleRunResponse> responses;
         try {
-            response = service.run(request, Boolean.TRUE);
+            responses = service.run(request, request.getExecuteMethod(), request.getAllChains());
         } catch (Exception e) {
             LogUtil.error("规则引擎执行异常:" + e.getMessage(), e);
             return ResultDataUtil.fail("规则引擎执行异常:" + e.getMessage());
         }
+        List<TestRunResponse> testRunResponses = new LinkedList<>();
         // 构造测试结果
-        TestRunResponse testRunResponse = strictModelMapper.map(response, TestRunResponse.class);
-        // 获取根节点信息
-        if (StringUtils.isNotBlank(testRunResponse.getMatchedNodeId())) {
-            testRunResponse.setRuleTreeRoot(ruleTreeNodeService.findRootByNodeId(testRunResponse.getMatchedNodeId()));
-        }
-        return ResultData.success(testRunResponse);
+        responses.forEach(response -> {
+            TestRunResponse testRunResponse = strictModelMapper.map(response, TestRunResponse.class);
+            // 获取根节点信息
+            if (StringUtils.isNotBlank(testRunResponse.getMatchedNodeId())) {
+                testRunResponse.setRuleTreeRoot(ruleTreeNodeService.findRootByNodeId(testRunResponse.getMatchedNodeId()));
+            }
+            testRunResponses.add(testRunResponse);
+        });
+        return ResultData.success(testRunResponses);
     }
 }

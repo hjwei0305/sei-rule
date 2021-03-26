@@ -22,11 +22,26 @@ public class TestRunRequest extends RuleRunRequest {
     @ApiModelProperty(value = "执行服务方法", notes = "测试需要执行服务方法, 默认值为FALSE")
     private Boolean executeMethod = Boolean.FALSE;
 
+    /**
+     * 执行所有规则链
+     */
+    @NotNull
+    @ApiModelProperty(value = "执行所有规则链", notes = "测试需要执行所有规则链, 默认值为FALSE")
+    private Boolean allChains = Boolean.FALSE;
+
     public Boolean getExecuteMethod() {
         return executeMethod;
     }
 
     public void setExecuteMethod(Boolean executeMethod) {
         this.executeMethod = executeMethod;
+    }
+
+    public Boolean getAllChains() {
+        return allChains;
+    }
+
+    public void setAllChains(Boolean allChains) {
+        this.allChains = allChains;
     }
 }

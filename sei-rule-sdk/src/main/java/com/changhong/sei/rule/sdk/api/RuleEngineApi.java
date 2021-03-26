@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 实现功能: 规则引擎API服务接口
@@ -28,4 +29,13 @@ public interface RuleEngineApi {
     @PostMapping(path = "run", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "执行规则", notes = "通过规则类型码和业务实体JSON，来执行一个规则，返回执行结果")
     ResultData<RuleRunResponse> run(@RequestBody @Valid RuleRunRequest request);
+
+    /**
+     * 执行所有规则链
+     * @param request 规则执行请求
+     * @return 规则执行结果
+     */
+    @PostMapping(path = "runChains", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "执行所有规则链", notes = "通过规则类型码和业务实体JSON，来执行一个规则，返回所有规则链执行结果")
+    ResultData<List<RuleRunResponse>> runChains(@RequestBody @Valid RuleRunRequest request);
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 实现功能: 规则引擎测试API服务接口
@@ -27,5 +28,5 @@ public interface RuleEngineTestApi {
      */
     @PostMapping(path = "testRun", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "执行测试规则", notes = "通过规则类型码和业务实体JSON，来执行一个规则测试，返回执行结果")
-    ResultData<TestRunResponse> testRun(@RequestBody @Valid TestRunRequest request);
+    ResultData<List<TestRunResponse>> testRun(@RequestBody @Valid TestRunRequest request);
 }

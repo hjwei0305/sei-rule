@@ -28,10 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.changhong.sei.rule.service.aviator.AviatorExpressionService.RULE_CHAIN_PARAM_PREFIX;
@@ -63,10 +60,13 @@ public class RuleEngineService {
      *
      * @param request 规则执行请求
      * @param executeMethod 是否执行服务方法
+     * @param allChains 执行所有规则链
      * @return 结果返回对象
      */
-    public RuleRunResponse run(RuleRunRequest request, boolean executeMethod) throws RuleEngineException {
-        RuleRunResponse response = new RuleRunResponse();
+    public List<RuleRunResponse> run(RuleRunRequest request,
+                                     boolean executeMethod,
+                                     boolean allChains) throws RuleEngineException {
+        List<RuleRunResponse> responses = new LinkedList<>();
         String ruleTypeCode = request.getRuleTypeCode();
         if (StringUtils.isBlank(ruleTypeCode)) {
             //规则类型代码不能为空！
@@ -117,9 +117,11 @@ public class RuleEngineService {
                     //是否匹配成功
                     if (ruleChainMatch(env, ruleChain)) {
                         //匹配成功后执行操作
-                        matchSuccess(request, response, ruleChain, executeMethod);
+                        responses.add(matchSuccess(request, ruleChain, executeMethod));
                         //匹配上一个直接返回
-                        return response;
+                        if (!allChains) {
+                            return responses;
+                        }
                     }
                 }
             }
@@ -130,7 +132,7 @@ public class RuleEngineService {
             MatchRuleComparatorFunction.getCacheHolder().remove();
         }
         //未匹配上 返回默认响应
-        return response;
+        return responses;
     }
 
     /**
@@ -190,12 +192,12 @@ public class RuleEngineService {
      * 匹配成功后执行的方法
      *
      * @param request   匹配请求
-     * @param response  匹配结果
      * @param ruleChain 规则链
      * @param executeMethod 是否执行服务方法
+     * @return 匹配结果
      */
-    private void matchSuccess(RuleRunRequest request, RuleRunResponse response, RuleChain ruleChain, boolean executeMethod) {
-        //记录日志
+    private RuleRunResponse matchSuccess(RuleRunRequest request, RuleChain ruleChain, boolean executeMethod) {
+        RuleRunResponse response = new RuleRunResponse();
         //规则类型[{0}]已匹配上规则节点[{1}]，输入参数:{2}，匹配表达式:[{3}]
         LogUtil.bizLog(ContextUtil.getMessage("00031", request.getRuleTypeCode(), ruleChain.getRuleTreeNodeId(), request.getRuleEntityJson(), ruleChain.getExpression()));
         //设置是否匹配标识
@@ -207,9 +209,7 @@ public class RuleEngineService {
         if (!Objects.isNull(returnEntities) && !returnEntities.isEmpty()) {
             //组装Map key：类名 entries:实体对象
             Map<String, RuleReturnEntity> returnEntityMap = new HashMap<>();
-            returnEntities.forEach(e -> {
-                returnEntityMap.put(e.getClassName(), e);
-            });
+            returnEntities.forEach(e -> returnEntityMap.put(e.getClassName(), e));
             response.setReturnEntityMap(returnEntityMap);
         }
         if (executeMethod) {
@@ -219,6 +219,7 @@ public class RuleEngineService {
                 serviceMethodExecute(request, response, ruleChain, method);
             }
         }
+        return response;
     }
 
     /**
