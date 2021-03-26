@@ -37,8 +37,8 @@ class RuleEngineControllerTest extends BaseUnit5Test {
         TestRunRequest request = new TestRunRequest();
         request.setRuleTypeCode("beis-reiminvoicecheckinfo-fpjcgz");
         String json = "{\n" +
-                "\t\"buyer\": \"虹信智远软件有限公司\",\n" +
-                "\t\"seller\": \"滴滴出行科技有限公司\",\n" +
+                "\t\"buyer\": \"四川虹信软件股份有限公司\",\n" +
+                "\t\"seller\": \"高端白酒销售公司\",\n" +
                 "\t\"ocrText\": \"*运输服务*客运服务费\",\n" +
                 "\t\"corporation\": \"四川虹信软件股份有限公司\"\n" +
                 "}";
