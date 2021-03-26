@@ -249,19 +249,6 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
     }
 
     /**
-     * 移动节点
-     *
-     * @param nodeId         当前节点ID
-     * @param targetParentId 目标父节点ID
-     * @return 返回操作结果对象
-     */
-    @Override
-    public OperateResult move(String nodeId, String targetParentId) {
-        //禁止移动节点!
-        return OperateResult.operationFailure("00016");
-    }
-
-    /**
      * 通过规则树根节点Id获取规则树
      *
      * @param rootNodeId 根节点Id
