@@ -6,6 +6,7 @@ import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.rule.api.engine.RuleEngineTestApi;
 import com.changhong.sei.rule.dto.engine.TestRunRequest;
 import com.changhong.sei.rule.dto.engine.TestRunResponse;
+import com.changhong.sei.rule.dto.ruletree.RuleTreeRoot;
 import com.changhong.sei.rule.sdk.api.RuleEngineApi;
 import com.changhong.sei.rule.sdk.dto.RuleRunRequest;
 import com.changhong.sei.rule.sdk.dto.RuleRunResponse;
@@ -92,7 +93,7 @@ public class RuleEngineController implements RuleEngineApi, RuleEngineTestApi {
      * @return 规则执行结果
      */
     @Override
-    public ResultData<List<TestRunResponse>> testRun(@Valid TestRunRequest request) {
+    public ResultData<TestRunResponse> testRun(@Valid TestRunRequest request) {
         List<RuleRunResponse> responses;
         try {
             responses = service.run(request, request.getExecuteMethod(), request.getAllChains());
@@ -100,16 +101,18 @@ public class RuleEngineController implements RuleEngineApi, RuleEngineTestApi {
             LogUtil.error("规则引擎执行异常:" + e.getMessage(), e);
             return ResultDataUtil.fail("规则引擎执行异常:" + e.getMessage());
         }
-        List<TestRunResponse> testRunResponses = new LinkedList<>();
+        if (CollectionUtils.isEmpty(responses)) {
+            // 执行测试失败，没有匹配成功的规则！
+            ResultDataUtil.fail("00042");
+        }
+        TestRunResponse testRunResponse = new TestRunResponse();
+        // 获取根节点信息
+        String nodeId = responses.get(0).getMatchedNodeId();
+        RuleTreeRoot root = ruleTreeNodeService.findRootByNodeId(nodeId);
+        testRunResponse.setRuleTreeRoot(root);
         // 构造测试结果
-        responses.forEach(response -> {
-            TestRunResponse testRunResponse = strictModelMapper.map(response, TestRunResponse.class);
-            // 获取根节点信息
-            if (StringUtils.isNotBlank(testRunResponse.getMatchedNodeId())) {
-                testRunResponse.setRuleTreeRoot(ruleTreeNodeService.findRootByNodeId(testRunResponse.getMatchedNodeId()));
-            }
-            testRunResponses.add(testRunResponse);
-        });
-        return ResultData.success(testRunResponses);
+        testRunResponse.setResponses(responses);
+        // 执行测试成功，存在匹配成功的规则！
+        return ResultDataUtil.success(testRunResponse, "00043");
     }
 }

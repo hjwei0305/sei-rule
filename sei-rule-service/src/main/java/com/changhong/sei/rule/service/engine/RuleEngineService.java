@@ -116,13 +116,17 @@ public class RuleEngineService {
                 for (RuleChain ruleChain : ruleChains) {
                     //是否匹配成功
                     if (ruleChainMatch(env, ruleChain)) {
-                        //匹配成功后执行操作
+                        // 匹配成功后执行操作
                         responses.add(matchSuccess(request, ruleChain, executeMethod));
-                        //匹配上一个直接返回
+                        // 匹配上一个直接返回
                         if (!allChains) {
                             return responses;
                         }
                     }
+                }
+                // 如果存在匹配成功的规则链，则返回
+                if (CollectionUtils.isNotEmpty(responses)) {
+                    return responses;
                 }
             }
         } catch (Exception e) {

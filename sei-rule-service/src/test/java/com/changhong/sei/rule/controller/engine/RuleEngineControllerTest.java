@@ -47,7 +47,7 @@ class RuleEngineControllerTest extends BaseUnit5Test {
         request.setRuleEntityJson(json);
         request.setExecuteMethod(Boolean.FALSE);
         request.setAllChains(Boolean.TRUE);
-        ResultData<List<TestRunResponse>> resultData = controller.testRun(request);
+        ResultData<TestRunResponse> resultData = controller.testRun(request);
         System.out.println(JsonUtils.toJson(resultData));
         Assertions.assertTrue(resultData.successful());
     }
