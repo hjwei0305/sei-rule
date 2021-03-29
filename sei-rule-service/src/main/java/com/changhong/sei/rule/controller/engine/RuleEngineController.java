@@ -14,16 +14,12 @@ import com.changhong.sei.rule.service.RuleTreeNodeService;
 import com.changhong.sei.rule.service.engine.RuleEngineService;
 import io.swagger.annotations.Api;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -41,17 +37,6 @@ public class RuleEngineController implements RuleEngineApi, RuleEngineTestApi {
     private RuleEngineService service;
     @Autowired
     private RuleTreeNodeService ruleTreeNodeService;
-    /**
-     * 定义通用的严格匹配实体转换器
-     */
-    private static final ModelMapper strictModelMapper;
-    // 初始化静态属性
-    static {
-        // 初始化转换器
-        strictModelMapper = new ModelMapper();
-        // 设置为严格匹配
-        strictModelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-    }
 
     /**
      * 执行规则
@@ -83,7 +68,14 @@ public class RuleEngineController implements RuleEngineApi, RuleEngineTestApi {
      */
     @Override
     public ResultData<List<RuleRunResponse>> runChains(@Valid RuleRunRequest request) {
-        return null;
+        List<RuleRunResponse> responses;
+        try {
+            responses = service.run(request, Boolean.TRUE, Boolean.TRUE);
+        } catch (Exception e) {
+            LogUtil.error("规则引擎执行异常:" + e.getMessage(), e);
+            return ResultDataUtil.fail("规则引擎执行异常:" + e.getMessage());
+        }
+        return ResultDataUtil.success("00041", responses);
     }
 
     /**
