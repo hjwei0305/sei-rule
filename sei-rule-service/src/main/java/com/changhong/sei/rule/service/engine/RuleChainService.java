@@ -153,6 +153,7 @@ public class RuleChainService {
         ruleChain.setExpression(ruleNode.getExpression());
         //节点Id
         ruleChain.setRuleTreeNodeId(ruleNode.getId());
+        ruleChain.setRuleTreeNodeName(ruleNode.getName());
         //返回对象
         ruleChain.setReturnConstant(ruleNode.getReturnConstant());
         List<NodeReturnResult> returnResults = ruleNode.getNodeReturnResults();

@@ -207,6 +207,7 @@ public class RuleEngineService {
         //设置是否匹配标识
         response.setMatched(true);
         response.setMatchedNodeId(ruleChain.getRuleTreeNodeId());
+        response.setMatchedNodeName(ruleChain.getRuleTreeNodeName());
         //返回对象
         response.setReturnConstant(ruleChain.getReturnConstant());
         List<RuleReturnEntity> returnEntities = ruleChain.getReturnEntities();

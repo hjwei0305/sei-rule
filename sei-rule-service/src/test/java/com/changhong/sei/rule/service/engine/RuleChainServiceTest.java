@@ -8,6 +8,7 @@ import com.changhong.sei.rule.service.RuleTreeNodeService;
 import com.changhong.sei.rule.service.bo.RuleChain;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,11 +52,19 @@ class RuleChainServiceTest extends BaseUnit5Test {
 
     @Test
     void getExpressionByRootNode() {
-        String rootNodeId = "E9F3CDCC-5AE2-11EB-81CA-3C6AA7266A52";
+        String rootNodeId = "875C4644-8DCF-11EB-9A05-0242C0A8462D";
         // 获取规则树
         RuleTreeNode tree = ruleTreeNodeService.getRuleTree(rootNodeId);
         Assertions.assertNotNull(tree);
         List<RuleChain> ruleChains = service.getExpressionByTree(tree);
         System.out.println(JsonUtils.toJson(ruleChains));
+    }
+
+    @Test
+    void deleteRuleChainCache() {
+        String rootNodeId = "875C4644-8DCF-11EB-9A05-0242C0A8462D";
+        service.deleteRuleChainCache(rootNodeId);
+        List<RuleChain> chains = service.getRuleChainsFromCache(rootNodeId);
+        Assertions.assertTrue(CollectionUtils.isEmpty(chains));
     }
 }

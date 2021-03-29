@@ -21,9 +21,14 @@ public class RuleChain implements Serializable {
     private String expression;
 
     /**
-     * 结果节点ID
+     * 结果节点Id
      */
     private String ruleTreeNodeId;
+
+    /**
+     * 结果节点名称
+     */
+    private String ruleTreeNodeName;
 
     /**
      * 规则返回结果（返回一个字符串常量）
@@ -58,6 +63,14 @@ public class RuleChain implements Serializable {
 
     public void setRuleTreeNodeId(String ruleTreeNodeId) {
         this.ruleTreeNodeId = ruleTreeNodeId;
+    }
+
+    public String getRuleTreeNodeName() {
+        return ruleTreeNodeName;
+    }
+
+    public void setRuleTreeNodeName(String ruleTreeNodeName) {
+        this.ruleTreeNodeName = ruleTreeNodeName;
     }
 
     public String getReturnConstant() {

@@ -26,11 +26,17 @@ public class RuleRunResponse implements Serializable {
     private Boolean matched = Boolean.FALSE;
 
     /**
-     * 规则匹配成功的节点id
+     * 规则匹配成功的结束节点id
      */
     @NotNull
     @ApiModelProperty(value = "规则匹配成功的节点id", required = true)
     private String matchedNodeId;
+    /**
+     * 规则匹配成功的结束节点名称
+     */
+    @NotNull
+    @ApiModelProperty(value = "规则匹配成功的结束节点名称", required = true)
+    private String matchedNodeName;
 
     /**
      * 方法执行成功
@@ -67,6 +73,14 @@ public class RuleRunResponse implements Serializable {
 
     public void setMatchedNodeId(String matchedNodeId) {
         this.matchedNodeId = matchedNodeId;
+    }
+
+    public String getMatchedNodeName() {
+        return matchedNodeName;
+    }
+
+    public void setMatchedNodeName(String matchedNodeName) {
+        this.matchedNodeName = matchedNodeName;
     }
 
     public Boolean getExecuted() {
