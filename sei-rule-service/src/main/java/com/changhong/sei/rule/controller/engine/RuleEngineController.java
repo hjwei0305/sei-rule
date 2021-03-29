@@ -95,7 +95,7 @@ public class RuleEngineController implements RuleEngineApi, RuleEngineTestApi {
         }
         if (CollectionUtils.isEmpty(responses)) {
             // 执行测试失败，没有匹配成功的规则！
-            ResultDataUtil.fail("00042");
+            return ResultDataUtil.fail("00042");
         }
         TestRunResponse testRunResponse = new TestRunResponse();
         // 获取根节点信息
