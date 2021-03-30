@@ -60,6 +60,7 @@ public class CanUseOperatorUtil {
         }
         // 公共操作符
         operators.add(new CanUseOperator(ComparisonOperator.COMPARER));
+        operators.add(new CanUseOperator(ComparisonOperator.FUNCTION));
         return operators;
     }
 

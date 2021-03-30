@@ -10,6 +10,7 @@ import com.changhong.sei.rule.entity.RuleAttribute;
 import com.changhong.sei.rule.entity.RuleComparator;
 import com.changhong.sei.rule.entity.RuleTreeNode;
 import com.changhong.sei.rule.service.exception.MatchingRuleComparatorException;
+import com.changhong.sei.rule.service.exception.RuleEngineException;
 import com.changhong.sei.rule.service.utils.DateParseUtil;
 import com.changhong.sei.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -163,6 +164,12 @@ public class AviatorExpressionService {
                 }
                 url.append(comparator.getMethod());
                 builder.append("MatchRuleComparator('").append(module).append("','").append(url.toString()).append("')");
+                break;
+            case FUNCTION:
+                if (StringUtils.isBlank(comparisonValue)) {
+                    throw new RuleEngineException("规则表达式的函数名为空！");
+                }
+                builder.append(comparisonValue).append("(").append(propertyCode).append(")");
                 break;
             default:
                 break;

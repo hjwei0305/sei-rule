@@ -10,6 +10,8 @@ import com.changhong.sei.exception.ServiceException;
  */
 public class RuleEngineException extends ServiceException {
 
+    private static final long serialVersionUID = 3953689843744438997L;
+
     /**
      * @param key  多语言key
      * @param args 填充参数 如：key=参数A{0},参数B{1}  此时的args={"A", "B"}
