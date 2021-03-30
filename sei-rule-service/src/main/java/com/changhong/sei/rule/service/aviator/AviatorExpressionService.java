@@ -21,8 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.changhong.sei.rule.dto.enums.ComparisonOperator.COMPARER;
-import static com.changhong.sei.rule.dto.enums.ComparisonOperator.MATCH;
+import static com.changhong.sei.rule.dto.enums.ComparisonOperator.*;
 
 /**
  * @author <a href="mailto:xiaogang.su@changhong.com">粟小刚</a>
@@ -97,8 +96,8 @@ public class AviatorExpressionService {
                             //如果是正则表达式匹配则 两边加/ 否则加' 单引号
                             if (MATCH.equals(operator)) {
                                 comparisonValue = "/" + comparisonValue + "/";
-                            } else {
-                                //字符串类型需要在两侧加单引号
+                            } else if (!FUNCTION.equals(operator)){
+                                // 字符串类型需要在两侧加单引号(排除函数)
                                 comparisonValue = "'" + comparisonValue + "'";
                             }
                             break;
