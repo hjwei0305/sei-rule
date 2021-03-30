@@ -42,4 +42,12 @@ class RuleAttributeControllerTest extends BaseUnit5Test {
         System.out.println(JsonUtils.toJson(resultData));
         Assertions.assertTrue(resultData.successful());
     }
+
+    @Test
+    void getCanUseFunctions() {
+        String id = "A68050C5-5633-11EB-8D6E-3C6AA7266A51";
+        ResultData<?> resultData = controller.getCanUseFunctions(id);
+        System.out.println(JsonUtils.toJson(resultData));
+        Assertions.assertTrue(resultData.successful());
+    }
 }

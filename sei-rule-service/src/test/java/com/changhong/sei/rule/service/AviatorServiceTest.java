@@ -33,9 +33,14 @@ public class AviatorServiceTest extends BaseUnit5Test {
 
     @Test
     public void testUserFunction() {
-        Double result = (Double) AviatorEvaluator.execute("AddFunction(1, 2)");
+        String expression = "isBlank(a)";
+        Map<String, Object> env = new HashMap<>();
+        env.put("a", " ");
+        Expression compiledExp = AviatorEvaluator.compile(expression, true);
+        // 执行表达式
+        Boolean result = (Boolean) compiledExp.execute(env);
         System.out.println(result);
-        Assertions.assertEquals(3.0d, result, 0.0);
+        Assertions.assertTrue(result);
     }
 
     @Test

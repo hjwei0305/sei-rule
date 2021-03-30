@@ -1,10 +1,11 @@
 package com.changhong.sei.rule.service.engine;
 
-import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.util.JsonUtils;
 import com.changhong.sei.rule.BaseUnit5Test;
 import com.changhong.sei.rule.sdk.dto.RuleRunRequest;
-import com.changhong.sei.rule.service.exception.RuleEngineException;
+import com.changhong.sei.rule.service.aviator.function.IsBlankFunction;
+import com.googlecode.aviator.runtime.type.AviatorObject;
+import com.googlecode.aviator.runtime.type.AviatorString;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import java.util.Map;
 
 import static com.changhong.sei.rule.service.aviator.AviatorExpressionService.RULE_CHAIN_PARAM_PREFIX;
 import static com.changhong.sei.rule.service.aviator.AviatorExpressionService.RULE_TYPE_CODE;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 实现功能:

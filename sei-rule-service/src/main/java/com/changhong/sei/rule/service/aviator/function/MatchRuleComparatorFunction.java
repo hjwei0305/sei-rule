@@ -34,6 +34,7 @@ public class MatchRuleComparatorFunction extends AbstractFunction {
      * 单次调用（同一线程）外部比较器缓存
      */
     private static final ThreadLocal<SimpleCache<String, Boolean>> cacheHolder = ThreadLocal.withInitial(() -> new SimpleCache<>(new HashMap<>()));
+    private static final long serialVersionUID = 2527144570901576740L;
 
     /**
      * 获取当前线程的cacheHolder
