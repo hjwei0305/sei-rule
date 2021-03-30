@@ -22,7 +22,7 @@ public interface LogicalExpressionDao extends BaseEntityDao<LogicalExpression> {
      * @param ruleTreeNodeId 规则树节点Id
      * @return 逻辑表达式清单
      */
-    @Query("select t from LogicalExpression t where t.ruleTreeNodeId=?1")
+    @Query("select t from LogicalExpression t where t.ruleTreeNodeId=?1 order by t.createdDate")
     List<LogicalExpression> findByRuleTreeNodeId(String ruleTreeNodeId);
 
     /**
