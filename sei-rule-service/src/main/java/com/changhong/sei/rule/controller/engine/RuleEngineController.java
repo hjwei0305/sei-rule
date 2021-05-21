@@ -49,15 +49,16 @@ public class RuleEngineController implements RuleEngineApi, RuleEngineTestApi {
         List<RuleRunResponse> responses;
         try {
             responses = service.run(request, Boolean.TRUE, Boolean.FALSE);
-            if (CollectionUtils.isNotEmpty(responses)) {
-                // 规则执行成功！
-                return ResultDataUtil.success("00041", responses.get(0));
+            if (CollectionUtils.isEmpty(responses)) {
+                // 执行测试失败，没有匹配成功的规则！
+                return ResultDataUtil.fail("00042");
             }
+            // 规则执行成功！
+            return ResultDataUtil.success(responses.get(0), "00041");
         } catch (Exception e) {
             LogUtil.error("规则引擎执行异常:" + e.getMessage(), e);
             return ResultDataUtil.fail("规则引擎执行异常:" + e.getMessage());
         }
-        return ResultDataUtil.success("00041", new RuleRunResponse());
     }
 
     /**

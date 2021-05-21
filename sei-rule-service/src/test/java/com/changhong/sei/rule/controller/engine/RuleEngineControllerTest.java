@@ -26,8 +26,8 @@ class RuleEngineControllerTest extends BaseUnit5Test {
     @Test
     void run() {
         RuleRunRequest request = new RuleRunRequest();
-        request.setRuleTypeCode("beis-recongnize");
-        String json = "{\"postscript\":\"保证金\",\"amount\":200,\"tradeDate\":\"2021-01-20 14:18:05\",\"enable\":true,\"idCard\":\"511621199301012355\"}";
+        request.setRuleTypeCode("soms-allotworkstrategy-fwddpggz");
+        String json = "{\"workNodeCode\":\"CreateAccounting\",\"businessCategoryCode\":\"0001\",\"corporationCode\":\"Q000\",\"businessTypeCode\":\"000004\"}";
         request.setRuleEntityJson(json);
         ResultData<RuleRunResponse> resultData = controller.run(request);
         System.out.println(JsonUtils.toJson(resultData));
