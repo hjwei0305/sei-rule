@@ -7,6 +7,8 @@ import com.changhong.sei.rule.sdk.dto.RuleRunResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * 实现功能: 规则引擎SDK执行组件
  *
@@ -25,5 +27,14 @@ public class RuleEngineManager {
      */
     public ResultData<RuleRunResponse> run(RuleRunRequest request) {
         return ruleEngineApi.run(request);
+    }
+
+    /**
+     * 执行所有规则链
+     * @param request 规则执行请求
+     * @return 规则执行结果
+     */
+    public ResultData<List<RuleRunResponse>> runChains(RuleRunRequest request) {
+        return ruleEngineApi.runChains(request);
     }
 }
