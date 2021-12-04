@@ -238,12 +238,12 @@ public class RuleEngineService {
      */
     private RuleRunResponse matchingFailed(RuleRunRequest request, RuleChain ruleChain) {
         RuleRunResponse response = new RuleRunResponse();
-        //设置是否匹配标识
+        // 设置是否匹配标识
         response.setMatched(Boolean.FALSE);
         response.setMatchedNodeId(ruleChain.getRuleTreeNodeId());
         response.setMatchedNodeName(ruleChain.getRuleTreeNodeName());
-        //返回对象
-        response.setReturnConstant("规则链未匹配成功");
+        // 规则链未匹配成功！
+        response.setReturnConstant(ContextUtil.getMessage("00045"));
         return response;
     }
 
