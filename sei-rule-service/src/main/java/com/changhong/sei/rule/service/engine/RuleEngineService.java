@@ -122,6 +122,8 @@ public class RuleEngineService {
                         if (!allChains) {
                             return responses;
                         }
+                    } else if (allChains) {
+                        responses.add(matchingFailed(request, ruleChain));
                     }
                 }
                 // 如果存在匹配成功的规则链，则返回
@@ -211,7 +213,7 @@ public class RuleEngineService {
         //返回对象
         response.setReturnConstant(ruleChain.getReturnConstant());
         List<RuleReturnEntity> returnEntities = ruleChain.getReturnEntities();
-        if (!Objects.isNull(returnEntities) && !returnEntities.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(returnEntities)) {
             //组装Map key：类名 entries:实体对象
             Map<String, RuleReturnEntity> returnEntityMap = new HashMap<>();
             returnEntities.forEach(e -> returnEntityMap.put(e.getClassName(), e));
@@ -224,6 +226,24 @@ public class RuleEngineService {
                 serviceMethodExecute(request, response, ruleChain, method);
             }
         }
+        return response;
+    }
+
+    /**
+     * 匹配失败的结果
+     *
+     * @param request   匹配请求
+     * @param ruleChain 规则链
+     * @return 匹配结果
+     */
+    private RuleRunResponse matchingFailed(RuleRunRequest request, RuleChain ruleChain) {
+        RuleRunResponse response = new RuleRunResponse();
+        //设置是否匹配标识
+        response.setMatched(Boolean.FALSE);
+        response.setMatchedNodeId(ruleChain.getRuleTreeNodeId());
+        response.setMatchedNodeName(ruleChain.getRuleTreeNodeName());
+        //返回对象
+        response.setReturnConstant("规则链未匹配成功");
         return response;
     }
 

@@ -76,7 +76,7 @@ public class RuleEngineController implements RuleEngineApi, RuleEngineTestApi {
             LogUtil.error("规则引擎执行异常:" + e.getMessage(), e);
             return ResultDataUtil.fail("规则引擎执行异常:" + e.getMessage());
         }
-        // 执行测试成功！
+        // 规则执行成功！
         return ResultDataUtil.success(responses,"00041");
     }
 
