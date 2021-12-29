@@ -66,7 +66,7 @@ public class RuleServiceMethodService extends BaseEntityService<RuleServiceMetho
     @Override
     protected OperateResult preDelete(String id) {
         // 检查规则树节点是否配置了服务方法
-        if (ruleTreeNodeDao.isExistsByProperty("ruleReturnTypeId", id)) {
+        if (ruleTreeNodeDao.isExistsByProperty("ruleServiceMethodId", id)) {
             // 规则树节点已经配置了服务方法，禁止删除！
             return OperateResult.operationFailure("00011");
         }
