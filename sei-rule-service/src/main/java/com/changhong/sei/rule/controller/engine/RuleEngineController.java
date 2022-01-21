@@ -2,6 +2,7 @@ package com.changhong.sei.rule.controller.engine;
 
 import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.log.LogUtil;
+import com.changhong.sei.core.util.JsonUtils;
 import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.rule.api.engine.RuleEngineTestApi;
 import com.changhong.sei.rule.dto.engine.TestRunRequest;
@@ -76,6 +77,8 @@ public class RuleEngineController implements RuleEngineApi, RuleEngineTestApi {
             LogUtil.error("规则引擎执行异常:" + e.getMessage(), e);
             return ResultDataUtil.fail("规则引擎执行异常:" + e.getMessage());
         }
+        // 打印返回的规则链结果
+        LogUtil.bizLog("返回的规则执行结果：" + JsonUtils.toJson(responses));
         // 规则执行成功！
         return ResultDataUtil.success(responses,"00041");
     }

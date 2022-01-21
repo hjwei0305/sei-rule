@@ -95,6 +95,8 @@ public class RuleEngineService {
         }
         env.put(RULE_CHAIN_PARAM_PREFIX, param);
         env.put(RULE_TYPE_CODE, request.getRuleTypeCode());
+        // 打印执行规则的输入参数
+        LogUtil.bizLog("执行规则【{}】，输入参数：{}", request.getRuleTypeCode(), JsonUtils.toJson(param));
         try {
             //根据优先级依次匹配多个规则
             for (RuleTreeRoot root : roots) {
