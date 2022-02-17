@@ -51,9 +51,11 @@ public class RuleEngineController implements RuleEngineApi, RuleEngineTestApi {
         try {
             responses = service.run(request, Boolean.TRUE, Boolean.FALSE);
             if (CollectionUtils.isEmpty(responses)) {
-                // 执行测试失败，没有匹配成功的规则！
+                // 规则执行失败，没有匹配成功的规则！
                 return ResultDataUtil.fail("00042");
             }
+            // 打印返回的规则执行结果
+            LogUtil.bizLog("返回的规则执行结果：" + JsonUtils.toJson(responses.get(0)));
             // 规则执行成功！
             return ResultDataUtil.success(responses.get(0), "00041");
         } catch (Exception e) {
@@ -77,7 +79,7 @@ public class RuleEngineController implements RuleEngineApi, RuleEngineTestApi {
             LogUtil.error("规则引擎执行异常:" + e.getMessage(), e);
             return ResultDataUtil.fail("规则引擎执行异常:" + e.getMessage());
         }
-        // 打印返回的规则链结果
+        // 打印返回的规则执行结果
         LogUtil.bizLog("返回的规则执行结果：" + JsonUtils.toJson(responses));
         // 规则执行成功！
         return ResultDataUtil.success(responses,"00041");
@@ -99,7 +101,7 @@ public class RuleEngineController implements RuleEngineApi, RuleEngineTestApi {
             return ResultDataUtil.fail("规则引擎执行异常:" + e.getMessage());
         }
         if (CollectionUtils.isEmpty(responses)) {
-            // 执行测试失败，没有匹配成功的规则！
+            // 规则执行失败，没有匹配成功的规则！
             return ResultDataUtil.fail("00042");
         }
         TestRunResponse testRunResponse = new TestRunResponse();

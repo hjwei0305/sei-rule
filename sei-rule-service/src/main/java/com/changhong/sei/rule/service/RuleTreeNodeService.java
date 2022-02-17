@@ -223,6 +223,16 @@ public class RuleTreeNodeService extends BaseTreeService<RuleTreeNode> {
                 return OperateResultWithData.operationFailure("00021", entity.getName());
             }
         }
+        // 检查逻辑表达式的匹配值不能为空
+        List<LogicalExpression> logicalExpressions = entity.getLogicalExpressions();
+        if (CollectionUtils.isNotEmpty(logicalExpressions)) {
+            for (LogicalExpression expression : logicalExpressions) {
+                if (StringUtils.isBlank(expression.getComparisonValue())) {
+                    // 节点【{0}】的逻辑表达式【{1}】匹配值为空，禁止保存！
+                    return OperateResultWithData.operationFailure("00021", entity.getName(), expression.getDisplayValue());
+                }
+            }
+        }
         OperateResultWithData<RuleTreeNode> result = super.save(entity);
         if (result.notSuccessful()) {
             return result;
