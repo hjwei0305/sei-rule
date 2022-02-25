@@ -3,6 +3,7 @@ package com.changhong.sei.rule.service;
 import com.changhong.sei.core.dao.BaseEntityDao;
 import com.changhong.sei.core.service.BaseEntityService;
 import com.changhong.sei.core.service.bo.OperateResult;
+import com.changhong.sei.core.service.bo.OperateResultWithData;
 import com.changhong.sei.rule.dao.*;
 import com.changhong.sei.rule.entity.RuleEntityType;
 import com.changhong.sei.rule.entity.RuleReturnType;

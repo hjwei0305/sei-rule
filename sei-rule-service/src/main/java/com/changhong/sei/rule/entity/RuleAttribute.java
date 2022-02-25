@@ -62,6 +62,26 @@ public class RuleAttribute extends BaseAuditableEntity {
     @Column(name = "find_data_url")
     private String findDataUrl;
 
+    public RuleAttribute() {
+    }
+
+    public RuleAttribute(String attribute, String name, RuleAttributeType ruleAttributeType, String uiComponent) {
+        this.attribute = attribute;
+        this.name = name;
+        this.ruleAttributeType = ruleAttributeType;
+        this.uiComponent = uiComponent;
+    }
+
+    public RuleAttribute(String attribute, String name, RuleAttributeType ruleAttributeType, String uiComponent, String valueField, String displayField, String findDataUrl) {
+        this.attribute = attribute;
+        this.name = name;
+        this.ruleAttributeType = ruleAttributeType;
+        this.uiComponent = uiComponent;
+        this.valueField = valueField;
+        this.displayField = displayField;
+        this.findDataUrl = findDataUrl;
+    }
+
     public String getRuleEntityTypeId() {
         return ruleEntityTypeId;
     }

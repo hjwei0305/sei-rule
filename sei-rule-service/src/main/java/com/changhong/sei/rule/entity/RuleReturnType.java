@@ -50,6 +50,16 @@ public class RuleReturnType extends BaseAuditableEntity {
     @Column(name = "find_data_url")
     private String findDataUrl;
 
+    public RuleReturnType() {
+    }
+
+    public RuleReturnType(String code, String name, String uiComponent, String findDataUrl) {
+        this.code = code;
+        this.name = name;
+        this.uiComponent = uiComponent;
+        this.findDataUrl = findDataUrl;
+    }
+
     public String getRuleEntityTypeId() {
         return ruleEntityTypeId;
     }

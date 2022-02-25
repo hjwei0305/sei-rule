@@ -38,6 +38,15 @@ public class RuleEntityType extends BaseAuditableEntity implements ICodeUnique {
     @Column(name = "service_name")
     private String serviceName;
 
+    public RuleEntityType() {
+    }
+
+    public RuleEntityType(String code, String name, String serviceName) {
+        this.code = code;
+        this.name = name;
+        this.serviceName = serviceName;
+    }
+
     public String getCode() {
         return code;
     }

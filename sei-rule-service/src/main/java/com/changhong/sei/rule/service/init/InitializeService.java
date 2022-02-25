@@ -28,8 +28,8 @@ public class InitializeService {
     public List<InitializeTask> getInitializeTasks() {
         List<InitializeTask> tasks = new LinkedList<>();
         tasks.add(new InitializeTask(1, "初始化规则主体"));
-        tasks.add(new InitializeTask(2, "初始化规则主体配置"));
-        tasks.add(new InitializeTask(3, "初始化必要的规则定义"));
+        tasks.add(new InitializeTask(2, "初始化规则主体属性配置"));
+        tasks.add(new InitializeTask(3, "初始化规则主体返回结果配置"));
         return tasks;
     }
 

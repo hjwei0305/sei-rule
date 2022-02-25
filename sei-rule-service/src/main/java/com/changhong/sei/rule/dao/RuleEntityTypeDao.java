@@ -12,5 +12,10 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface RuleEntityTypeDao extends BaseEntityDao<RuleEntityType> {
-
+    /**
+     * 通过代码获取规则业务实体
+     * @param code 代码
+     * @return 规则业务实体
+     */
+    RuleEntityType findByCode(String code);
 }

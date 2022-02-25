@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class BasePerformer implements TaskPerformer {
+
     /**
      * 执行任务
      *
