@@ -46,6 +46,15 @@ public class RuleComparator extends BaseAuditableEntity {
     @Column(name = "path")
     private String path;
 
+    public RuleComparator() {
+    }
+
+    public RuleComparator(String method, String name, String path) {
+        this.method = method;
+        this.name = name;
+        this.path = path;
+    }
+
     public String getRuleEntityTypeId() {
         return ruleEntityTypeId;
     }

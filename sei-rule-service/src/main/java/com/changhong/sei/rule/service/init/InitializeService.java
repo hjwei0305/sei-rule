@@ -30,6 +30,8 @@ public class InitializeService {
         tasks.add(new InitializeTask(1, "初始化规则主体"));
         tasks.add(new InitializeTask(2, "初始化规则主体属性配置"));
         tasks.add(new InitializeTask(3, "初始化规则主体返回结果配置"));
+        tasks.add(new InitializeTask(4, "初始化规则主体比较器配置"));
+        tasks.add(new InitializeTask(5, "初始化必要的规则定义"));
         return tasks;
     }
 

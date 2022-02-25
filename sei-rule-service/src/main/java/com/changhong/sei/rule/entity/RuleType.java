@@ -48,6 +48,15 @@ public class RuleType extends BaseAuditableEntity implements ITenant {
     @Column(name = "tenant_code")
     private String tenantCode;
 
+    public RuleType() {
+    }
+
+    public RuleType(String code, String name, String remark) {
+        this.code = code;
+        this.name = name;
+        this.remark = remark;
+    }
+
     public String getRuleEntityTypeId() {
         return ruleEntityTypeId;
     }

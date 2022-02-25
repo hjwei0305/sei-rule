@@ -31,7 +31,7 @@ class InitializeControllerTest extends BaseUnit5Test {
 
     @Test
     void performTask() {
-        ResultData<?> resultData = controller.performTask(3);
+        ResultData<?> resultData = controller.performTask(5);
         System.out.println(JsonUtils.toJson(resultData));
         Assertions.assertTrue(resultData.successful());
     }
