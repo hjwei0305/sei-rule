@@ -2,8 +2,11 @@ package com.changhong.sei.rule.service.init;
 
 import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.dto.ResultData;
+import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.service.bo.OperateResult;
+import com.changhong.sei.core.utils.ResultDataUtil;
 import com.changhong.sei.rule.dto.init.InitializeTask;
+import com.changhong.sei.rule.service.init.performer.TaskPerformer;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -37,8 +40,16 @@ public class InitializeService {
      * @return 处理结果
      */
     public OperateResult performTask(Integer id) {
-
-        // 初始化任务【{0}】执行完成！
-        return OperateResult.operationSuccess("00047", id);
+        String performerBeanId = "taskPerformer" + id;
+        TaskPerformer performer;
+        try {
+            performer = ContextUtil.getBean(performerBeanId);
+        } catch (Exception e) {
+            String extBeanIdError = "初始化任务执行器[" + performerBeanId + "]" + "没有实现！";
+            LogUtil.error(extBeanIdError,e);
+            // 初始化任务执行器【{0}】没有实现！
+            return OperateResult.operationFailure("00049", performerBeanId);
+        }
+        return performer.performTask();
     }
 }
