@@ -54,7 +54,7 @@ public class TaskPerformer5 extends BasePerformer<RuleType> {
         RuleEntityType somsEntityType = ruleEntityTypeDao.findByCode(SOMS_ALLOT_WORK_STRATEGY);
         if (Objects.nonNull(somsEntityType)) {
             String entityTypeId = somsEntityType.getId();
-            initEntities.add(new RuleType(entityTypeId, "soms-allotworkstrategy-fwddpgcl", "服务订单派工规则", "在共享服务订单生成工作池任务时，SOMS调用此规则来确定工作池任务的派工策略。"));
+            initEntities.add(new RuleType(entityTypeId, "soms-allotworkstrategy-fwddpggz", "服务订单派工规则", "在共享服务订单生成工作池任务时，SOMS调用此规则来确定工作池任务的派工策略。"));
         }
     }
 
