@@ -53,7 +53,8 @@ public class RuleReturnType extends BaseAuditableEntity {
     public RuleReturnType() {
     }
 
-    public RuleReturnType(String code, String name, String uiComponent, String findDataUrl) {
+    public RuleReturnType(String ruleEntityTypeId, String code, String name, String uiComponent, String findDataUrl) {
+        this.ruleEntityTypeId = ruleEntityTypeId;
         this.code = code;
         this.name = name;
         this.uiComponent = uiComponent;

@@ -51,7 +51,8 @@ public class RuleType extends BaseAuditableEntity implements ITenant {
     public RuleType() {
     }
 
-    public RuleType(String code, String name, String remark) {
+    public RuleType(String ruleEntityTypeId, String code, String name, String remark) {
+        this.ruleEntityTypeId= ruleEntityTypeId;
         this.code = code;
         this.name = name;
         this.remark = remark;

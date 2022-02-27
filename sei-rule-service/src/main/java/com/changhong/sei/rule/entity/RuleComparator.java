@@ -49,7 +49,8 @@ public class RuleComparator extends BaseAuditableEntity {
     public RuleComparator() {
     }
 
-    public RuleComparator(String method, String name, String path) {
+    public RuleComparator(String ruleEntityType, String method, String name, String path) {
+        this.ruleEntityTypeId = ruleEntityType;
         this.method = method;
         this.name = name;
         this.path = path;

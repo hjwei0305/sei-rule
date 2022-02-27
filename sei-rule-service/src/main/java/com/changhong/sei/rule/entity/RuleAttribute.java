@@ -65,14 +65,16 @@ public class RuleAttribute extends BaseAuditableEntity {
     public RuleAttribute() {
     }
 
-    public RuleAttribute(String attribute, String name, RuleAttributeType ruleAttributeType, String uiComponent) {
+    public RuleAttribute(String ruleEntityTypeId, String attribute, String name, RuleAttributeType ruleAttributeType, String uiComponent) {
+        this.ruleEntityTypeId = ruleEntityTypeId;
         this.attribute = attribute;
         this.name = name;
         this.ruleAttributeType = ruleAttributeType;
         this.uiComponent = uiComponent;
     }
 
-    public RuleAttribute(String attribute, String name, RuleAttributeType ruleAttributeType, String uiComponent, String valueField, String displayField, String findDataUrl) {
+    public RuleAttribute(String ruleEntityTypeId, String attribute, String name, RuleAttributeType ruleAttributeType, String uiComponent, String valueField, String displayField, String findDataUrl) {
+        this.ruleEntityTypeId = ruleEntityTypeId;
         this.attribute = attribute;
         this.name = name;
         this.ruleAttributeType = ruleAttributeType;
