@@ -2,7 +2,8 @@ sei: # 应用全局配置
   application:
     code: sei-rule
     name: SEI规则引擎
-    env: PROD
+    env: DEV
+    #env: PROD
     version: '@project_version@'
     swagger:
       title: "${sei.application.name} API"
@@ -10,8 +11,10 @@ sei: # 应用全局配置
       version: ${sei.application.version}
   mock: # 本地调试的当前用户配置
     user:
-      tenant-code: GGG
-      account: 10000
+      tenant-code: 10044
+      account: admin
+      #tenant-code: GGG
+      #account: 10000
 
 spring:
   application:
