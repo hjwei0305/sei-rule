@@ -20,6 +20,7 @@ public class TaskPerformer1 extends BasePerformer<RuleEntityType> {
     private RuleEntityTypeDao ruleEntityTypeDao;
     public static final String EBILL_INVOICE_CHECK = "ebill-invoice_check";
     public static final String SOMS_ALLOT_WORK_STRATEGY = "soms-AllotWorkStrategy";
+    public static final String SOMS_SHARE_ORDER = "soms-share_order";
 
     /**
      * 设置初始化业务实体名称
@@ -41,6 +42,7 @@ public class TaskPerformer1 extends BasePerformer<RuleEntityType> {
         initEntities = new LinkedList<>();
         initEntities.add(new RuleEntityType(EBILL_INVOICE_CHECK, "我的票据合规性检查", "ebill"));
         initEntities.add(new RuleEntityType(SOMS_ALLOT_WORK_STRATEGY, "共享运营派工策略", "soms-v6"));
+        initEntities.add(new RuleEntityType(SOMS_SHARE_ORDER, "共享服务订单规则", "soms-v6"));
     }
 
     /**

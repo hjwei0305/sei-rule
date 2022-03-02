@@ -13,7 +13,7 @@ import java.util.Objects;
 import static com.changhong.sei.rule.service.init.performer.TaskPerformer1.EBILL_INVOICE_CHECK;
 
 /**
- * 实现功能: 初始化规则主体返回结果配置
+ * 实现功能: 初始化规则主体比较器配置
  *
  * @author 王锦光 wangjg
  * @version 2022-02-25 10:45
@@ -32,7 +32,7 @@ public class TaskPerformer4 extends BasePerformer<RuleComparator> {
      */
     @Override
     protected String getEntityName() {
-        return "规则主体的返回结果";
+        return "规则主体的比较器";
     }
 
     /**

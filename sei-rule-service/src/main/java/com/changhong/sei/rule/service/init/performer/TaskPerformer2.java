@@ -11,8 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedList;
 import java.util.Objects;
 
-import static com.changhong.sei.rule.service.init.performer.TaskPerformer1.EBILL_INVOICE_CHECK;
-import static com.changhong.sei.rule.service.init.performer.TaskPerformer1.SOMS_ALLOT_WORK_STRATEGY;
+import static com.changhong.sei.rule.service.init.performer.TaskPerformer1.*;
 
 /**
  * 实现功能: 初始化规则主体属性配置
@@ -75,6 +74,15 @@ public class TaskPerformer2 extends BasePerformer<RuleAttribute> {
             initEntities.add(new RuleAttribute(entityTypeId, "businessTypeName", "业务类型名称", RuleAttributeType.STRING, "Input"));
             initEntities.add(new RuleAttribute(entityTypeId, "corporationCode", "公司代码", RuleAttributeType.STRING, "ComboListLocal", "code", "name", "sei-basic/corporation/findAllAuthEntityData"));
             initEntities.add(new RuleAttribute(entityTypeId, "workNodeCode", "工作节点", RuleAttributeType.STRING, "ComboListLocal", "code", "name", "soms-v6/workNode/findAll"));
+        }
+        RuleEntityType somsOrderEntityType = ruleEntityTypeDao.findByCode(SOMS_SHARE_ORDER);
+        if (Objects.nonNull(somsOrderEntityType)) {
+            String entityTypeId = somsOrderEntityType.getId();
+            initEntities.add(new RuleAttribute(entityTypeId, "businessCategoryCode", "业务分类", RuleAttributeType.STRING, "ComboListLocal", "code", "name", "soms-v6/businessCategory/findAll"));
+            initEntities.add(new RuleAttribute(entityTypeId, "businessTypeCode", "业务类型", RuleAttributeType.STRING, "ComboListLocal", "code", "name", "soms-v6/businessType/findAllUnfrozen"));
+            initEntities.add(new RuleAttribute(entityTypeId, "businessTypeName", "业务类型名称", RuleAttributeType.STRING, "Input"));
+            initEntities.add(new RuleAttribute(entityTypeId, "corporationCode", "公司代码", RuleAttributeType.STRING, "ComboListLocal", "code", "name", "sei-basic/corporation/findAllAuthEntityData"));
+            initEntities.add(new RuleAttribute(entityTypeId, "orderMoney", "订单金额", RuleAttributeType.NUMBER, "MoneyInput"));
         }
     }
 

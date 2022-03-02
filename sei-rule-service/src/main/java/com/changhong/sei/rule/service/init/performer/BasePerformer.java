@@ -14,7 +14,6 @@ import java.util.List;
  * @author 王锦光 wangjg
  * @version 2022-02-25 10:40
  */
-@Component
 public abstract class BasePerformer<T extends BaseEntity> implements TaskPerformer {
     /**
      * 定义初始化业务实体

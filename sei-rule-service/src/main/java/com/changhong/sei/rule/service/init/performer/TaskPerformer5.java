@@ -11,8 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedList;
 import java.util.Objects;
 
-import static com.changhong.sei.rule.service.init.performer.TaskPerformer1.EBILL_INVOICE_CHECK;
-import static com.changhong.sei.rule.service.init.performer.TaskPerformer1.SOMS_ALLOT_WORK_STRATEGY;
+import static com.changhong.sei.rule.service.init.performer.TaskPerformer1.*;
 
 /**
  * 实现功能: 初始化必要的规则定义
@@ -55,6 +54,11 @@ public class TaskPerformer5 extends BasePerformer<RuleType> {
         if (Objects.nonNull(somsEntityType)) {
             String entityTypeId = somsEntityType.getId();
             initEntities.add(new RuleType(entityTypeId, "soms-allotworkstrategy-fwddpggz", "服务订单派工规则", "在共享服务订单生成工作池任务时，SOMS调用此规则来确定工作池任务的派工策略。"));
+        }
+        RuleEntityType somsOrderEntityType = ruleEntityTypeDao.findByCode(SOMS_SHARE_ORDER);
+        if (Objects.nonNull(somsOrderEntityType)) {
+            String entityTypeId = somsOrderEntityType.getId();
+            initEntities.add(new RuleType(entityTypeId, "soms-share_order-rgfhblgz", "人工复核比例规则", "在共享服务订单处理流程中，SOMS调用此规则来确定服务订单是否需要人工复核。"));
         }
     }
 
