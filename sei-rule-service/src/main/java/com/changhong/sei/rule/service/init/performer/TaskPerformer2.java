@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedList;
 import java.util.Objects;
 
-import static com.changhong.sei.rule.service.init.performer.TaskPerformer1.*;
-
 /**
  * 实现功能: 初始化规则主体属性配置
  *
@@ -45,7 +43,7 @@ public class TaskPerformer2 extends BasePerformer<RuleAttribute> {
     protected void setInitEntities() {
         initEntities = new LinkedList<>();
         // 获取规则业务实体
-        RuleEntityType ebillEntityType = ruleEntityTypeDao.findByCode(EBILL_INVOICE_CHECK);
+        RuleEntityType ebillEntityType = ruleEntityTypeDao.findByCode(TaskPerformer1.EBILL_INVOICE_CHECK);
         if (Objects.nonNull(ebillEntityType)) {
             String entityTypeId = ebillEntityType.getId();
             initEntities.add(new RuleAttribute(entityTypeId, "buyerName", "购买方名称", RuleAttributeType.STRING, "Input"));
@@ -66,7 +64,7 @@ public class TaskPerformer2 extends BasePerformer<RuleAttribute> {
             initEntities.add(new RuleAttribute(entityTypeId, "businessInfo.expenseDetailTypeName", "费用明细类型名称", RuleAttributeType.DATETIME, "DatePicker"));
             initEntities.add(new RuleAttribute(entityTypeId, "businessInfo.passengerName", "报销人", RuleAttributeType.STRING, "DatePicker"));
         }
-        RuleEntityType somsEntityType = ruleEntityTypeDao.findByCode(SOMS_ALLOT_WORK_STRATEGY);
+        RuleEntityType somsEntityType = ruleEntityTypeDao.findByCode(TaskPerformer1.SOMS_ALLOT_WORK_STRATEGY);
         if (Objects.nonNull(somsEntityType)) {
             String entityTypeId = somsEntityType.getId();
             initEntities.add(new RuleAttribute(entityTypeId, "businessCategoryCode", "业务分类", RuleAttributeType.STRING, "ComboListLocal", "code", "name", "soms-v6/businessCategory/findAll"));
@@ -75,7 +73,7 @@ public class TaskPerformer2 extends BasePerformer<RuleAttribute> {
             initEntities.add(new RuleAttribute(entityTypeId, "corporationCode", "公司代码", RuleAttributeType.STRING, "ComboListLocal", "code", "name", "sei-basic/corporation/findAllAuthEntityData"));
             initEntities.add(new RuleAttribute(entityTypeId, "workNodeCode", "工作节点", RuleAttributeType.STRING, "ComboListLocal", "code", "name", "soms-v6/workNode/findAll"));
         }
-        RuleEntityType somsOrderEntityType = ruleEntityTypeDao.findByCode(SOMS_SHARE_ORDER);
+        RuleEntityType somsOrderEntityType = ruleEntityTypeDao.findByCode(TaskPerformer1.SOMS_SHARE_ORDER);
         if (Objects.nonNull(somsOrderEntityType)) {
             String entityTypeId = somsOrderEntityType.getId();
             initEntities.add(new RuleAttribute(entityTypeId, "businessCategoryCode", "业务分类", RuleAttributeType.STRING, "ComboListLocal", "code", "name", "soms-v6/businessCategory/findAll"));
