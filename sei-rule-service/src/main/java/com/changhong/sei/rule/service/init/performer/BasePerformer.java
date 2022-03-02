@@ -1,6 +1,7 @@
 package com.changhong.sei.rule.service.init.performer;
 
 import com.changhong.sei.core.entity.BaseEntity;
+import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.service.bo.OperateResult;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,10 +73,12 @@ public abstract class BasePerformer<T extends BaseEntity> implements TaskPerform
             // 判断是否已经存在
             if (alreadyExists(entity)) {
                 // 如果存在则跳过
+                LogUtil.bizLog("初始化业务实体已经存在！id={}", entity.getId());
                 continue;
             }
             // 不存在则保存
             save(entity);
+            LogUtil.bizLog("初始化业务实体执行保存！id={}", entity.getId());
         }
         // {0}初始化完毕！
         return OperateResult.operationSuccess("00047", getEntityName());
