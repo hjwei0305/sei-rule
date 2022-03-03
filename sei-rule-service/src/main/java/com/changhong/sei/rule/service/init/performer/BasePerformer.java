@@ -27,11 +27,10 @@ public abstract class BasePerformer<T extends BaseEntity> implements TaskPerform
     protected abstract String getEntityName();
 
     /**
-     * 在子类中设置初始换业务实体清单（执行一次）
+     * 在子类中设置初始换业务实体清单（存在当前租户，可以构造当前租户的数据）
      * initEntities = new LinkedList<>();
      * initEntities.add(...);
      */
-    @PostConstruct
     protected abstract void setInitEntities();
 
     /**
@@ -65,6 +64,8 @@ public abstract class BasePerformer<T extends BaseEntity> implements TaskPerform
     @Override
     @Transactional(rollbackFor = Exception.class)
     public OperateResult performTask() {
+        // 构造初始化数据
+        setInitEntities();
         for (T entity : initEntities) {
             // 设置关联属性
             setRelationalField(entity);
