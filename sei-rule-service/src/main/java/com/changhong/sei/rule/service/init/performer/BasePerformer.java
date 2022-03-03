@@ -14,11 +14,6 @@ import java.util.List;
  */
 public abstract class BasePerformer<T extends BaseEntity> implements TaskPerformer {
     /**
-     * 定义初始化业务实体
-     */
-    protected List<T> initEntities;
-
-    /**
      * 设置初始化业务实体名称
      *
      * @return 业务实体名称

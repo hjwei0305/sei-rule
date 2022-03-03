@@ -45,7 +45,7 @@ public class TaskPerformer5 extends BasePerformer<RuleType> {
      */
     @Override
     protected List<RuleType> constructInitEntities() {
-        initEntities = new LinkedList<>();
+        List<RuleType> initEntities = new LinkedList<>();
         // 获取规则业务实体
         RuleEntityType ebillEntityType = ruleEntityTypeDao.findByCode(EBILL_INVOICE_CHECK);
         if (Objects.nonNull(ebillEntityType)) {

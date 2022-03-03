@@ -44,7 +44,7 @@ public class TaskPerformer4 extends BasePerformer<RuleComparator> {
      */
     @Override
     protected List<RuleComparator> constructInitEntities() {
-        initEntities = new LinkedList<>();
+        List<RuleComparator> initEntities = new LinkedList<>();
         // 获取规则业务实体
         RuleEntityType ebillEntityType = ruleEntityTypeDao.findByCode(EBILL_INVOICE_CHECK);
         if (Objects.nonNull(ebillEntityType)) {

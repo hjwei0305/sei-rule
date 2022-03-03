@@ -40,7 +40,7 @@ public class TaskPerformer1 extends BasePerformer<RuleEntityType> {
      */
     @Override
     protected List<RuleEntityType> constructInitEntities() {
-        initEntities = new LinkedList<>();
+        List<RuleEntityType> initEntities = new LinkedList<>();
         initEntities.add(new RuleEntityType(EBILL_INVOICE_CHECK, "我的票据合规性检查", "ebill"));
         initEntities.add(new RuleEntityType(SOMS_ALLOT_WORK_STRATEGY, "共享运营派工策略", "soms-v6"));
         initEntities.add(new RuleEntityType(SOMS_SHARE_ORDER, "共享服务订单规则", "soms-v6"));
