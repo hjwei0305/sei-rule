@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 import static com.changhong.sei.rule.service.init.performer.TaskPerformer1.*;
@@ -37,12 +38,13 @@ public class TaskPerformer5 extends BasePerformer<RuleType> {
     }
 
     /**
-     * 在子类中设置初始换业务实体清单（执行一次）
+     * 在子类中设置初始换业务实体清单
      * initEntities = new LinkedList<>();
      * initEntities.add(...);
+     * return initEntities;
      */
     @Override
-    protected void setInitEntities() {
+    protected List<RuleType> constructInitEntities() {
         initEntities = new LinkedList<>();
         // 获取规则业务实体
         RuleEntityType ebillEntityType = ruleEntityTypeDao.findByCode(EBILL_INVOICE_CHECK);
@@ -60,6 +62,7 @@ public class TaskPerformer5 extends BasePerformer<RuleType> {
             String entityTypeId = somsOrderEntityType.getId();
             initEntities.add(new RuleType(entityTypeId, "soms-share_order-rgfhblgz", "人工复核比例规则", "在共享服务订单处理流程中，SOMS调用此规则来确定服务订单是否需要人工复核。"));
         }
+        return initEntities;
     }
 
     /**

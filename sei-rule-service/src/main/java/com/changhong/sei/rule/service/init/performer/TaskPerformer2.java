@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -35,12 +36,12 @@ public class TaskPerformer2 extends BasePerformer<RuleAttribute> {
     }
 
     /**
-     * 在子类中设置初始换业务实体清单（执行一次）
+     * 在子类中设置初始换业务实体清单
      * initEntities = new LinkedList<>();
      * initEntities.add(...);
      */
     @Override
-    protected void setInitEntities() {
+    protected List<RuleAttribute> constructInitEntities() {
         initEntities = new LinkedList<>();
         // 获取规则业务实体
         RuleEntityType ebillEntityType = ruleEntityTypeDao.findByCode(TaskPerformer1.EBILL_INVOICE_CHECK);
@@ -82,6 +83,7 @@ public class TaskPerformer2 extends BasePerformer<RuleAttribute> {
             initEntities.add(new RuleAttribute(entityTypeId, "corporationCode", "公司代码", RuleAttributeType.STRING, "ComboListLocal", "code", "name", "sei-basic/corporation/findAllAuthEntityData"));
             initEntities.add(new RuleAttribute(entityTypeId, "orderMoney", "订单金额", RuleAttributeType.NUMBER, "MoneyInput"));
         }
+        return initEntities;
     }
 
     /**

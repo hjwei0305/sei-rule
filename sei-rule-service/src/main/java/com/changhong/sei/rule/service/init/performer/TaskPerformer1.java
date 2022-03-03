@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -33,16 +34,17 @@ public class TaskPerformer1 extends BasePerformer<RuleEntityType> {
     }
 
     /**
-     * 在子类中设置初始换业务实体清单（执行一次）
+     * 在子类中设置初始换业务实体清单
      * initEntities = new LinkedList<>();
      * initEntities.add(...);
      */
     @Override
-    protected void setInitEntities() {
+    protected List<RuleEntityType> constructInitEntities() {
         initEntities = new LinkedList<>();
         initEntities.add(new RuleEntityType(EBILL_INVOICE_CHECK, "我的票据合规性检查", "ebill"));
         initEntities.add(new RuleEntityType(SOMS_ALLOT_WORK_STRATEGY, "共享运营派工策略", "soms-v6"));
         initEntities.add(new RuleEntityType(SOMS_SHARE_ORDER, "共享服务订单规则", "soms-v6"));
+        return initEntities;
     }
 
     /**

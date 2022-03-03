@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 import static com.changhong.sei.rule.service.init.performer.TaskPerformer1.EBILL_INVOICE_CHECK;
@@ -36,12 +37,13 @@ public class TaskPerformer4 extends BasePerformer<RuleComparator> {
     }
 
     /**
-     * 在子类中设置初始换业务实体清单（执行一次）
+     * 在子类中设置初始换业务实体清单
      * initEntities = new LinkedList<>();
      * initEntities.add(...);
+     * return initEntities;
      */
     @Override
-    protected void setInitEntities() {
+    protected List<RuleComparator> constructInitEntities() {
         initEntities = new LinkedList<>();
         // 获取规则业务实体
         RuleEntityType ebillEntityType = ruleEntityTypeDao.findByCode(EBILL_INVOICE_CHECK);
@@ -50,6 +52,7 @@ public class TaskPerformer4 extends BasePerformer<RuleComparator> {
             initEntities.add(new RuleComparator(entityTypeId, "inSupplierBlacklist", "在供应商黑名单中", "myBillRule"));
             initEntities.add(new RuleComparator(entityTypeId, "invoiceIsOverdue", "开票日期超过6个月", "myBillRule"));
         }
+        return initEntities;
     }
 
     /**
